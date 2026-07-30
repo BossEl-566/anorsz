@@ -119,23 +119,35 @@ export default function Header() {
       }`}
     >
       <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:h-24 lg:px-12 xl:px-16">
-        {/* Logo: left side */}
-        <Link
-          href="/"
-          aria-label="Anors.Z Global Water Station home"
-          onClick={closeMobileMenu}
-          className="group flex shrink-0 items-center"
-        >
-          <div className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-white px-3 py-2 shadow-lg ring-1 ring-white/20 transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-xl sm:w-16 lg:h-16 lg:w-16">
-            <Image
-              src={anorszLogo}
-              alt="Anors.Z Global Water Station"
-              priority
-              className="h-full w-full object-contain"
-              sizes="(max-width: 640px) 145px, (max-width: 1024px) 165px, 185px"
-            />
-          </div>
-        </Link>
+        {/* Logo and company name: left side */}
+<Link
+  href="/"
+  aria-label="Anors.Z Global Water Station home"
+  onClick={closeMobileMenu}
+  className="group flex shrink-0 items-center gap-3"
+>
+  {/* Logo image */}
+  <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white px-3 py-2 shadow-lg ring-1 ring-white/20 transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-xl lg:h-16 lg:w-16">
+    <Image
+      src={anorszLogo}
+      alt="Anors.Z Global Water Station logo"
+      priority
+      className="h-full w-full object-contain"
+      sizes="64px"
+    />
+  </div>
+
+  {/* Company name outside the logo container */}
+  <div className="flex flex-col">
+    <span className="text-xl font-semibold leading-none tracking-[-0.03em] text-white sm:text-2xl">
+      Anors.Z
+    </span>
+
+    <span className="mt-1 hidden text-[9px] font-medium uppercase tracking-[0.16em] text-white/55 sm:block lg:text-[10px]">
+      Global Water Station
+    </span>
+  </div>
+</Link>
 
         {/* Desktop navigation: right side */}
         <nav
