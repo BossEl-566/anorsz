@@ -1,38 +1,50 @@
-import Image from "next/image";
-
-export default function Home() {
+export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#f7fbff] px-4 py-8 sm:px-6 md:py-12">
-      <section className="mx-auto flex min-h-[80vh] max-w-7xl flex-col items-center justify-center overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#571553] via-[#8d1c77] to-[#1769aa] px-6 py-16 text-center text-white shadow-2xl sm:px-10 md:px-16">
-        <div className="mb-6 rounded-full border border-white/30 bg-white/10 px-5 py-2 text-sm font-medium backdrop-blur-md">
-          Pure • Fresh • Safe
+    <main>
+      <section className="relative min-h-screen overflow-hidden bg-[#08182b]">
+        {/* Background video */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          className="absolute inset-0 h-full w-full object-cover"
+        >
+          <source src="/videos/hero-video.mp4" type="video/mp4" />
+        </video>
+
+        {/* Dark blue video overlay */}
+        <div className="absolute inset-0 bg-[#071c3c]/70" />
+
+        {/* Subtle purple brand overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#681761]/30 via-transparent to-[#071c3c]/30" />
+
+        {/* Temporary hero content */}
+        <div className="relative z-10 mx-auto flex min-h-screen max-w-[1440px] items-end px-5 pb-16 pt-32 sm:px-8 md:pb-20 lg:px-12 lg:pb-24 xl:px-16">
+          <div className="max-w-4xl text-white">
+            <p className="mb-5 text-sm font-medium uppercase tracking-[0.25em] text-cyan-200">
+              Anors.Z Global Water Station
+            </p>
+
+            <h1 className="text-4xl font-medium leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+              Pure water solutions for healthier communities
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-base leading-7 text-white/75 sm:text-lg">
+              Advanced water purification technology delivering clean, safe
+              and affordable drinking water for schools, businesses,
+              institutions, communities and homes.
+            </p>
+          </div>
         </div>
+      </section>
 
-        <h1 className="max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-          Anors.Z Global
-          <span className="block text-cyan-200">Water Station</span>
-        </h1>
-
-        <p className="mt-6 max-w-2xl text-base leading-7 text-white/85 sm:text-lg md:text-xl">
-          Advanced water purification solutions providing accessible,
-          reliable and safe drinking water for institutions, businesses,
-          communities and homes.
-        </p>
-
-        <div className="mt-10 flex w-full flex-col justify-center gap-4 sm:w-auto sm:flex-row">
-          <button
-            type="button"
-            className="rounded-full bg-white px-7 py-3.5 font-semibold text-[#681761] transition hover:-translate-y-1 hover:shadow-xl"
-          >
-            Explore Our Solutions
-          </button>
-
-          <button
-            type="button"
-            className="rounded-full border border-white/40 bg-white/10 px-7 py-3.5 font-semibold text-white backdrop-blur-md transition hover:bg-white/20"
-          >
-            Make an Enquiry
-          </button>
+      <section className="min-h-screen bg-white px-5 py-24">
+        <div className="mx-auto max-w-[1440px]">
+          <h2 className="text-4xl font-semibold text-[#10243e]">
+            Test the header scroll effect
+          </h2>
         </div>
       </section>
     </main>
