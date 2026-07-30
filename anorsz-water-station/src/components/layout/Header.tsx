@@ -114,7 +114,7 @@ export default function Header() {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         hasScrolled || isMenuOpen
-          ? "border-b border-white/10 bg-[#08182b]/90 shadow-lg backdrop-blur-xl"
+          ? "border-b border-white/10 bg-[#160b19]/92 shadow-lg backdrop-blur-xl"
           : "bg-transparent"
       }`}
     >
@@ -173,7 +173,7 @@ export default function Header() {
       {/* Mobile navigation */}
       <div
         id="mobile-navigation"
-        className={`overflow-hidden border-t border-white/10 bg-[#08182b]/95 backdrop-blur-xl transition-all duration-500 lg:hidden ${
+        className={`overflow-hidden border-t border-white/10 bg-[#160b19]/97 backdrop-blur-xl transition-all duration-500 lg:hidden ${
           isMenuOpen
             ? "max-h-[calc(100vh-5rem)] opacity-100"
             : "pointer-events-none max-h-0 opacity-0"
