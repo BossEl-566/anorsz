@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import Video from "next-video";
+import BackgroundVideo from "next-video/background-video";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -12,19 +14,31 @@ import {
   Handshake,
   Leaf,
   MonitorSmartphone,
+  Play,
   Recycle,
   ShieldCheck,
   Sparkles,
   Target,
   Users,
   Waves,
+  Wrench,
   Zap,
   type LucideIcon,
 } from "lucide-react";
 
+import aboutCommunityOne from "@/assets/images/about-community-1.jpeg";
+import aboutCommunityTwo from "@/assets/images/about-community-2.jpeg";
+import aboutCommunityThree from "@/assets/images/about-community-3.jpeg";
+import aboutMissionImage from "@/assets/images/hero-1.jpeg";
+import aboutStoryImage from "@/assets/images/home-water-station.jpeg";
+import aboutSupportImage from "@/assets/images/home-community-impact.png";
+import aboutSustainabilityImage from "@/assets/images/about-sustainability.jpeg";
+import aboutVisionImage from "@/assets/images/about-community-1.jpeg";
 import ctaBackground from "@/assets/images/home-cta-background.png";
-import communityImpactImage from "@/assets/images/hero-1.jpeg";
-import waterStationImage from "@/assets/images/home-water-station.jpeg";
+
+import aboutHeroVideo from "@videos/mission.mp4";
+import aboutInstallationVideo from "@videos/about-installation-video.mp4";
+import aboutTechnologyVideo from "@videos/about-technology-video.mp4";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -45,29 +59,35 @@ type TechnologyItem = {
   icon: LucideIcon;
 };
 
+type ImpactItem = {
+  title: string;
+  description: string;
+  image: typeof aboutCommunityOne;
+};
+
 const companyValues: ValueItem[] = [
   {
     title: "Water Quality",
     description:
-      "We prioritise clean, safe and dependable drinking water through carefully selected purification technologies.",
+      "We place clean, safe and dependable drinking water at the centre of every solution we deliver.",
     icon: ShieldCheck,
   },
   {
     title: "Accessibility",
     description:
-      "Our systems are designed to make quality drinking water easier to access across institutions and communities.",
+      "Our systems make quality drinking water easier to access across institutions and communities.",
     icon: Users,
   },
   {
     title: "Innovation",
     description:
-      "We use intelligent monitoring, smart-card access and modern dispensing systems to improve the water experience.",
+      "We use smart-card access, intelligent displays and modern purification systems to improve water access.",
     icon: Sparkles,
   },
   {
     title: "Sustainability",
     description:
-      "We encourage reusable bottles, reduce disposable packaging and promote environmentally responsible water access.",
+      "We encourage reusable bottles and help reduce waste from disposable plastic and sachet-water packaging.",
     icon: Leaf,
   },
 ];
@@ -77,43 +97,64 @@ const technologyItems: TechnologyItem[] = [
     number: "01",
     title: "Smart Water Card",
     description:
-      "Customers use a dedicated smart card to access water conveniently and securely from the station.",
+      "Customers use a dedicated smart card to access water conveniently and securely.",
     icon: CreditCard,
   },
   {
     number: "02",
     title: "Intelligent Display",
     description:
-      "Digital screens show useful information including water temperature, volume, date, time and water-quality readings.",
+      "Digital screens show temperature, water volume, TDS readings, date, time and card information.",
     icon: MonitorSmartphone,
   },
   {
     number: "03",
     title: "Ultrafiltration",
     description:
-      "The filtration process helps remove suspended solids, sediments and fine particles from the water.",
+      "The filtration system removes suspended solids, sediments and fine colloidal particles.",
     icon: Droplets,
   },
   {
     number: "04",
     title: "UV Sterilisation",
     description:
-      "Ultraviolet treatment is used to help eliminate bacteria, viruses and other harmful microorganisms.",
+      "Ultraviolet treatment helps eliminate bacteria, viruses and other harmful microorganisms.",
     icon: Zap,
   },
   {
     number: "05",
     title: "Reverse Osmosis",
     description:
-      "Reverse osmosis helps remove dissolved substances, impurities and unwanted chemicals from the water.",
+      "Reverse osmosis removes dissolved substances, impurities and unwanted chemicals.",
     icon: Waves,
   },
   {
     number: "06",
     title: "High-Capacity Output",
     description:
-      "Selected stations can provide multiple faucets, strong cooling and configurable cold, warm or hot-water options.",
+      "Available configurations include multiple faucets and cold, warm or hot-water dispensing.",
     icon: Gauge,
+  },
+];
+
+const impactItems: ImpactItem[] = [
+  {
+    title: "Education",
+    description:
+      "Supporting basic, secondary and tertiary institutions with dependable access to safe drinking water.",
+    image: aboutCommunityOne,
+  },
+  {
+    title: "Business and Industry",
+    description:
+      "Providing scalable systems for offices, corporate institutions, factories and commercial facilities.",
+    image: aboutCommunityTwo,
+  },
+  {
+    title: "Communities and Public Spaces",
+    description:
+      "Creating convenient refill access for communities, hospitals, hotels and public institutions.",
+    image: aboutCommunityThree,
   },
 ];
 
@@ -121,7 +162,7 @@ const sustainabilityPoints = [
   "Promotes the use of reusable water bottles",
   "Reduces dependence on disposable plastic bottles",
   "Helps reduce sachet-water waste",
-  "Designed for responsible energy consumption",
+  "Uses efficient modern purification technologies",
   "Supports healthier institutions and communities",
 ];
 
@@ -129,69 +170,113 @@ export default function AboutPage() {
   return (
     <main className="overflow-hidden bg-[#f7f6f4] text-[#171319]">
       {/* =========================================================
-          ABOUT HERO
+          VIDEO HERO
       ========================================================== */}
-      <section className="relative isolate min-h-[72svh] overflow-hidden bg-[#160b19] text-white">
-        <Image
-          src={communityImpactImage}
-          alt="People benefiting from an Anors.Z water station"
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-        />
-
-        {/* Brand and readability overlays */}
-        <div className="absolute inset-0 bg-[#681761]/25" />
-
-        <div className="absolute inset-0 bg-gradient-to-r from-[#130616]/95 via-[#29102d]/65 to-[#160b19]/25" />
-
-        <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-transparent to-[#160b19]/90" />
-
-        {/* Decorative pattern */}
-        <div
+      <section
+        aria-labelledby="about-page-heading"
+        className="relative isolate min-h-[82svh] overflow-hidden bg-[#160b19] text-white"
+      >
+        <BackgroundVideo
+          src={aboutHeroVideo}
+          posterFetchPriority="high"
           aria-hidden="true"
-          className="pointer-events-none absolute bottom-0 right-0 hidden h-[55%] w-[38%] opacity-[0.16] md:block"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1.4px)",
-            backgroundSize: "21px 21px",
-            WebkitMaskImage:
-              "linear-gradient(to left, black 10%, rgba(0,0,0,0.6) 55%, transparent 100%)",
-            maskImage:
-              "linear-gradient(to left, black 10%, rgba(0,0,0,0.6) 55%, transparent 100%)",
-          }}
-        />
+          className="
+            absolute inset-0 h-full w-full
+            [&_.next-video-bg-text]:!place-content-stretch
+            [&_.next-video-bg-text]:!p-0
+          "
+        >
+          <div className="relative flex min-h-[82svh] w-full items-end overflow-hidden">
+            {/* Purple brand tint */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-[#681761]/25"
+            />
 
-        <div className="relative z-10 mx-auto flex min-h-[72svh] max-w-[1440px] items-end px-5 pb-12 pt-32 sm:px-8 sm:pb-16 lg:px-12 lg:pb-20 xl:px-16">
-          <div className="w-full">
-            <div className="flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.2em] text-white/65 sm:text-xs">
-              <Link href="/" className="transition hover:text-white">
-                Home
-              </Link>
+            {/* Header readability */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/75 via-black/10 to-transparent"
+            />
 
-              <span className="h-px w-5 bg-white/40" />
+            {/* Left-side content contrast */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#110513]/90 via-[#241027]/45 to-black/15"
+            />
 
-              <span>About Us</span>
+            {/* Strong bottom gradient */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to bottom, transparent 24%, rgba(46,13,47,0.14) 44%, rgba(32,8,35,0.67) 72%, rgba(18,5,22,0.98) 100%)",
+              }}
+            />
+
+            {/* Decorative dots */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-0 right-0 hidden h-[55%] w-[40%] opacity-[0.14] md:block"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle, rgba(255,255,255,0.85) 1px, transparent 1.4px)",
+                backgroundSize: "21px 21px",
+                WebkitMaskImage:
+                  "linear-gradient(to left, black 10%, rgba(0,0,0,0.55) 55%, transparent 100%)",
+                maskImage:
+                  "linear-gradient(to left, black 10%, rgba(0,0,0,0.55) 55%, transparent 100%)",
+              }}
+            />
+
+            <div className="relative z-10 mx-auto w-full max-w-[1440px] px-5 pb-10 pt-32 sm:px-8 sm:pb-14 lg:px-12 lg:pb-16 xl:px-16">
+              <div className="flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.2em] text-white/65 sm:text-xs">
+                <Link href="/" className="transition hover:text-white">
+                  Home
+                </Link>
+
+                <span className="h-px w-5 bg-white/40" />
+
+                <span>About Us</span>
+              </div>
+
+              <div className="mt-6 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+                <h1
+                  id="about-page-heading"
+                  className="max-w-4xl text-[clamp(2.5rem,5.7vw,5.6rem)] font-normal leading-[0.99] tracking-[-0.05em]"
+                >
+                  Pure Water.
+                  <span className="block">Positive Impact.</span>
+                </h1>
+
+                <p className="max-w-xl text-sm leading-7 text-white/70 sm:text-base lg:justify-self-end">
+                  We combine modern purification technology, intelligent
+                  dispensing and environmental responsibility to help people
+                  access cleaner and safer drinking water.
+                </p>
+              </div>
+
+              <div className="mt-9 h-px w-full bg-white/25" />
+
+              <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <p className="max-w-lg text-xs leading-6 text-white/55 sm:text-sm">
+                  Serving schools, businesses, healthcare facilities,
+                  hospitality organisations, homes and communities.
+                </p>
+
+                <Link
+                  href="/contact"
+                  className="group inline-flex w-fit items-center gap-3 border-b border-white/45 pb-2 text-sm font-medium text-white transition hover:border-white"
+                >
+                  <span>Speak with our team</span>
+
+                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </Link>
+              </div>
             </div>
-
-            <div className="mt-6 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
-              <h1 className="max-w-4xl text-[clamp(2.6rem,6vw,5.8rem)] font-normal leading-[0.98] tracking-[-0.05em]">
-                Pure Water.
-                <span className="block">Positive Impact.</span>
-              </h1>
-
-              <p className="max-w-xl text-sm leading-7 text-white/72 sm:text-base lg:justify-self-end">
-                Anors.Z Global Water Station combines modern purification
-                technology, convenient access and environmental responsibility
-                to help institutions and communities enjoy cleaner and safer
-                drinking water.
-              </p>
-            </div>
-
-            <div className="mt-10 h-px w-full bg-white/25" />
           </div>
-        </div>
+        </BackgroundVideo>
       </section>
 
       {/* =========================================================
@@ -212,34 +297,33 @@ export default function AboutPage() {
           }}
         />
 
-        <div className="relative mx-auto grid max-w-[1440px] gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-20 lg:px-12 lg:py-28 xl:px-16">
+        <div className="relative mx-auto grid max-w-[1440px] gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-20 lg:px-12 lg:py-28 xl:px-16">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
               Our Story
             </p>
 
-            <h2 className="mt-4 max-w-xl text-[clamp(2rem,4vw,4.2rem)] font-normal leading-[1.04] tracking-[-0.045em]">
+            <h2 className="mt-4 max-w-xl text-[clamp(2rem,4vw,4.15rem)] font-normal leading-[1.04] tracking-[-0.045em]">
               Rethinking How People Access Safe Drinking Water
             </h2>
 
             <div className="mt-8 max-w-xl space-y-5 text-sm leading-7 text-black/60 sm:text-[15px]">
               <p>
                 Anors.Z Global Water Station is a water-refilling company
-                focused on providing pure, safe, reliable and affordable
-                drinking water for everyday consumption.
+                focused on making pure, safe, reliable and affordable drinking
+                water available for everyday consumption.
               </p>
 
               <p>
-                Our solution is designed for schools, companies, healthcare
-                facilities, restaurants, hotels, homes, public institutions and
-                communities that need dependable access to quality water.
+                Our solutions are designed for schools, companies, hospitals,
+                restaurants, hotels, homes, government institutions and
+                communities that require dependable water access.
               </p>
 
               <p>
-                Through modern purification systems and smart dispensing
-                technology, we seek to improve public health while helping to
-                reduce the environmental waste created by disposable plastic
-                bottles and sachet water.
+                Through advanced purification and smart dispensing
+                technologies, we seek to improve public health while reducing
+                environmental waste from disposable bottles and sachet water.
               </p>
             </div>
 
@@ -247,23 +331,23 @@ export default function AboutPage() {
               href="/solutions"
               className="group mt-8 inline-flex items-center gap-3 border-b border-[#681761]/40 pb-2 text-sm font-medium text-[#681761] transition hover:border-[#681761]"
             >
-              <span>Explore our solutions</span>
+              <span>Explore our water solutions</span>
 
               <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Link>
           </div>
 
           <div className="relative">
-            <div className="relative aspect-[4/4.5] min-h-[480px] overflow-hidden bg-[#ddd6de]">
+            <div className="relative aspect-[4/4.5] min-h-[500px] overflow-hidden bg-[#ddd6de]">
               <Image
-                src={waterStationImage}
-                alt="Anors.Z intelligent water station"
+                src={aboutStoryImage}
+                alt="Anors.Z water station and company operations"
                 fill
                 className="object-cover transition duration-700 hover:scale-[1.025]"
-                sizes="(max-width: 1024px) 100vw, 52vw"
+                sizes="(max-width: 1024px) 100vw, 53vw"
               />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-[#160b19]/60 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#160b19]/65 via-transparent to-transparent" />
 
               <div className="absolute bottom-6 left-6 right-6 border-t border-white/35 pt-5 text-white sm:bottom-8 sm:left-8 sm:right-8">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-white/65">
@@ -298,31 +382,36 @@ export default function AboutPage() {
             </div>
 
             <p className="max-w-xl text-sm leading-7 text-black/60 lg:justify-self-end">
-              Our mission and vision guide how we design water-access
-              solutions, work with institutions and measure our impact on
-              people and the environment.
+              Our mission and vision guide how we design water systems, work
+              with institutions and measure our impact on people and the
+              environment.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-px overflow-hidden border border-[#4b164c]/20 bg-[#4b164c]/20 lg:mt-16 lg:grid-cols-2">
+          <div className="mt-12 grid gap-5 lg:mt-16 lg:grid-cols-2">
             {/* Mission */}
-            <article className="group relative min-h-[420px] overflow-hidden bg-[#241026] p-7 text-white sm:p-10 lg:p-12">
-              <div
-                aria-hidden="true"
-                className="absolute -right-24 -top-24 h-72 w-72 rounded-full border border-white/10 transition duration-700 group-hover:scale-110"
+            <article className="group relative min-h-[540px] overflow-hidden bg-[#241026] text-white">
+              <Image
+                src={aboutMissionImage}
+                alt="People accessing safe drinking water"
+                fill
+                className="object-cover opacity-60 transition duration-700 group-hover:scale-[1.025]"
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
 
-              <div className="relative flex h-full flex-col">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#180719] via-[#241026]/65 to-[#241026]/20" />
+
+              <div className="relative flex min-h-[540px] flex-col p-7 sm:p-10 lg:p-12">
                 <div className="flex items-start justify-between">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/15 backdrop-blur-md">
                     <Target className="h-5 w-5" />
                   </span>
 
-                  <span className="text-5xl font-light text-white/15">01</span>
+                  <span className="text-5xl font-light text-white/30">01</span>
                 </div>
 
-                <div className="mt-auto pt-20">
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/50">
+                <div className="mt-auto pt-24">
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/55">
                     Our Mission
                   </p>
 
@@ -331,32 +420,37 @@ export default function AboutPage() {
                     affordable.
                   </h3>
 
-                  <p className="mt-5 max-w-xl text-sm leading-7 text-white/65">
+                  <p className="mt-5 max-w-xl text-sm leading-7 text-white/70">
                     We provide dependable water stations that combine modern
                     purification, convenient smart-card access and reusable
-                    bottles to protect public health and reduce plastic waste.
+                    bottles to protect health and reduce waste.
                   </p>
                 </div>
               </div>
             </article>
 
             {/* Vision */}
-            <article className="group relative min-h-[420px] overflow-hidden bg-[#681761] p-7 text-white sm:p-10 lg:p-12">
-              <div
-                aria-hidden="true"
-                className="absolute -right-24 -top-24 h-72 w-72 rounded-full border border-white/10 transition duration-700 group-hover:scale-110"
+            <article className="group relative min-h-[540px] overflow-hidden bg-[#681761] text-white">
+              <Image
+                src={aboutVisionImage}
+                alt="A healthier and more sustainable community"
+                fill
+                className="object-cover opacity-55 transition duration-700 group-hover:scale-[1.025]"
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
 
-              <div className="relative flex h-full flex-col">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#4b1048] via-[#681761]/65 to-[#681761]/20" />
+
+              <div className="relative flex min-h-[540px] flex-col p-7 sm:p-10 lg:p-12">
                 <div className="flex items-start justify-between">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/15 backdrop-blur-md">
                     <Eye className="h-5 w-5" />
                   </span>
 
-                  <span className="text-5xl font-light text-white/20">02</span>
+                  <span className="text-5xl font-light text-white/30">02</span>
                 </div>
 
-                <div className="mt-auto pt-20">
+                <div className="mt-auto pt-24">
                   <p className="text-xs uppercase tracking-[0.2em] text-white/55">
                     Our Vision
                   </p>
@@ -365,10 +459,10 @@ export default function AboutPage() {
                     Build healthier communities and a more sustainable future.
                   </h3>
 
-                  <p className="mt-5 max-w-xl text-sm leading-7 text-white/70">
+                  <p className="mt-5 max-w-xl text-sm leading-7 text-white/75">
                     We aim to create positive global impact by improving access
                     to safe water, protecting the environment and supporting
-                    generations with responsible water solutions.
+                    future generations.
                   </p>
                 </div>
               </div>
@@ -413,7 +507,7 @@ export default function AboutPage() {
               return (
                 <article
                   key={value.title}
-                  className="group min-h-[300px] border-b border-r border-black/10 bg-white p-7 transition duration-300 hover:z-10 hover:-translate-y-1 hover:border-[#681761]/30 hover:shadow-[0_24px_60px_rgba(50,14,49,0.10)]"
+                  className="group min-h-[310px] border-b border-r border-black/10 bg-white p-7 transition duration-300 hover:z-10 hover:-translate-y-1 hover:border-[#681761]/30 hover:shadow-[0_24px_60px_rgba(50,14,49,0.10)]"
                 >
                   <div className="flex items-start justify-between">
                     <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#681761]/10 text-[#681761] transition duration-300 group-hover:bg-[#681761] group-hover:text-white">
@@ -438,12 +532,12 @@ export default function AboutPage() {
       </section>
 
       {/* =========================================================
-          TECHNOLOGY
+          TECHNOLOGY VIDEO
       ========================================================== */}
       <section className="relative overflow-hidden bg-[#1e0c21] text-white">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-[0.08]"
+          className="pointer-events-none absolute inset-0 opacity-[0.07]"
           style={{
             backgroundImage:
               "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
@@ -464,19 +558,39 @@ export default function AboutPage() {
             </div>
 
             <p className="max-w-xl text-sm leading-7 text-white/60 lg:justify-self-end">
-              The water station brings filtration, sterilisation, digital
-              monitoring and smart access together in one integrated system.
+              Our water stations combine filtration, sterilisation, smart-card
+              access, real-time information and modern dispensing technology in
+              one integrated solution.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-px border border-white/10 bg-white/10 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3">
+          {/* Technology video */}
+          <div className="relative mt-12 overflow-hidden border border-white/15 bg-black lg:mt-16">
+            <div className="aspect-video">
+              <Video
+                src={aboutTechnologyVideo}
+                controls
+                playsInline
+                preload="metadata"
+                className="h-full w-full object-cover"
+              />
+            </div>
+
+            <div className="pointer-events-none absolute left-5 top-5 z-10 hidden items-center gap-3 rounded-full border border-white/20 bg-black/25 px-4 py-2 text-xs text-white backdrop-blur-md sm:flex">
+              <Play className="h-3.5 w-3.5" />
+              <span>Technology demonstration</span>
+            </div>
+          </div>
+
+          {/* Technology cards */}
+          <div className="mt-8 grid gap-px border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
             {technologyItems.map((item) => {
               const Icon = item.icon;
 
               return (
                 <article
                   key={item.number}
-                  className="group min-h-[330px] bg-[#1e0c21] p-7 transition duration-300 hover:bg-[#681761] sm:p-8"
+                  className="group min-h-[310px] bg-[#1e0c21] p-7 transition duration-300 hover:bg-[#681761] sm:p-8"
                 >
                   <div className="flex items-start justify-between">
                     <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5">
@@ -488,7 +602,7 @@ export default function AboutPage() {
                     </span>
                   </div>
 
-                  <h3 className="mt-16 text-xl font-medium">{item.title}</h3>
+                  <h3 className="mt-14 text-xl font-medium">{item.title}</h3>
 
                   <p className="mt-4 text-sm leading-7 text-white/60 transition group-hover:text-white/75">
                     {item.description}
@@ -497,22 +611,65 @@ export default function AboutPage() {
               );
             })}
           </div>
+        </div>
+      </section>
 
-          <div className="mt-12 flex flex-col gap-6 border-t border-white/15 pt-8 sm:flex-row sm:items-center sm:justify-between">
-            <p className="max-w-xl text-sm leading-7 text-white/60">
-              Water-station configurations can be selected according to the
-              institution, expected number of users and preferred temperature
-              options.
+      {/* =========================================================
+          COMMUNITY IMPACT GALLERY
+      ========================================================== */}
+      <section className="bg-white">
+        <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
+                Where We Make an Impact
+              </p>
+
+              <h2 className="mt-4 max-w-2xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
+                Water Solutions Designed for Different Environments
+              </h2>
+            </div>
+
+            <p className="max-w-xl text-sm leading-7 text-black/60 lg:justify-self-end">
+              Station size, faucet configuration, temperature options and
+              purification capacity can be selected according to the
+              environment and expected number of users.
             </p>
+          </div>
 
-            <Link
-              href="/technology"
-              className="group inline-flex items-center gap-3 text-sm font-medium text-white"
-            >
-              <span>Explore the technology</span>
+          <div className="mt-12 grid gap-5 lg:mt-16 lg:grid-cols-3">
+            {impactItems.map((item, index) => (
+              <article
+                key={item.title}
+                className={`group relative overflow-hidden ${
+                  index === 1 ? "lg:translate-y-10" : ""
+                }`}
+              >
+                <div className="relative aspect-[4/5] min-h-[440px] overflow-hidden bg-[#ded8df]">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-cover transition duration-700 group-hover:scale-[1.04]"
+                    sizes="(max-width: 1024px) 100vw, 34vw"
+                  />
 
-              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </Link>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#170719]/90 via-[#170719]/15 to-transparent" />
+
+                  <div className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-7">
+                    <span className="text-xs text-white/50">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+
+                    <h3 className="mt-3 text-2xl font-normal">{item.title}</h3>
+
+                    <p className="mt-3 max-w-sm text-sm leading-6 text-white/65">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -520,18 +677,32 @@ export default function AboutPage() {
       {/* =========================================================
           SUSTAINABILITY
       ========================================================== */}
-      <section className="bg-white">
-        <div className="mx-auto grid max-w-[1440px] gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-20 lg:px-12 lg:py-28 xl:px-16">
-          <div className="relative aspect-[16/11] min-h-[420px] overflow-hidden bg-[#d9d2db]">
+      <section className="relative overflow-hidden bg-[#f7f6f4]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-0 h-72 w-72 opacity-40"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, rgba(21,148,71,0.18) 1px, transparent 1.5px)",
+            backgroundSize: "18px 18px",
+            WebkitMaskImage:
+              "linear-gradient(to left, black, rgba(0,0,0,0.3), transparent)",
+            maskImage:
+              "linear-gradient(to left, black, rgba(0,0,0,0.3), transparent)",
+          }}
+        />
+
+        <div className="relative mx-auto grid max-w-[1440px] gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-20 lg:px-12 lg:py-28 xl:px-16">
+          <div className="relative aspect-[16/11] min-h-[440px] overflow-hidden bg-[#d9d2db]">
             <Image
-              src={communityImpactImage}
-              alt="Students and community members using reusable water bottles"
+              src={aboutSustainabilityImage}
+              alt="Reusable bottles and sustainable drinking-water access"
               fill
-              className="object-cover"
+              className="object-cover transition duration-700 hover:scale-[1.025]"
               sizes="(max-width: 1024px) 100vw, 56vw"
             />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-[#180719]/65 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#180719]/70 via-transparent to-transparent" />
 
             <div className="absolute bottom-6 left-6 right-6 text-white sm:bottom-8 sm:left-8 sm:right-8">
               <div className="flex items-center gap-3">
@@ -559,10 +730,10 @@ export default function AboutPage() {
             </h2>
 
             <p className="mt-6 max-w-xl text-sm leading-7 text-black/60">
-              Our refill model encourages people to carry reusable bottles
-              rather than depend exclusively on disposable bottled and sachet
-              water. It connects access to safe water with practical action
-              against plastic pollution.
+              Our refill model encourages customers to carry reusable bottles
+              instead of depending exclusively on disposable bottled and
+              sachet water. It connects access to safe water with practical
+              action against plastic pollution.
             </p>
 
             <div className="mt-8 space-y-4">
@@ -584,39 +755,110 @@ export default function AboutPage() {
       </section>
 
       {/* =========================================================
-          PARTNERSHIP
+          INSTALLATION AND SUPPORT VIDEO
       ========================================================== */}
-      <section className="border-y border-black/10 bg-[#f7f6f4]">
-        <div className="mx-auto grid max-w-[1440px] gap-10 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[0.75fr_1.25fr] lg:items-center lg:px-12 xl:px-16">
-          <div className="flex items-center gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#681761] text-white">
-              <Handshake className="h-5 w-5" />
-            </span>
-
+      <section className="bg-white">
+        <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+          <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-20">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
-                Our Partnership Approach
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
+                Installation and Support
               </p>
 
-              <p className="mt-1 text-lg font-medium">
-                Support beyond installation
+              <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
+                Support That Continues Beyond Installation
+              </h2>
+
+              <p className="mt-6 max-w-xl text-sm leading-7 text-black/60">
+                We work with each client to understand their environment,
+                expected number of users, water requirements and preferred
+                station configuration.
               </p>
+
+              <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                {[
+                  {
+                    title: "Site Assessment",
+                    description:
+                      "Understanding the location, water source and expected usage.",
+                    icon: Eye,
+                  },
+                  {
+                    title: "System Selection",
+                    description:
+                      "Choosing the suitable station size and purification capacity.",
+                    icon: Gauge,
+                  },
+                  {
+                    title: "Installation",
+                    description:
+                      "Professional setup, testing and commissioning of the station.",
+                    icon: Wrench,
+                  },
+                  {
+                    title: "Training and Support",
+                    description:
+                      "User guidance and continued technical assistance.",
+                    icon: Handshake,
+                  },
+                ].map(({ title, description, icon: Icon }) => (
+                  <div
+                    key={title}
+                    className="border border-black/10 bg-[#f7f6f4] p-5"
+                  >
+                    <Icon className="h-5 w-5 text-[#681761]" />
+
+                    <h3 className="mt-5 text-base font-medium">{title}</h3>
+
+                    <p className="mt-2 text-sm leading-6 text-black/55">
+                      {description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-5">
+              <div className="relative aspect-video overflow-hidden bg-black">
+                <Video
+                  src={aboutInstallationVideo}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+
+              <div className="relative aspect-[16/7] min-h-[230px] overflow-hidden bg-[#ded7df]">
+                <Image
+                  src={aboutSupportImage}
+                  alt="Anors.Z installation and technical support"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 55vw"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-r from-[#160b19]/65 to-transparent" />
+
+                <div className="absolute bottom-6 left-6 max-w-sm text-white">
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/60">
+                    A Long-Term Partner
+                  </p>
+
+                  <p className="mt-2 text-xl leading-tight">
+                    Training, technical guidance and flexible support packages.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-
-          <p className="max-w-3xl text-sm leading-7 text-black/60 lg:justify-self-end">
-            We work with clients to understand their environment, expected
-            water demand and preferred system configuration. Available
-            packages can include training, technical support and flexible
-            short- or long-term arrangements.
-          </p>
         </div>
       </section>
 
       {/* =========================================================
           FINAL CTA
       ========================================================== */}
-      <section className="bg-white px-3 py-3 sm:px-5 sm:py-5">
+      <section className="bg-white px-3 pb-3 sm:px-5 sm:pb-5">
         <div className="relative mx-auto min-h-[430px] max-w-[1440px] overflow-hidden">
           <Image
             src={ctaBackground}
@@ -629,6 +871,19 @@ export default function AboutPage() {
           <div className="absolute inset-0 bg-[#210b25]/65" />
 
           <div className="absolute inset-0 bg-gradient-to-r from-[#160719]/85 via-[#681761]/35 to-[#0f1c19]/55" />
+
+          <div
+            aria-hidden="true"
+            className="absolute left-0 top-0 hidden h-full w-52 opacity-20 sm:block"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle, white 1px, transparent 1.5px)",
+              backgroundSize: "16px 16px",
+              WebkitMaskImage:
+                "linear-gradient(to right, black, transparent)",
+              maskImage: "linear-gradient(to right, black, transparent)",
+            }}
+          />
 
           <div className="relative z-10 flex min-h-[430px] items-center justify-center px-5 py-16 text-center text-white sm:px-8">
             <div className="max-w-3xl">
