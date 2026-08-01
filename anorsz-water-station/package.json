@@ -2,6 +2,9 @@
   "name": "anorsz-water-station",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+  "node": ">=22.0.0 <23.0.0"
+},
   "scripts": {
     "dev": "concurrently -k -n NEXT,VIDEO \"next dev\" \"next-video sync -w\"",
     "build": "next build",
