@@ -97,7 +97,7 @@ const contactCards: ContactCard[] = [
           href="tel:+233504642508"
           className="block text-sm font-medium text-[#681761] transition hover:text-[#4d1049]"
         >
-          050 464 2508
+          059 186 8018
         </a>
       </div>
     ),
