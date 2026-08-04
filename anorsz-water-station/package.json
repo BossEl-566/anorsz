@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-  "node": ">=22.0.0 <23.0.0"
-},
+    "node": ">=22.0.0 <23.0.0"
+  },
   "scripts": {
     "dev": "concurrently -k -n NEXT,VIDEO \"next dev\" \"next-video sync -w\"",
     "build": "next build",
@@ -12,6 +12,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "framer-motion": "^12.43.0",
     "lucide-react": "^1.28.0",
     "next": "16.2.12",
     "next-video": "^2.8.1",
