@@ -40,7 +40,7 @@ import ctaBackground from "@/assets/images/home-cta-background.png";
 
 import aboutHeroVideo from "@videos/mission.mp4";
 import aboutInstallationVideo from "@videos/about-installation-video.mp4";
-import aboutTechnologyVideo from "@videos/about-technology-video.mp4";
+import aboutTechnologyVideo from "@videos/hero-video.mp4";
 
 type ValueItem = {
   title: string;
