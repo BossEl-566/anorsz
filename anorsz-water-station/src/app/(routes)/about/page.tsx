@@ -1,8 +1,10 @@
-import type { Metadata } from "next";
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import Video from "next-video";
 import BackgroundVideo from "next-video/background-video";
+import { motion, type Variants } from "framer-motion";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -40,12 +42,6 @@ import aboutHeroVideo from "@videos/mission.mp4";
 import aboutInstallationVideo from "@videos/about-installation-video.mp4";
 import aboutTechnologyVideo from "@videos/about-technology-video.mp4";
 
-export const metadata: Metadata = {
-  title: "About Us",
-  description:
-    "Learn about Anors.Z Global Water Station, our mission, vision, technology and commitment to safe drinking water and environmental sustainability.",
-};
-
 type ValueItem = {
   title: string;
   description: string;
@@ -63,6 +59,81 @@ type ImpactItem = {
   title: string;
   description: string;
   image: typeof aboutCommunityOne;
+};
+
+const viewport = {
+  once: true,
+  amount: 0.2,
+} as const;
+
+const fadeUp: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 35,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.65,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const slideFromLeft: Variants = {
+  hidden: {
+    opacity: 0,
+    x: -45,
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const slideFromRight: Variants = {
+  hidden: {
+    opacity: 0,
+    x: 45,
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const staggerContainer: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.08,
+    },
+  },
+};
+
+const staggerItem: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 30,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
 };
 
 const companyValues: ValueItem[] = [
@@ -166,7 +237,7 @@ const sustainabilityPoints = [
   "Supports healthier institutions and communities",
 ];
 
-export default function AboutPage() {
+export default function AboutPageClient() {
   return (
     <main className="overflow-hidden bg-[#f7f6f4] text-[#171319]">
       {/* =========================================================
@@ -187,25 +258,21 @@ export default function AboutPage() {
           "
         >
           <div className="relative flex min-h-[82svh] w-full items-end overflow-hidden">
-            {/* Purple brand tint */}
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 bg-[#681761]/25"
             />
 
-            {/* Header readability */}
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/75 via-black/10 to-transparent"
             />
 
-            {/* Left-side content contrast */}
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#110513]/90 via-[#241027]/45 to-black/15"
             />
 
-            {/* Strong bottom gradient */}
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0"
@@ -215,7 +282,6 @@ export default function AboutPage() {
               }}
             />
 
-            {/* Decorative dots */}
             <div
               aria-hidden="true"
               className="pointer-events-none absolute bottom-0 right-0 hidden h-[55%] w-[40%] opacity-[0.14] md:block"
@@ -231,7 +297,20 @@ export default function AboutPage() {
             />
 
             <div className="relative z-10 mx-auto w-full max-w-[1440px] px-5 pb-10 pt-32 sm:px-8 sm:pb-14 lg:px-12 lg:pb-16 xl:px-16">
-              <div className="flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.2em] text-white/65 sm:text-xs">
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  y: 20,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                transition={{
+                  duration: 0.6,
+                }}
+                className="flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.2em] text-white/65 sm:text-xs"
+              >
                 <Link href="/" className="transition hover:text-white">
                   Home
                 </Link>
@@ -239,27 +318,79 @@ export default function AboutPage() {
                 <span className="h-px w-5 bg-white/40" />
 
                 <span>About Us</span>
-              </div>
+              </motion.div>
 
               <div className="mt-6 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
-                <h1
+                <motion.h1
                   id="about-page-heading"
+                  initial={{
+                    opacity: 0,
+                    y: 35,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  transition={{
+                    delay: 0.1,
+                    duration: 0.7,
+                  }}
                   className="max-w-4xl text-[clamp(2.5rem,5.7vw,5.6rem)] font-normal leading-[0.99] tracking-[-0.05em]"
                 >
                   Pure Water.
                   <span className="block">Positive Impact.</span>
-                </h1>
+                </motion.h1>
 
-                <p className="max-w-xl text-sm leading-7 text-white/70 sm:text-base lg:justify-self-end">
+                <motion.p
+                  initial={{
+                    opacity: 0,
+                    y: 35,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  transition={{
+                    delay: 0.2,
+                    duration: 0.7,
+                  }}
+                  className="max-w-xl text-sm leading-7 text-white/70 sm:text-base lg:justify-self-end"
+                >
                   We combine modern purification technology, intelligent
                   dispensing and environmental responsibility to help people
                   access cleaner and safer drinking water.
-                </p>
+                </motion.p>
               </div>
 
-              <div className="mt-9 h-px w-full bg-white/25" />
+              <motion.div
+                initial={{
+                  scaleX: 0,
+                }}
+                animate={{
+                  scaleX: 1,
+                }}
+                transition={{
+                  delay: 0.3,
+                  duration: 0.7,
+                }}
+                className="mt-9 h-px w-full origin-left bg-white/25"
+              />
 
-              <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  y: 25,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                transition={{
+                  delay: 0.4,
+                  duration: 0.7,
+                }}
+                className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"
+              >
                 <p className="max-w-lg text-xs leading-6 text-white/55 sm:text-sm">
                   Serving schools, businesses, healthcare facilities,
                   hospitality organisations, homes and communities.
@@ -273,7 +404,7 @@ export default function AboutPage() {
 
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </Link>
-              </div>
+              </motion.div>
             </div>
           </div>
         </BackgroundVideo>
@@ -298,7 +429,12 @@ export default function AboutPage() {
         />
 
         <div className="relative mx-auto grid max-w-[1440px] gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-20 lg:px-12 lg:py-28 xl:px-16">
-          <div>
+          <motion.div
+            variants={slideFromLeft}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+          >
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
               Our Story
             </p>
@@ -335,9 +471,15 @@ export default function AboutPage() {
 
               <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Link>
-          </div>
+          </motion.div>
 
-          <div className="relative">
+          <motion.div
+            variants={slideFromRight}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="relative"
+          >
             <div className="relative aspect-[4/4.5] min-h-[500px] overflow-hidden bg-[#ddd6de]">
               <Image
                 src={aboutStoryImage}
@@ -361,7 +503,7 @@ export default function AboutPage() {
             </div>
 
             <div className="absolute -bottom-5 -right-5 hidden h-28 w-28 border-b border-r border-[#681761]/40 lg:block" />
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -371,7 +513,12 @@ export default function AboutPage() {
       <section className="bg-white">
         <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
           <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-            <div>
+            <motion.div
+              variants={slideFromLeft}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+            >
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
                 Why We Exist
               </p>
@@ -379,18 +526,33 @@ export default function AboutPage() {
               <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
                 Guided by Purpose and Long-Term Impact
               </h2>
-            </div>
+            </motion.div>
 
-            <p className="max-w-xl text-sm leading-7 text-black/60 lg:justify-self-end">
+            <motion.p
+              variants={slideFromRight}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="max-w-xl text-sm leading-7 text-black/60 lg:justify-self-end"
+            >
               Our mission and vision guide how we design water systems, work
               with institutions and measure our impact on people and the
               environment.
-            </p>
+            </motion.p>
           </div>
 
-          <div className="mt-12 grid gap-5 lg:mt-16 lg:grid-cols-2">
-            {/* Mission */}
-            <article className="group relative min-h-[540px] overflow-hidden bg-[#241026] text-white">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mt-12 grid gap-5 lg:mt-16 lg:grid-cols-2"
+          >
+            <motion.article
+              variants={staggerItem}
+              whileHover={{ y: -8 }}
+              className="group relative min-h-[540px] overflow-hidden bg-[#241026] text-white"
+            >
               <Image
                 src={aboutMissionImage}
                 alt="People accessing safe drinking water"
@@ -427,10 +589,13 @@ export default function AboutPage() {
                   </p>
                 </div>
               </div>
-            </article>
+            </motion.article>
 
-            {/* Vision */}
-            <article className="group relative min-h-[540px] overflow-hidden bg-[#681761] text-white">
+            <motion.article
+              variants={staggerItem}
+              whileHover={{ y: -8 }}
+              className="group relative min-h-[540px] overflow-hidden bg-[#681761] text-white"
+            >
               <Image
                 src={aboutVisionImage}
                 alt="A healthier and more sustainable community"
@@ -466,8 +631,8 @@ export default function AboutPage() {
                   </p>
                 </div>
               </div>
-            </article>
-          </div>
+            </motion.article>
+          </motion.div>
         </div>
       </section>
 
@@ -490,7 +655,13 @@ export default function AboutPage() {
         />
 
         <div className="relative mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
-          <div className="mx-auto max-w-4xl text-center">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mx-auto max-w-4xl text-center"
+          >
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
               What Guides Us
             </p>
@@ -498,16 +669,24 @@ export default function AboutPage() {
             <h2 className="mt-5 text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.06] tracking-[-0.04em]">
               Values That Shape Every Solution We Deliver
             </h2>
-          </div>
+          </motion.div>
 
-          <div className="mt-12 grid border-l border-t border-black/10 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mt-12 grid border-l border-t border-black/10 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4"
+          >
             {companyValues.map((value, index) => {
               const Icon = value.icon;
 
               return (
-                <article
+                <motion.article
                   key={value.title}
-                  className="group min-h-[310px] border-b border-r border-black/10 bg-white p-7 transition duration-300 hover:z-10 hover:-translate-y-1 hover:border-[#681761]/30 hover:shadow-[0_24px_60px_rgba(50,14,49,0.10)]"
+                  variants={staggerItem}
+                  whileHover={{ y: -7 }}
+                  className="group min-h-[310px] border-b border-r border-black/10 bg-white p-7 transition duration-300 hover:z-10 hover:border-[#681761]/30 hover:shadow-[0_24px_60px_rgba(50,14,49,0.10)]"
                 >
                   <div className="flex items-start justify-between">
                     <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#681761]/10 text-[#681761] transition duration-300 group-hover:bg-[#681761] group-hover:text-white">
@@ -524,10 +703,10 @@ export default function AboutPage() {
                   <p className="mt-4 text-sm leading-7 text-black/55">
                     {value.description}
                   </p>
-                </article>
+                </motion.article>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -547,7 +726,12 @@ export default function AboutPage() {
 
         <div className="relative mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
-            <div>
+            <motion.div
+              variants={slideFromLeft}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+            >
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#d89ad0] sm:text-xs">
                 Our Technology
               </p>
@@ -555,17 +739,28 @@ export default function AboutPage() {
               <h2 className="mt-4 max-w-2xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
                 Intelligent Systems Behind Every Drop
               </h2>
-            </div>
+            </motion.div>
 
-            <p className="max-w-xl text-sm leading-7 text-white/60 lg:justify-self-end">
+            <motion.p
+              variants={slideFromRight}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="max-w-xl text-sm leading-7 text-white/60 lg:justify-self-end"
+            >
               Our water stations combine filtration, sterilisation, smart-card
               access, real-time information and modern dispensing technology in
               one integrated solution.
-            </p>
+            </motion.p>
           </div>
 
-          {/* Technology video */}
-          <div className="relative mt-12 overflow-hidden border border-white/15 bg-black lg:mt-16">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="relative mt-12 overflow-hidden border border-white/15 bg-black lg:mt-16"
+          >
             <div className="aspect-video">
               <Video
                 src={aboutTechnologyVideo}
@@ -580,16 +775,23 @@ export default function AboutPage() {
               <Play className="h-3.5 w-3.5" />
               <span>Technology demonstration</span>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Technology cards */}
-          <div className="mt-8 grid gap-px border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mt-8 grid gap-px border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3"
+          >
             {technologyItems.map((item) => {
               const Icon = item.icon;
 
               return (
-                <article
+                <motion.article
                   key={item.number}
+                  variants={staggerItem}
+                  whileHover={{ y: -7 }}
                   className="group min-h-[310px] bg-[#1e0c21] p-7 transition duration-300 hover:bg-[#681761] sm:p-8"
                 >
                   <div className="flex items-start justify-between">
@@ -607,10 +809,10 @@ export default function AboutPage() {
                   <p className="mt-4 text-sm leading-7 text-white/60 transition group-hover:text-white/75">
                     {item.description}
                   </p>
-                </article>
+                </motion.article>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -620,7 +822,12 @@ export default function AboutPage() {
       <section className="bg-white">
         <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
-            <div>
+            <motion.div
+              variants={slideFromLeft}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+            >
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
                 Where We Make an Impact
               </p>
@@ -628,19 +835,33 @@ export default function AboutPage() {
               <h2 className="mt-4 max-w-2xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
                 Water Solutions Designed for Different Environments
               </h2>
-            </div>
+            </motion.div>
 
-            <p className="max-w-xl text-sm leading-7 text-black/60 lg:justify-self-end">
+            <motion.p
+              variants={slideFromRight}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="max-w-xl text-sm leading-7 text-black/60 lg:justify-self-end"
+            >
               Station size, faucet configuration, temperature options and
               purification capacity can be selected according to the
               environment and expected number of users.
-            </p>
+            </motion.p>
           </div>
 
-          <div className="mt-12 grid gap-5 lg:mt-16 lg:grid-cols-3">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mt-12 grid gap-5 lg:mt-16 lg:grid-cols-3"
+          >
             {impactItems.map((item, index) => (
-              <article
+              <motion.article
                 key={item.title}
+                variants={staggerItem}
+                whileHover={{ y: -8 }}
                 className={`group relative overflow-hidden ${
                   index === 1 ? "lg:translate-y-10" : ""
                 }`}
@@ -668,9 +889,9 @@ export default function AboutPage() {
                     </p>
                   </div>
                 </div>
-              </article>
+              </motion.article>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -693,7 +914,13 @@ export default function AboutPage() {
         />
 
         <div className="relative mx-auto grid max-w-[1440px] gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-20 lg:px-12 lg:py-28 xl:px-16">
-          <div className="relative aspect-[16/11] min-h-[440px] overflow-hidden bg-[#d9d2db]">
+          <motion.div
+            variants={slideFromLeft}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="relative aspect-[16/11] min-h-[440px] overflow-hidden bg-[#d9d2db]"
+          >
             <Image
               src={aboutSustainabilityImage}
               alt="Reusable bottles and sustainable drinking-water access"
@@ -718,9 +945,14 @@ export default function AboutPage() {
                 packaging.
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          <div>
+          <motion.div
+            variants={slideFromRight}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+          >
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#159447] sm:text-xs">
               Sustainability
             </p>
@@ -736,10 +968,17 @@ export default function AboutPage() {
               action against plastic pollution.
             </p>
 
-            <div className="mt-8 space-y-4">
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="mt-8 space-y-4"
+            >
               {sustainabilityPoints.map((point) => (
-                <div
+                <motion.div
                   key={point}
+                  variants={staggerItem}
                   className="flex items-start gap-4 border-b border-black/10 pb-4"
                 >
                   <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#159447]/10 text-[#159447]">
@@ -747,10 +986,10 @@ export default function AboutPage() {
                   </span>
 
                   <p className="text-sm leading-6 text-black/65">{point}</p>
-                </div>
+                </motion.div>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
@@ -760,7 +999,12 @@ export default function AboutPage() {
       <section className="bg-white">
         <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
           <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-20">
-            <div>
+            <motion.div
+              variants={slideFromLeft}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+            >
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
                 Installation and Support
               </p>
@@ -775,7 +1019,13 @@ export default function AboutPage() {
                 station configuration.
               </p>
 
-              <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={viewport}
+                className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2"
+              >
                 {[
                   {
                     title: "Site Assessment",
@@ -802,9 +1052,11 @@ export default function AboutPage() {
                     icon: Handshake,
                   },
                 ].map(({ title, description, icon: Icon }) => (
-                  <div
+                  <motion.div
                     key={title}
-                    className="border border-black/10 bg-[#f7f6f4] p-5"
+                    variants={staggerItem}
+                    whileHover={{ y: -6 }}
+                    className="border border-black/10 bg-[#f7f6f4] p-5 transition duration-300 hover:border-[#681761]/25 hover:shadow-[0_16px_40px_rgba(48,13,45,0.08)]"
                   >
                     <Icon className="h-5 w-5 text-[#681761]" />
 
@@ -813,13 +1065,25 @@ export default function AboutPage() {
                     <p className="mt-2 text-sm leading-6 text-black/55">
                       {description}
                     </p>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
-            <div className="space-y-5">
-              <div className="relative aspect-video overflow-hidden bg-black">
+            <motion.div
+              variants={slideFromRight}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="space-y-5"
+            >
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={viewport}
+                className="relative aspect-video overflow-hidden bg-black"
+              >
                 <Video
                   src={aboutInstallationVideo}
                   controls
@@ -827,14 +1091,20 @@ export default function AboutPage() {
                   preload="metadata"
                   className="h-full w-full object-cover"
                 />
-              </div>
+              </motion.div>
 
-              <div className="relative aspect-[16/7] min-h-[230px] overflow-hidden bg-[#ded7df]">
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={viewport}
+                className="relative aspect-[16/7] min-h-[230px] overflow-hidden bg-[#ded7df]"
+              >
                 <Image
                   src={aboutSupportImage}
                   alt="Anors.Z installation and technical support"
                   fill
-                  className="object-cover"
+                  className="object-cover transition duration-700 hover:scale-[1.025]"
                   sizes="(max-width: 1024px) 100vw, 55vw"
                 />
 
@@ -849,8 +1119,8 @@ export default function AboutPage() {
                     Training, technical guidance and flexible support packages.
                   </p>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -859,7 +1129,22 @@ export default function AboutPage() {
           FINAL CTA
       ========================================================== */}
       <section className="bg-white px-3 pb-3 sm:px-5 sm:pb-5">
-        <div className="relative mx-auto min-h-[430px] max-w-[1440px] overflow-hidden">
+        <motion.div
+          initial={{
+            opacity: 0,
+            scale: 0.98,
+          }}
+          whileInView={{
+            opacity: 1,
+            scale: 1,
+          }}
+          transition={{
+            duration: 0.75,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          viewport={viewport}
+          className="relative mx-auto min-h-[430px] max-w-[1440px] overflow-hidden"
+        >
           <Image
             src={ctaBackground}
             alt=""
@@ -886,26 +1171,51 @@ export default function AboutPage() {
           />
 
           <div className="relative z-10 flex min-h-[430px] items-center justify-center px-5 py-16 text-center text-white sm:px-8">
-            <div className="max-w-3xl">
-              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 backdrop-blur-sm">
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="max-w-3xl"
+            >
+              <motion.span
+                variants={staggerItem}
+                whileHover={{
+                  scale: 1.1,
+                  rotate: 8,
+                }}
+                className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 backdrop-blur-sm"
+              >
                 <Droplets className="h-5 w-5" />
-              </span>
+              </motion.span>
 
-              <p className="mt-6 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/65 sm:text-xs">
+              <motion.p
+                variants={staggerItem}
+                className="mt-6 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/65 sm:text-xs"
+              >
                 Work With Anors.Z
-              </p>
+              </motion.p>
 
-              <h2 className="mt-4 text-[clamp(2rem,4vw,4rem)] font-normal leading-[1.05] tracking-[-0.04em]">
+              <motion.h2
+                variants={staggerItem}
+                className="mt-4 text-[clamp(2rem,4vw,4rem)] font-normal leading-[1.05] tracking-[-0.04em]"
+              >
                 Let’s Build a Cleaner and Safer Water Future
-              </h2>
+              </motion.h2>
 
-              <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-white/70">
+              <motion.p
+                variants={staggerItem}
+                className="mx-auto mt-5 max-w-xl text-sm leading-7 text-white/70"
+              >
                 Speak with our team about a water station or purification
                 solution suited to your institution, organisation or
                 community.
-              </p>
+              </motion.p>
 
-              <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <motion.div
+                variants={staggerItem}
+                className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
+              >
                 <Link
                   href="/contact"
                   className="group inline-flex min-w-[190px] items-center justify-center gap-3 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-[#681761] transition duration-300 hover:-translate-y-1 hover:shadow-xl"
@@ -921,10 +1231,10 @@ export default function AboutPage() {
                 >
                   View Our Solutions
                 </Link>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </section>
     </main>
   );
