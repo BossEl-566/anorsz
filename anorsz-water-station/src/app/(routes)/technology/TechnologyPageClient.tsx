@@ -583,29 +583,31 @@ export default function TechnologyPageClient() {
             </motion.p>
           </div>
 
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={viewport}
-            className="relative mt-12 overflow-hidden border border-white/15 bg-black lg:mt-16"
-          >
-            <div className="aspect-video">
-              <Video
+        <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewport}
+        className="relative mt-12 flex justify-center lg:mt-16"
+        >
+        <div className="relative w-full max-w-[430px] overflow-hidden border border-white/15 bg-black shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+            <div className="aspect-[9/16]">
+            <Video
                 src={technologyVideo}
                 controls
                 playsInline
                 preload="metadata"
-                className="h-full w-full object-cover"
-              />
+                className="h-full w-full object-contain"
+            />
             </div>
 
-            <div className="pointer-events-none absolute left-5 top-5 z-10 hidden items-center gap-3 rounded-full border border-white/20 bg-black/30 px-4 py-2 text-xs text-white backdrop-blur-md sm:flex">
-              <Play className="h-3.5 w-3.5" />
+            <div className="pointer-events-none absolute left-4 top-4 z-10 hidden items-center gap-3 rounded-full border border-white/20 bg-black/40 px-4 py-2 text-xs text-white backdrop-blur-md sm:flex">
+            <Play className="h-3.5 w-3.5" />
 
-              <span>Anors.Z technology demonstration</span>
+            <span>Anors.Z technology demonstration</span>
             </div>
-          </motion.div>
+        </div>
+        </motion.div>
         </div>
       </section>
 
