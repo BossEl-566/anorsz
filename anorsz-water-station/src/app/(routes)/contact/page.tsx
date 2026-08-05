@@ -112,7 +112,7 @@ const contactCards: ContactCard[] = [
         href="mailto:gigamonjosephp@gmail.com"
         className="mt-5 block break-all text-sm font-medium text-[#681761] transition hover:text-[#4d1049]"
       >
-        gigamonjosephp@gmail.com
+        info@anorsz.com
       </a>
     ),
   },
