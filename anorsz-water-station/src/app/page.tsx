@@ -255,7 +255,7 @@ export default function HomePage() {
           }}
         />
 
-        <div className="relative mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+        <div className="relative mx-auto max-w-360 px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
           <div className="grid items-start gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
             {/* Heading */}
             <motion.div
@@ -281,7 +281,7 @@ export default function HomePage() {
               viewport={viewport}
               className="relative"
             >
-              <div className="relative aspect-[16/10] overflow-hidden bg-[#ded9df]">
+              <div className="relative aspect-16/10 overflow-hidden bg-[#ded9df]">
                 <Image
                   src={waterStationImage}
                   alt="Anors.Z intelligent water station"
@@ -291,7 +291,7 @@ export default function HomePage() {
                   sizes="(max-width: 1024px) 100vw, 58vw"
                 />
 
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#1a091c]/35 via-transparent to-transparent" />
+                <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-[#1a091c]/35 via-transparent to-transparent" />
 
                 <div className="absolute bottom-5 left-5 rounded-full border border-white/25 bg-black/25 px-4 py-2 text-xs text-white backdrop-blur-md sm:bottom-7 sm:left-7">
                   Pure • Fresh • Safe
@@ -392,7 +392,7 @@ export default function HomePage() {
           }}
         />
 
-        <div className="relative mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+        <div className="relative mx-auto max-w-360 px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
           <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <motion.div
               variants={slideFromLeft}
