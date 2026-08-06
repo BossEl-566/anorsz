@@ -438,7 +438,7 @@ export default function HomePage() {
                   key={step.number}
                   variants={staggerItem}
                   whileHover={{ y: -8 }}
-                  className="group relative min-h-[310px] overflow-hidden bg-[#241026] p-6 text-white transition duration-500 hover:bg-[#681761] sm:p-7 lg:min-h-[350px]"
+                  className="group relative min-h-77.5 overflow-hidden bg-[#241026] p-6 text-white transition duration-500 hover:bg-[#681761] sm:p-7 lg:min-h-87.5"
                 >
                   <div
                     aria-hidden="true"
@@ -489,7 +489,7 @@ export default function HomePage() {
           }}
         />
 
-        <div className="relative mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+        <div className="relative mx-auto max-w-360 px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -528,12 +528,12 @@ export default function HomePage() {
                   index !== 0 ? "sm:border-l sm:border-black/10" : ""
                 }`}
               >
-                <p className="text-5xl font-light tracking-[-0.05em] text-[#681761] sm:text-6xl">
+                <p className="text-5xl font-light tracking-tighter text-[#681761] sm:text-6xl">
                   {statistic.value}
                   <span className="text-2xl">{statistic.suffix}</span>
                 </p>
 
-                <p className="mx-auto mt-4 max-w-[180px] text-xs leading-5 text-black/55">
+                <p className="mx-auto mt-4 max-w-45 text-xs leading-5 text-black/55">
                   {statistic.label}
                 </p>
               </motion.div>
@@ -546,7 +546,7 @@ export default function HomePage() {
           WHO WE SERVE
       ========================================================== */}
       <section className="bg-white">
-        <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+        <div className="mx-auto max-w-360 px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-end">
             <motion.div
               variants={slideFromLeft}
