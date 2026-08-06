@@ -296,7 +296,7 @@ export default function AboutPageClient() {
               }}
             />
 
-            <div className="relative z-10 mx-auto w-full max-w-[1440px] px-5 pb-10 pt-32 sm:px-8 sm:pb-14 lg:px-12 lg:pb-16 xl:px-16">
+            <div className="relative z-10 mx-auto w-full max-w-360 px-5 pb-10 pt-32 sm:px-8 sm:pb-14 lg:px-12 lg:pb-16 xl:px-16">
               <motion.div
                 initial={{
                   opacity: 0,
@@ -335,7 +335,7 @@ export default function AboutPageClient() {
                     delay: 0.1,
                     duration: 0.7,
                   }}
-                  className="max-w-4xl text-[clamp(2.5rem,5.7vw,5.6rem)] font-normal leading-[0.99] tracking-[-0.05em]"
+                  className="max-w-4xl text-[clamp(2.5rem,5.7vw,5.6rem)] font-normal leading-[0.99] tracking-tighter"
                 >
                   Pure Water.
                   <span className="block">Positive Impact.</span>
@@ -428,7 +428,7 @@ export default function AboutPageClient() {
           }}
         />
 
-        <div className="relative mx-auto grid max-w-[1440px] gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-20 lg:px-12 lg:py-28 xl:px-16">
+        <div className="relative mx-auto grid max-w-360 gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-20 lg:px-12 lg:py-28 xl:px-16">
           <motion.div
             variants={slideFromLeft}
             initial="hidden"
