@@ -68,13 +68,13 @@ export default function BlogPage() {
         <div className="absolute inset-0 bg-[#681761]/30" />
 
         {/* Header readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/80 via-black/10 to-transparent" />
 
         {/* Left-side contrast */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#110513]/95 via-[#29102d]/65 to-black/15" />
+        <div className="absolute inset-0 bg-linear-to-r from-[#110513]/95 via-[#29102d]/65 to-black/15" />
 
         {/* Strong bottom overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#160b19]/95" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-[#160b19]/95" />
 
         {/* Decorative dots */}
         <div
@@ -91,7 +91,7 @@ export default function BlogPage() {
           }}
         />
 
-        <div className="relative z-10 mx-auto flex min-h-[72svh] max-w-[1440px] items-end px-5 pb-12 pt-32 sm:px-8 sm:pb-16 lg:px-12 lg:pb-20 xl:px-16">
+        <div className="relative z-10 mx-auto flex min-h-[72svh] max-w-360 items-end px-5 pb-12 pt-32 sm:px-8 sm:pb-16 lg:px-12 lg:pb-20 xl:px-16">
           <div className="w-full">
             <div className="flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.2em] text-white/65 sm:text-xs">
               <Link href="/" className="transition hover:text-white">
@@ -104,7 +104,7 @@ export default function BlogPage() {
             </div>
 
             <div className="mt-6 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
-              <h1 className="max-w-4xl text-[clamp(2.5rem,5.7vw,5.5rem)] font-normal leading-[0.99] tracking-[-0.05em]">
+              <h1 className="max-w-4xl text-[clamp(2.5rem,5.7vw,5.5rem)] font-normal leading-[0.99] tracking-tighter">
                 Ideas for Cleaner Water
                 <span className="block">and Healthier Communities.</span>
               </h1>
