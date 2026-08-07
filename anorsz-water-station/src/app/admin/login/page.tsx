@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 export default function AdminLoginPage() {
   return (
-    <main className="fixed inset-0 z-[100] overflow-y-auto bg-[#f7f6f4]">
+    <main className="min-h-screen bg-[#f7f6f4]">
       <div className="grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">
         {/* =====================================================
             LEFT
