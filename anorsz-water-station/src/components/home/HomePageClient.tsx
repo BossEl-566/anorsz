@@ -1,0 +1,739 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { motion, type Variants } from "framer-motion";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Building2,
+  Check,
+  CircleGauge,
+  CreditCard,
+  Droplets,
+  Factory,
+  GraduationCap,
+  HeartPulse,
+  Hotel,
+  House,
+  Leaf,
+  MonitorSmartphone,
+  PhoneCall,
+  Recycle,
+  ShieldCheck,
+  Sparkles,
+  UtensilsCrossed,
+  type LucideIcon,
+} from "lucide-react";
+import type { HomePageContent } from "@/types/website-content";
+import HeroSection from "@/components/sections/HeroSection";
+
+import ctaBackground from "@/assets/images/home-cta-background.png";
+import communityImpactImage from "@/assets/images/home-community-impact.png";
+import waterStationImage from "@/assets/images/home-water-station.jpeg";
+
+type ProcessStep = {
+  number: string;
+  title: string;
+  description: string;
+  icon: LucideIcon;
+};
+
+type Institution = {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+};
+
+const viewport = {
+  once: true,
+  amount: 0.2,
+} as const;
+
+const fadeUp: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 35,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.65,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const slideFromLeft: Variants = {
+  hidden: {
+    opacity: 0,
+    x: -45,
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const slideFromRight: Variants = {
+  hidden: {
+    opacity: 0,
+    x: 45,
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const staggerContainer: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.08,
+    },
+  },
+};
+
+const staggerItem: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 30,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+
+type HomePageClientProps = {
+  content: HomePageContent;
+};
+
+const featureIcons = {
+  cleanSafe: ShieldCheck,
+  technology: CircleGauge,
+  eco: Leaf,
+  reliable: Droplets,
+} satisfies Record<
+  HomePageContent["overview"]["features"][number]["key"],
+  LucideIcon
+>;
+
+const processIcons: LucideIcon[] = [
+  Droplets,
+  ShieldCheck,
+  MonitorSmartphone,
+  CreditCard,
+];
+
+const institutionIcons = {
+  schools: GraduationCap,
+  companies: Building2,
+  factories: Factory,
+  healthcare: HeartPulse,
+  hotels: Hotel,
+  restaurants: UtensilsCrossed,
+  communities: House,
+  publicInstitutions: ShieldCheck,
+} satisfies Record<
+  HomePageContent["whoWeServe"]["institutions"][number]["key"],
+  LucideIcon
+>;
+
+export default function HomePageClient({
+  content,
+}: HomePageClientProps) {
+  return (
+    <main className="overflow-hidden bg-[#f7f6f4] text-[#171319]">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.7 }}
+      >
+        <HeroSection />
+      </motion.div>
+
+      {/* =========================================================
+          COMPANY OVERVIEW
+      ========================================================== */}
+      <section className="relative overflow-hidden bg-[#f7f6f4]">
+        {/* Decorative pattern */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 top-0 h-44 w-80 opacity-50"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(104,23,97,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(104,23,97,0.08) 1px, transparent 1px)",
+            backgroundSize: "18px 18px",
+            maskImage:
+              "linear-gradient(to right, black, rgba(0,0,0,0.4), transparent)",
+            WebkitMaskImage:
+              "linear-gradient(to right, black, rgba(0,0,0,0.4), transparent)",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-360 px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+          <div className="grid items-start gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+            {/* Heading */}
+            <motion.div
+              variants={slideFromLeft}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
+                {content.overview.eyebrow}
+              </p>
+
+              <h2 className="mt-4 max-w-xl text-[clamp(2rem,4vw,4.25rem)] font-normal leading-[1.04] tracking-[-0.045em]">
+                {content.overview.title}
+              </h2>
+            </motion.div>
+
+            {/* Main image */}
+            <motion.div
+              variants={slideFromRight}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="relative"
+            >
+              <div className="relative aspect-16/10 overflow-hidden bg-[#ded9df]">
+                <Image
+                  src={waterStationImage}
+                  alt="Anors.Z intelligent water station"
+                  fill
+                  priority={false}
+                  className="object-cover transition duration-700 hover:scale-[1.03]"
+                  sizes="(max-width: 1024px) 100vw, 58vw"
+                />
+
+                <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-[#1a091c]/35 via-transparent to-transparent" />
+
+                <div className="absolute bottom-5 left-5 rounded-full border border-white/25 bg-black/25 px-4 py-2 text-xs text-white backdrop-blur-md sm:bottom-7 sm:left-7">
+                  {content.overview.imageBadge}
+                </div>
+              </div>
+
+              <div className="absolute -bottom-4 -left-4 hidden h-20 w-20 border-b border-l border-[#681761]/40 lg:block" />
+            </motion.div>
+          </div>
+
+          {/* Lower overview row */}
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mt-12 grid gap-10 border-t border-black/15 pt-8 md:grid-cols-[0.8fr_1.2fr] lg:mt-16 lg:pt-10"
+          >
+            <div>
+              <h3 className="text-lg font-medium">
+                {content.overview.lowerTitle}
+              </h3>
+
+              <p className="mt-4 max-w-md text-sm leading-7 text-black/60">
+                {content.overview.lowerDescription}
+              </p>
+
+              <Link href={content.overview.linkHref}
+                className="group mt-7 inline-flex items-center gap-3 border-b border-[#681761]/40 pb-2 text-sm font-medium text-[#681761] transition hover:border-[#681761]"
+              >
+                <span>{content.overview.linkLabel}</span>
+
+                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </Link>
+            </div>
+
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="grid gap-4 sm:grid-cols-2"
+            >
+              {content.overview.features.map((feature) => {
+  const Icon = featureIcons[feature.key];
+
+  return (
+    <motion.div
+      key={feature.key}
+      variants={staggerItem}
+      whileHover={{ y: -6 }}
+      className="group flex items-center gap-4 border border-black/10 bg-white px-5 py-5 transition duration-300 hover:border-[#681761]/30 hover:shadow-[0_18px_50px_rgba(48,13,45,0.08)]"
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#681761]/8 text-[#681761] transition group-hover:bg-[#681761] group-hover:text-white">
+        <Icon className="h-5 w-5" />
+      </span>
+
+      <span className="text-sm font-medium">
+        {feature.title}
+      </span>
+    </motion.div>
+  );
+})}
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          HOW THE WATER STATION WORKS
+      ========================================================== */}
+      <section className="relative overflow-hidden bg-white">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-0 h-80 w-80 opacity-40"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, rgba(104,23,97,0.16) 1px, transparent 1.5px)",
+            backgroundSize: "18px 18px",
+            maskImage:
+              "linear-gradient(to left, black, rgba(0,0,0,0.4), transparent)",
+            WebkitMaskImage:
+              "linear-gradient(to left, black, rgba(0,0,0,0.4), transparent)",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-360 px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+            <motion.div
+              variants={slideFromLeft}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
+                {content.howItWorks.eyebrow}
+              </p>
+
+              <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.8vw,3.75rem)] font-normal leading-[1.05] tracking-[-0.04em]">
+                {content.howItWorks.title}
+              </h2>
+            </motion.div>
+
+            <motion.p
+              variants={slideFromRight}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="max-w-2xl text-sm leading-7 text-black/60 lg:justify-self-end"
+            >
+              {content.howItWorks.description}
+            </motion.p>
+          </div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mt-12 grid gap-px overflow-hidden border border-[#3a123a]/20 bg-[#3a123a]/20 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4"
+          >
+            {content.howItWorks.steps.map((step, index) => {
+  const Icon =
+    processIcons[index] ?? Droplets;
+
+              return (
+                <motion.article
+                  key={step.number}
+                  variants={staggerItem}
+                  whileHover={{ y: -8 }}
+                  className="group relative min-h-77.5 overflow-hidden bg-[#241026] p-6 text-white transition duration-500 hover:bg-[#681761] sm:p-7 lg:min-h-87.5"
+                >
+                  <div
+                    aria-hidden="true"
+                    className="absolute -right-12 -top-12 h-40 w-40 rounded-full border border-white/10 transition duration-500 group-hover:scale-125"
+                  />
+
+                  <div className="relative flex h-full flex-col">
+                    <div className="flex items-start justify-between gap-6">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5">
+                        <Icon className="h-5 w-5" />
+                      </span>
+
+                      <span className="text-4xl font-light text-white/25">
+                        {step.number}
+                      </span>
+                    </div>
+
+                    <div className="mt-auto pt-16">
+                      <h3 className="text-xl font-normal leading-tight">
+                        {step.title}
+                      </h3>
+
+                      <p className="mt-4 text-sm leading-6 text-white/65 transition group-hover:text-white/80">
+                        {step.description}
+                      </p>
+                    </div>
+                  </div>
+                </motion.article>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          IMPACT / KEY NUMBERS
+      ========================================================== */}
+      <section className="relative overflow-hidden bg-[#f7f6f4]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 top-0 h-full w-60 opacity-40"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, rgba(104,23,97,0.14) 1px, transparent 1.5px)",
+            backgroundSize: "18px 18px",
+            maskImage: "linear-gradient(to right, black, transparent)",
+            WebkitMaskImage: "linear-gradient(to right, black, transparent)",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-360 px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mx-auto max-w-5xl text-center"
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
+              {content.impact.eyebrow}
+            </p>
+
+            <h2 className="mt-5 text-[clamp(2rem,3.6vw,3.7rem)] font-normal leading-[1.08] tracking-[-0.04em]">
+              {content.impact.title}
+            </h2>
+
+            <p className="mx-auto mt-6 max-w-2xl text-sm leading-7 text-black/60">
+              {content.impact.description}
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mt-14 grid gap-y-10 border-y border-black/10 py-10 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4"
+          >
+            {content.impact.statistics.map((statistic, index) => (
+              <motion.div
+                key={statistic.label}
+                variants={staggerItem}
+                whileHover={{ y: -5 }}
+                className={`text-center ${
+                  index !== 0 ? "sm:border-l sm:border-black/10" : ""
+                }`}
+              >
+                <p className="text-5xl font-light tracking-tighter text-[#681761] sm:text-6xl">
+                  {statistic.value}
+                  <span className="text-2xl">{statistic.suffix}</span>
+                </p>
+
+                <p className="mx-auto mt-4 max-w-45 text-xs leading-5 text-black/55">
+                  {statistic.label}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          WHO WE SERVE
+      ========================================================== */}
+      <section className="bg-white">
+        <div className="mx-auto max-w-360 px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-end">
+            <motion.div
+              variants={slideFromLeft}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
+                {content.whoWeServe.eyebrow}
+              </p>
+
+              <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.8vw,3.75rem)] font-normal leading-[1.05] tracking-[-0.04em]">
+                {content.whoWeServe.title}
+              </h2>
+            </motion.div>
+
+            <motion.p
+              variants={slideFromRight}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="max-w-xl text-sm leading-7 text-black/60 lg:justify-self-end"
+            >
+              {content.whoWeServe.description}
+            </motion.p>
+          </div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mt-12 grid border-l border-t border-black/10 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4"
+          >
+            {content.whoWeServe.institutions.map((institution) => {
+  const Icon =
+    institutionIcons[institution.key];
+
+              return (
+                <motion.article
+                  key={institution.title}
+                  variants={staggerItem}
+                  whileHover={{ y: -7 }}
+                  className="group min-h-[235px] border-b border-r border-black/10 bg-white p-6 transition duration-300 hover:z-10 hover:border-[#681761]/30 hover:shadow-[0_22px_60px_rgba(48,13,45,0.1)] sm:p-7"
+                >
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#681761]/8 text-[#681761] transition duration-300 group-hover:bg-[#681761] group-hover:text-white">
+                    <Icon className="h-5 w-5" />
+                  </span>
+
+                  <h3 className="mt-8 text-lg font-medium">
+                    {institution.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm leading-6 text-black/55">
+                    {institution.description}
+                  </p>
+                </motion.article>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          WHO WE ARE
+      ========================================================== */}
+      <section className="relative overflow-hidden bg-[#f7f6f4]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-0 h-72 w-72 opacity-50"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(104,23,97,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(104,23,97,0.08) 1px, transparent 1px)",
+            backgroundSize: "18px 18px",
+            maskImage:
+              "linear-gradient(to left, black, rgba(0,0,0,0.5), transparent)",
+            WebkitMaskImage:
+              "linear-gradient(to left, black, rgba(0,0,0,0.5), transparent)",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-end lg:gap-20">
+            <motion.div
+              variants={slideFromLeft}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
+                {content.whoWeAre.eyebrow}
+              </p>
+
+              <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.8vw,3.75rem)] font-normal leading-[1.05] tracking-[-0.04em]">
+                {content.whoWeAre.title}
+              </h2>
+            </motion.div>
+
+            <motion.div
+              variants={slideFromRight}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+            >
+              <p className="max-w-xl text-sm leading-7 text-black/60">
+                {content.whoWeAre.description}
+              </p>
+
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={viewport}
+                className="mt-6 flex flex-wrap gap-x-7 gap-y-3"
+              >
+                {content.whoWeAre.points.map((item) => (
+                  <motion.div
+                    key={item.text}
+                    variants={staggerItem}
+                    className="flex items-center gap-2 text-sm font-medium"
+                  >
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#159447]/12 text-[#159447]">
+                      <Check className="h-3.5 w-3.5" />
+                    </span>
+
+                    {item.text}
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+          </div>
+
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="relative mt-12 aspect-[16/8.5] min-h-[360px] overflow-hidden bg-[#d8d2d9] lg:mt-16"
+          >
+            <Image
+              src={communityImpactImage}
+              alt="Anors.Z supporting institutions and communities"
+              fill
+              className="object-cover transition duration-700 hover:scale-[1.02]"
+              sizes="(max-width: 1440px) 100vw, 1440px"
+            />
+
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#180719]/55 via-transparent to-transparent" />
+
+            <div className="absolute bottom-6 left-6 max-w-md text-white sm:bottom-8 sm:left-8">
+              <p className="text-xs uppercase tracking-[0.2em] text-white/70">
+                {content.whoWeAre.purposeEyebrow}
+              </p>
+
+              <p className="mt-3 text-xl font-normal sm:text-2xl">
+                {content.whoWeAre.purposeText}
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          FINAL CTA
+      ========================================================== */}
+      <section className="bg-white px-3 py-3 sm:px-5 sm:py-5">
+        <motion.div
+          initial={{
+            opacity: 0,
+            scale: 0.98,
+          }}
+          whileInView={{
+            opacity: 1,
+            scale: 1,
+          }}
+          transition={{
+            duration: 0.75,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          viewport={viewport}
+          className="relative mx-auto min-h-[390px] max-w-[1440px] overflow-hidden"
+        >
+          <Image
+            src={ctaBackground}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="(max-width: 1440px) 100vw, 1440px"
+          />
+
+          {/* Dark branded overlays */}
+          <div className="absolute inset-0 bg-[#2c102d]/65" />
+
+          <div className="absolute inset-0 bg-gradient-to-r from-[#19081c]/80 via-[#681761]/35 to-[#11251e]/60" />
+
+          <div
+            aria-hidden="true"
+            className="absolute left-0 top-0 hidden h-full w-48 opacity-20 sm:block"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle, white 1px, transparent 1.5px)",
+              backgroundSize: "16px 16px",
+              maskImage: "linear-gradient(to right, black, transparent)",
+              WebkitMaskImage:
+                "linear-gradient(to right, black, transparent)",
+            }}
+          />
+
+          <div className="relative z-10 flex min-h-[390px] items-center justify-center px-5 py-16 text-center text-white sm:px-8">
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="max-w-3xl"
+            >
+              <motion.span
+                variants={staggerItem}
+                whileHover={{
+                  scale: 1.1,
+                  rotate: 8,
+                }}
+                className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 backdrop-blur-sm"
+              >
+                <Sparkles className="h-5 w-5" />
+              </motion.span>
+
+              <motion.p
+                variants={staggerItem}
+                className="mt-6 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/70 sm:text-xs"
+              >
+                {content.cta.eyebrow}
+              </motion.p>
+
+              <motion.h2
+                variants={staggerItem}
+                className="mt-4 text-[clamp(2rem,4vw,4rem)] font-normal leading-[1.05] tracking-[-0.04em]"
+              >
+                {content.cta.title}
+              </motion.h2>
+
+              <motion.p
+                variants={staggerItem}
+                className="mx-auto mt-5 max-w-xl text-sm leading-7 text-white/70"
+              >
+                {content.cta.description}
+              </motion.p>
+
+              <motion.div
+                variants={staggerItem}
+                className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
+              >
+                <Link href={content.cta.primaryButtonHref}
+                  className="group inline-flex min-w-[190px] items-center justify-center gap-3 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-[#681761] transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+                >
+                  <span>{content.cta.primaryButtonLabel}</span>
+
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+
+                <a href={content.cta.phoneHref}
+                  className="inline-flex min-w-[190px] items-center justify-center gap-3 rounded-full border border-white/30 bg-white/10 px-6 py-3.5 text-sm font-medium text-white backdrop-blur-md transition hover:bg-white/20"
+                >
+                  <PhoneCall className="h-4 w-4" />
+
+                  <span>{content.cta.secondaryButtonLabel}</span>
+                </a>
+              </motion.div>
+            </motion.div>
+          </div>
+        </motion.div>
+      </section>
+    </main>
+  );
+}
