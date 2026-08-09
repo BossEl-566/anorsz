@@ -1,6 +1,8 @@
 "use client";
 
-import Image from "next/image";
+import Image, {
+  type StaticImageData,
+} from "next/image";
 import Link from "next/link";
 import Video from "next-video";
 import BackgroundVideo from "next-video/background-video";
@@ -28,6 +30,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import type { AboutPageContent } from "@/types/website-content";
 import aboutCommunityOne from "@/assets/images/about-community-1.jpeg";
 import aboutCommunityTwo from "@/assets/images/about-community-2.jpeg";
 import aboutCommunityThree from "@/assets/images/about-community-3.jpeg";
@@ -42,24 +45,6 @@ import aboutHeroVideo from "@videos/mission.mp4";
 import aboutInstallationVideo from "@videos/about-installation-video.mp4";
 import aboutTechnologyVideo from "@videos/hero-video.mp4";
 
-type ValueItem = {
-  title: string;
-  description: string;
-  icon: LucideIcon;
-};
-
-type TechnologyItem = {
-  number: string;
-  title: string;
-  description: string;
-  icon: LucideIcon;
-};
-
-type ImpactItem = {
-  title: string;
-  description: string;
-  image: typeof aboutCommunityOne;
-};
 
 const viewport = {
   once: true,
@@ -136,108 +121,54 @@ const staggerItem: Variants = {
   },
 };
 
-const companyValues: ValueItem[] = [
-  {
-    title: "Water Quality",
-    description:
-      "We place clean, safe and dependable drinking water at the centre of every solution we deliver.",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Accessibility",
-    description:
-      "Our systems make quality drinking water easier to access across institutions and communities.",
-    icon: Users,
-  },
-  {
-    title: "Innovation",
-    description:
-      "We use smart-card access, intelligent displays and modern purification systems to improve water access.",
-    icon: Sparkles,
-  },
-  {
-    title: "Sustainability",
-    description:
-      "We encourage reusable bottles and help reduce waste from disposable plastic and sachet-water packaging.",
-    icon: Leaf,
-  },
-];
+const valueIcons = {
+  waterQuality: ShieldCheck,
+  accessibility: Users,
+  innovation: Sparkles,
+  sustainability: Leaf,
+} satisfies Record<
+  AboutPageContent["values"]["items"][number]["key"],
+  LucideIcon
+>;
 
-const technologyItems: TechnologyItem[] = [
-  {
-    number: "01",
-    title: "Smart Water Card",
-    description:
-      "Customers use a dedicated smart card to access water conveniently and securely.",
-    icon: CreditCard,
-  },
-  {
-    number: "02",
-    title: "Intelligent Display",
-    description:
-      "Digital screens show temperature, water volume, TDS readings, date, time and card information.",
-    icon: MonitorSmartphone,
-  },
-  {
-    number: "03",
-    title: "Ultrafiltration",
-    description:
-      "The filtration system removes suspended solids, sediments and fine colloidal particles.",
-    icon: Droplets,
-  },
-  {
-    number: "04",
-    title: "UV Sterilisation",
-    description:
-      "Ultraviolet treatment helps eliminate bacteria, viruses and other harmful microorganisms.",
-    icon: Zap,
-  },
-  {
-    number: "05",
-    title: "Reverse Osmosis",
-    description:
-      "Reverse osmosis removes dissolved substances, impurities and unwanted chemicals.",
-    icon: Waves,
-  },
-  {
-    number: "06",
-    title: "High-Capacity Output",
-    description:
-      "Available configurations include multiple faucets and cold, warm or hot-water dispensing.",
-    icon: Gauge,
-  },
-];
+const technologyIcons = {
+  smartCard: CreditCard,
+  display: MonitorSmartphone,
+  ultrafiltration: Droplets,
+  uv: Zap,
+  reverseOsmosis: Waves,
+  highCapacity: Gauge,
+} satisfies Record<
+  AboutPageContent["technology"]["items"][number]["key"],
+  LucideIcon
+>;
 
-const impactItems: ImpactItem[] = [
-  {
-    title: "Education",
-    description:
-      "Supporting basic, secondary and tertiary institutions with dependable access to safe drinking water.",
-    image: aboutCommunityOne,
-  },
-  {
-    title: "Business and Industry",
-    description:
-      "Providing scalable systems for offices, corporate institutions, factories and commercial facilities.",
-    image: aboutCommunityTwo,
-  },
-  {
-    title: "Communities and Public Spaces",
-    description:
-      "Creating convenient refill access for communities, hospitals, hotels and public institutions.",
-    image: aboutCommunityThree,
-  },
-];
+const impactImages = {
+  education: aboutCommunityOne,
+  business: aboutCommunityTwo,
+  communities: aboutCommunityThree,
+} satisfies Record<
+  AboutPageContent["impact"]["items"][number]["key"],
+  StaticImageData
+>;
 
-const sustainabilityPoints = [
-  "Promotes the use of reusable water bottles",
-  "Reduces dependence on disposable plastic bottles",
-  "Helps reduce sachet-water waste",
-  "Uses efficient modern purification technologies",
-  "Supports healthier institutions and communities",
-];
+const supportIcons = {
+  siteAssessment: Eye,
+  systemSelection: Gauge,
+  installation: Wrench,
+  trainingSupport: Handshake,
+} satisfies Record<
+  AboutPageContent["support"]["items"][number]["key"],
+  LucideIcon
+>;
 
-export default function AboutPageClient() {
+type AboutPageClientProps = {
+  content: AboutPageContent;
+};
+
+export default function AboutPageClient({
+  content,
+}: AboutPageClientProps) {
   return (
     <main className="overflow-hidden bg-[#f7f6f4] text-[#171319]">
       {/* =========================================================
@@ -317,7 +248,7 @@ export default function AboutPageClient() {
 
                 <span className="h-px w-5 bg-white/40" />
 
-                <span>About Us</span>
+                <span>{content.hero.breadcrumbLabel}</span>
               </motion.div>
 
               <div className="mt-6 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
@@ -337,8 +268,8 @@ export default function AboutPageClient() {
                   }}
                   className="max-w-4xl text-[clamp(2.5rem,5.7vw,5.6rem)] font-normal leading-[0.99] tracking-tighter"
                 >
-                  Pure Water.
-                  <span className="block">Positive Impact.</span>
+                  {content.hero.titleLineOne}
+                  <span className="block">{content.hero.titleLineTwo}</span>
                 </motion.h1>
 
                 <motion.p
@@ -356,9 +287,7 @@ export default function AboutPageClient() {
                   }}
                   className="max-w-xl text-sm leading-7 text-white/70 sm:text-base lg:justify-self-end"
                 >
-                  We combine modern purification technology, intelligent
-                  dispensing and environmental responsibility to help people
-                  access cleaner and safer drinking water.
+                  {content.hero.description}
                 </motion.p>
               </div>
 
