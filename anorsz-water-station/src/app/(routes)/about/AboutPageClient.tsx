@@ -1,19 +1,10 @@
 "use client";
 
-import { useRef } from "react";
-import Image, {
-  type StaticImageData,
-} from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import Video from "next-video";
 import BackgroundVideo from "next-video/background-video";
-import {
-  motion,
-  MotionConfig,
-  useScroll,
-  useTransform,
-  type Variants,
-} from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -37,7 +28,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import type { AboutPageContent } from "@/types/website-content";
 import aboutCommunityOne from "@/assets/images/about-community-1.jpeg";
 import aboutCommunityTwo from "@/assets/images/about-community-2.jpeg";
 import aboutCommunityThree from "@/assets/images/about-community-3.jpeg";
@@ -50,57 +40,73 @@ import ctaBackground from "@/assets/images/home-cta-background.png";
 
 import aboutHeroVideo from "@videos/mission.mp4";
 import aboutInstallationVideo from "@videos/about-installation-video.mp4";
-import aboutTechnologyVideo from "@videos/about-technology-video.mp4";
+import aboutTechnologyVideo from "@videos/hero-video.mp4";
 
+type ValueItem = {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+};
+
+type TechnologyItem = {
+  number: string;
+  title: string;
+  description: string;
+  icon: LucideIcon;
+};
+
+type ImpactItem = {
+  title: string;
+  description: string;
+  image: typeof aboutCommunityOne;
+};
 
 const viewport = {
   once: true,
   amount: 0.2,
 } as const;
 
-const easeOut = [0.22, 1, 0.36, 1] as const;
-
 const fadeUp: Variants = {
   hidden: {
     opacity: 0,
-    y: 38,
+    y: 35,
   },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
+      duration: 0.65,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const slideFromLeft: Variants = {
+  hidden: {
+    opacity: 0,
+    x: -45,
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
       duration: 0.7,
-      ease: easeOut,
+      ease: [0.22, 1, 0.36, 1],
     },
   },
 };
 
-const fadeLeft: Variants = {
+const slideFromRight: Variants = {
   hidden: {
     opacity: 0,
-    x: -48,
+    x: 45,
   },
   visible: {
     opacity: 1,
     x: 0,
     transition: {
-      duration: 0.75,
-      ease: easeOut,
-    },
-  },
-};
-
-const fadeRight: Variants = {
-  hidden: {
-    opacity: 0,
-    x: 48,
-  },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: 0.75,
-      ease: easeOut,
+      duration: 0.7,
+      ease: [0.22, 1, 0.36, 1],
     },
   },
 };
@@ -109,7 +115,7 @@ const staggerContainer: Variants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.11,
+      staggerChildren: 0.12,
       delayChildren: 0.08,
     },
   },
@@ -119,1059 +125,898 @@ const staggerItem: Variants = {
   hidden: {
     opacity: 0,
     y: 30,
-    scale: 0.985,
   },
   visible: {
     opacity: 1,
     y: 0,
-    scale: 1,
     transition: {
-      duration: 0.62,
-      ease: easeOut,
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1],
     },
   },
 };
 
-const revealFromLeft: Variants = {
-  hidden: {
-    opacity: 0,
-    clipPath: "inset(0 100% 0 0)",
-    scale: 1.04,
+const companyValues: ValueItem[] = [
+  {
+    title: "Water Quality",
+    description:
+      "We place clean, safe and dependable drinking water at the centre of every solution we deliver.",
+    icon: ShieldCheck,
   },
-  visible: {
-    opacity: 1,
-    clipPath: "inset(0 0% 0 0)",
-    scale: 1,
-    transition: {
-      duration: 1,
-      ease: easeOut,
-    },
+  {
+    title: "Accessibility",
+    description:
+      "Our systems make quality drinking water easier to access across institutions and communities.",
+    icon: Users,
   },
-};
-
-const revealFromRight: Variants = {
-  hidden: {
-    opacity: 0,
-    clipPath: "inset(0 0 0 100%)",
-    scale: 1.04,
+  {
+    title: "Innovation",
+    description:
+      "We use smart-card access, intelligent displays and modern purification systems to improve water access.",
+    icon: Sparkles,
   },
-  visible: {
-    opacity: 1,
-    clipPath: "inset(0 0 0 0%)",
-    scale: 1,
-    transition: {
-      duration: 1,
-      ease: easeOut,
-    },
+  {
+    title: "Sustainability",
+    description:
+      "We encourage reusable bottles and help reduce waste from disposable plastic and sachet-water packaging.",
+    icon: Leaf,
   },
-};
+];
 
-const valueIcons = {
-  waterQuality: ShieldCheck,
-  accessibility: Users,
-  innovation: Sparkles,
-  sustainability: Leaf,
-} satisfies Record<
-  AboutPageContent["values"]["items"][number]["key"],
-  LucideIcon
->;
+const technologyItems: TechnologyItem[] = [
+  {
+    number: "01",
+    title: "Smart Water Card",
+    description:
+      "Customers use a dedicated smart card to access water conveniently and securely.",
+    icon: CreditCard,
+  },
+  {
+    number: "02",
+    title: "Intelligent Display",
+    description:
+      "Digital screens show temperature, water volume, TDS readings, date, time and card information.",
+    icon: MonitorSmartphone,
+  },
+  {
+    number: "03",
+    title: "Ultrafiltration",
+    description:
+      "The filtration system removes suspended solids, sediments and fine colloidal particles.",
+    icon: Droplets,
+  },
+  {
+    number: "04",
+    title: "UV Sterilisation",
+    description:
+      "Ultraviolet treatment helps eliminate bacteria, viruses and other harmful microorganisms.",
+    icon: Zap,
+  },
+  {
+    number: "05",
+    title: "Reverse Osmosis",
+    description:
+      "Reverse osmosis removes dissolved substances, impurities and unwanted chemicals.",
+    icon: Waves,
+  },
+  {
+    number: "06",
+    title: "High-Capacity Output",
+    description:
+      "Available configurations include multiple faucets and cold, warm or hot-water dispensing.",
+    icon: Gauge,
+  },
+];
 
-const technologyIcons = {
-  smartCard: CreditCard,
-  display: MonitorSmartphone,
-  ultrafiltration: Droplets,
-  uv: Zap,
-  reverseOsmosis: Waves,
-  highCapacity: Gauge,
-} satisfies Record<
-  AboutPageContent["technology"]["items"][number]["key"],
-  LucideIcon
->;
+const impactItems: ImpactItem[] = [
+  {
+    title: "Education",
+    description:
+      "Supporting basic, secondary and tertiary institutions with dependable access to safe drinking water.",
+    image: aboutCommunityOne,
+  },
+  {
+    title: "Business and Industry",
+    description:
+      "Providing scalable systems for offices, corporate institutions, factories and commercial facilities.",
+    image: aboutCommunityTwo,
+  },
+  {
+    title: "Communities and Public Spaces",
+    description:
+      "Creating convenient refill access for communities, hospitals, hotels and public institutions.",
+    image: aboutCommunityThree,
+  },
+];
 
-const impactImages = {
-  education: aboutCommunityOne,
-  business: aboutCommunityTwo,
-  communities: aboutCommunityThree,
-} satisfies Record<
-  AboutPageContent["impact"]["items"][number]["key"],
-  StaticImageData
->;
+const sustainabilityPoints = [
+  "Promotes the use of reusable water bottles",
+  "Reduces dependence on disposable plastic bottles",
+  "Helps reduce sachet-water waste",
+  "Uses efficient modern purification technologies",
+  "Supports healthier institutions and communities",
+];
 
-const supportIcons = {
-  siteAssessment: Eye,
-  systemSelection: Gauge,
-  installation: Wrench,
-  trainingSupport: Handshake,
-} satisfies Record<
-  AboutPageContent["support"]["items"][number]["key"],
-  LucideIcon
->;
-
-type AboutPageClientProps = {
-  content: AboutPageContent;
-};
-
-export default function AboutPageClient({
-  content,
-}: AboutPageClientProps) {
-  const heroRef = useRef<HTMLElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-
-  const heroContentY = useTransform(scrollYProgress, [0, 1], [0, 80]);
-
-  const heroContentOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.72, 1],
-    [1, 0.75, 0],
-  );
-
-  const heroDotsY = useTransform(scrollYProgress, [0, 1], [0, -90]);
-
+export default function AboutPageClient() {
   return (
-    <MotionConfig reducedMotion="user">
-      <main className="overflow-hidden bg-[#f7f6f4] text-[#171319]">
-        {/* =========================================================
-            VIDEO HERO
-        ========================================================== */}
-        <section
-          ref={heroRef}
-          aria-labelledby="about-page-heading"
-          className="relative isolate min-h-[82svh] overflow-hidden bg-[#160b19] text-white"
+    <main className="overflow-hidden bg-[#f7f6f4] text-[#171319]">
+      {/* =========================================================
+          VIDEO HERO
+      ========================================================== */}
+      <section
+        aria-labelledby="about-page-heading"
+        className="relative isolate min-h-[82svh] overflow-hidden bg-[#160b19] text-white"
+      >
+        <BackgroundVideo
+          src={aboutHeroVideo}
+          posterFetchPriority="high"
+          aria-hidden="true"
+          className="
+            absolute inset-0 h-full w-full
+            [&_.next-video-bg-text]:!place-content-stretch
+            [&_.next-video-bg-text]:!p-0
+          "
         >
-          <BackgroundVideo
-            src={aboutHeroVideo}
-            posterFetchPriority="high"
-            aria-hidden="true"
-            className="
-              absolute inset-0 h-full w-full
-              [&_.next-video-bg-text]:!place-content-stretch
-              [&_.next-video-bg-text]:!p-0
-            "
-          >
-            <div className="relative flex min-h-[82svh] w-full items-end overflow-hidden">
-              <motion.div
-                aria-hidden="true"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1.2 }}
-                className="pointer-events-none absolute inset-0 bg-[#681761]/25"
-              />
+          <div className="relative flex min-h-[82svh] w-full items-end overflow-hidden">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-[#681761]/25"
+            />
 
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/75 via-black/10 to-transparent"
-              />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/75 via-black/10 to-transparent"
+            />
 
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#110513]/90 via-[#241027]/45 to-black/15"
-              />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#110513]/90 via-[#241027]/45 to-black/15"
+            />
 
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(to bottom, transparent 24%, rgba(46,13,47,0.14) 44%, rgba(32,8,35,0.67) 72%, rgba(18,5,22,0.98) 100%)",
-                }}
-              />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to bottom, transparent 24%, rgba(46,13,47,0.14) 44%, rgba(32,8,35,0.67) 72%, rgba(18,5,22,0.98) 100%)",
+              }}
+            />
 
-              <motion.div
-                aria-hidden="true"
-                style={{ y: heroDotsY }}
-                animate={{
-                  opacity: [0.1, 0.18, 0.1],
-                }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="pointer-events-none absolute bottom-0 right-0 hidden h-[55%] w-[40%] md:block"
-              >
-                <div
-                  className="h-full w-full opacity-[0.14]"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(circle, rgba(255,255,255,0.85) 1px, transparent 1.4px)",
-                    backgroundSize: "21px 21px",
-                    WebkitMaskImage:
-                      "linear-gradient(to left, black 10%, rgba(0,0,0,0.55) 55%, transparent 100%)",
-                    maskImage:
-                      "linear-gradient(to left, black 10%, rgba(0,0,0,0.55) 55%, transparent 100%)",
-                  }}
-                />
-              </motion.div>
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-0 right-0 hidden h-[55%] w-[40%] opacity-[0.14] md:block"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle, rgba(255,255,255,0.85) 1px, transparent 1.4px)",
+                backgroundSize: "21px 21px",
+                WebkitMaskImage:
+                  "linear-gradient(to left, black 10%, rgba(0,0,0,0.55) 55%, transparent 100%)",
+                maskImage:
+                  "linear-gradient(to left, black 10%, rgba(0,0,0,0.55) 55%, transparent 100%)",
+              }}
+            />
 
-              <motion.div
-                style={{
-                  y: heroContentY,
-                  opacity: heroContentOpacity,
-                }}
-                className="relative z-10 mx-auto w-full max-w-[1440px] px-5 pb-10 pt-32 sm:px-8 sm:pb-14 lg:px-12 lg:pb-16 xl:px-16"
-              >
-                <motion.div
-                  initial={{
-                    opacity: 0,
-                    y: 18,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  transition={{
-                    delay: 0.15,
-                    duration: 0.65,
-                    ease: easeOut,
-                  }}
-                  className="flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.2em] text-white/65 sm:text-xs"
-                >
-                  <Link href="/" className="transition hover:text-white">
-                    Home
-                  </Link>
-
-                  <motion.span
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: 1 }}
-                    transition={{
-                      delay: 0.35,
-                      duration: 0.55,
-                      ease: easeOut,
-                    }}
-                    className="h-px w-5 origin-left bg-white/40"
-                  />
-
-                  <span>{content.hero.breadcrumbLabel}</span>
-                </motion.div>
-
-                <div className="mt-6 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
-                  <motion.h1
-                    id="about-page-heading"
-                    initial={{
-                      opacity: 0,
-                      y: 50,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    transition={{
-                      delay: 0.28,
-                      duration: 0.85,
-                      ease: easeOut,
-                    }}
-                    className="max-w-4xl text-[clamp(2.5rem,5.7vw,5.6rem)] font-normal leading-[0.99] tracking-[-0.05em]"
-                  >
-                    {content.hero.titleLineOne}
-
-<motion.span
-  initial={{ opacity: 0, x: -24 }}
-  animate={{ opacity: 1, x: 0 }}
-  transition={{
-    delay: 0.48,
-    duration: 0.75,
-    ease: easeOut,
-  }}
-  className="block"
->
-  {content.hero.titleLineTwo}
-</motion.span>
-                  </motion.h1>
-
-                  <motion.p
-                    initial={{
-                      opacity: 0,
-                      y: 35,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    transition={{
-                      delay: 0.5,
-                      duration: 0.72,
-                      ease: easeOut,
-                    }}
-                    className="max-w-xl text-sm leading-7 text-white/70 sm:text-base lg:justify-self-end"
-                  >
-                    {content.hero.description}
-                  </motion.p>
-                </div>
-
-                <motion.div
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{
-                    delay: 0.62,
-                    duration: 0.8,
-                    ease: easeOut,
-                  }}
-                  className="mt-9 h-px w-full origin-left bg-white/25"
-                />
-
-                <motion.div
-                  initial={{
-                    opacity: 0,
-                    y: 24,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  transition={{
-                    delay: 0.72,
-                    duration: 0.68,
-                    ease: easeOut,
-                  }}
-                  className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <p className="max-w-lg text-xs leading-6 text-white/55 sm:text-sm">
-                    {content.hero.audienceDescription}
-                  </p>
-
-                  <motion.div whileHover={{ x: 4 }}>
-                    <Link href={content.hero.linkHref}
-                      className="group inline-flex w-fit items-center gap-3 border-b border-white/45 pb-2 text-sm font-medium text-white transition hover:border-white"
-                    >
-                      <span>{content.hero.linkLabel}</span>
-
-                      <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                    </Link>
-                  </motion.div>
-                </motion.div>
-              </motion.div>
-            </div>
-          </BackgroundVideo>
-        </section>
-
-        {/* =========================================================
-            COMPANY STORY
-        ========================================================== */}
-        <section className="relative overflow-hidden bg-[#f7f6f4]">
-          <motion.div
-            aria-hidden="true"
-            animate={{
-              x: [0, 10, 0],
-              y: [0, -8, 0],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="pointer-events-none absolute left-0 top-0 h-72 w-72 opacity-40"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(104,23,97,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(104,23,97,0.08) 1px, transparent 1px)",
-              backgroundSize: "18px 18px",
-              WebkitMaskImage:
-                "linear-gradient(to right, black, rgba(0,0,0,0.3), transparent)",
-              maskImage:
-                "linear-gradient(to right, black, rgba(0,0,0,0.3), transparent)",
-            }}
-          />
-
-          <div className="relative mx-auto grid max-w-[1440px] gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-20 lg:px-12 lg:py-28 xl:px-16">
-            <motion.div
-              variants={fadeLeft}
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-            >
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
-                {content.story.eyebrow}
-              </p>
-
-              <h2 className="mt-4 max-w-xl text-[clamp(2rem,4vw,4.15rem)] font-normal leading-[1.04] tracking-[-0.045em]">
-                {content.story.title}
-              </h2>
-
-              <motion.div
-                variants={staggerContainer}
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewport}
-                className="mt-8 max-w-xl space-y-5 text-sm leading-7 text-black/60 sm:text-[15px]"
-              >
-                <motion.p variants={staggerItem}>
-  {content.story.paragraphOne}
-</motion.p>
-
-<motion.p variants={staggerItem}>
-  {content.story.paragraphTwo}
-</motion.p>
-
-<motion.p variants={staggerItem}>
-  {content.story.paragraphThree}
-</motion.p>
-              </motion.div>
-
-              <motion.div whileHover={{ x: 5 }} className="w-fit">
-                <Link href={content.story.linkHref}
-                  className="group mt-8 inline-flex items-center gap-3 border-b border-[#681761]/40 pb-2 text-sm font-medium text-[#681761] transition hover:border-[#681761]"
-                >
-                  <span>{content.story.linkLabel}</span>
-
-                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </Link>
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              variants={revealFromRight}
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              className="relative"
-            >
-              <motion.div
-                whileHover={{ scale: 1.012 }}
-                transition={{ duration: 0.45 }}
-                className="relative aspect-[4/4.5] min-h-[500px] overflow-hidden bg-[#ddd6de]"
-              >
-                <Image
-                  src={aboutStoryImage}
-                  alt="Anors.Z water station and company operations"
-                  fill
-                  className="object-cover transition duration-700 hover:scale-[1.025]"
-                  sizes="(max-width: 1024px) 100vw, 53vw"
-                />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-[#160b19]/65 via-transparent to-transparent" />
-
-                <motion.div
-                  initial={{
-                    opacity: 0,
-                    y: 25,
-                  }}
-                  whileInView={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  transition={{
-                    delay: 0.4,
-                    duration: 0.65,
-                    ease: easeOut,
-                  }}
-                  viewport={viewport}
-                  className="absolute bottom-6 left-6 right-6 border-t border-white/35 pt-5 text-white sm:bottom-8 sm:left-8 sm:right-8"
-                >
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/65">
-                   {content.story.beliefEyebrow}
-                  </p>
-
-                  <p className="mt-2 max-w-md text-xl leading-tight sm:text-2xl">
-                    {content.story.beliefText}
-                  </p>
-                </motion.div>
-              </motion.div>
-
+            <div className="relative z-10 mx-auto w-full max-w-360 px-5 pb-10 pt-32 sm:px-8 sm:pb-14 lg:px-12 lg:pb-16 xl:px-16">
               <motion.div
                 initial={{
                   opacity: 0,
-                  scale: 0.7,
+                  y: 20,
                 }}
-                whileInView={{
+                animate={{
                   opacity: 1,
-                  scale: 1,
+                  y: 0,
                 }}
                 transition={{
-                  delay: 0.55,
-                  duration: 0.55,
-                  ease: easeOut,
+                  duration: 0.6,
                 }}
-                viewport={viewport}
-                className="absolute -bottom-5 -right-5 hidden h-28 w-28 border-b border-r border-[#681761]/40 lg:block"
-              />
-            </motion.div>
-          </div>
-        </section>
-
-        {/* =========================================================
-            MISSION AND VISION
-        ========================================================== */}
-        <section className="bg-white">
-          <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
-            <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-              <motion.div
-                variants={fadeLeft}
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewport}
+                className="flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.2em] text-white/65 sm:text-xs"
               >
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
-                  {content.purpose.eyebrow}
-                </p>
+                <Link href="/" className="transition hover:text-white">
+                  Home
+                </Link>
 
-                <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
-                  {content.purpose.title}
-                </h2>
+                <span className="h-px w-5 bg-white/40" />
+
+                <span>About Us</span>
               </motion.div>
 
-              <motion.p
-                variants={fadeRight}
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewport}
-                className="max-w-xl text-sm leading-7 text-black/60 lg:justify-self-end"
-              >
-                {content.purpose.description}
-              </motion.p>
-            </div>
+              <div className="mt-6 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+                <motion.h1
+                  id="about-page-heading"
+                  initial={{
+                    opacity: 0,
+                    y: 35,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  transition={{
+                    delay: 0.1,
+                    duration: 0.7,
+                  }}
+                  className="max-w-4xl text-[clamp(2.5rem,5.7vw,5.6rem)] font-normal leading-[0.99] tracking-tighter"
+                >
+                  Pure Water.
+                  <span className="block">Positive Impact.</span>
+                </motion.h1>
 
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              className="mt-12 grid gap-5 lg:mt-16 lg:grid-cols-2"
-            >
-              <motion.article
-                variants={staggerItem}
-                whileHover={{ y: -8 }}
-                className="group relative min-h-[540px] overflow-hidden bg-[#241026] text-white"
-              >
-                <Image
-                  src={aboutMissionImage}
-                  alt="People accessing safe drinking water"
-                  fill
-                  className="object-cover opacity-60 transition duration-700 group-hover:scale-[1.04]"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-[#180719] via-[#241026]/65 to-[#241026]/20" />
-
-                <div className="relative flex min-h-[540px] flex-col p-7 sm:p-10 lg:p-12">
-                  <div className="flex items-start justify-between">
-                    <motion.span
-                      whileHover={{
-                        scale: 1.12,
-                        rotate: -8,
-                      }}
-                      className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/15 backdrop-blur-md"
-                    >
-                      <Target className="h-5 w-5" />
-                    </motion.span>
-
-                    <span className="text-5xl font-light text-white/30">
-                      01
-                    </span>
-                  </div>
-
-                  <div className="mt-auto pt-24">
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/55">
-                      {content.purpose.missionEyebrow}
-                    </p>
-
-                    <h3 className="mt-4 max-w-xl text-2xl font-normal leading-tight sm:text-3xl">
-                      {content.purpose.missionTitle}
-                    </h3>
-
-                    <p className="mt-5 max-w-xl text-sm leading-7 text-white/70">
-                      {content.purpose.missionDescription}
-                    </p>
-                  </div>
-                </div>
-              </motion.article>
-
-              <motion.article
-                variants={staggerItem}
-                whileHover={{ y: -8 }}
-                className="group relative min-h-[540px] overflow-hidden bg-[#681761] text-white"
-              >
-                <Image
-                  src={aboutVisionImage}
-                  alt="A healthier and more sustainable community"
-                  fill
-                  className="object-cover opacity-55 transition duration-700 group-hover:scale-[1.04]"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-[#4b1048] via-[#681761]/65 to-[#681761]/20" />
-
-                <div className="relative flex min-h-[540px] flex-col p-7 sm:p-10 lg:p-12">
-                  <div className="flex items-start justify-between">
-                    <motion.span
-                      whileHover={{
-                        scale: 1.12,
-                        rotate: 8,
-                      }}
-                      className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/15 backdrop-blur-md"
-                    >
-                      <Eye className="h-5 w-5" />
-                    </motion.span>
-
-                    <span className="text-5xl font-light text-white/30">
-                      02
-                    </span>
-                  </div>
-
-                  <div className="mt-auto pt-24">
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/55">
-                      {content.purpose.visionEyebrow}
-                    </p>
-
-                    <h3 className="mt-4 max-w-xl text-2xl font-normal leading-tight sm:text-3xl">
-                      {content.purpose.visionTitle}
-                    </h3>
-
-                    <p className="mt-5 max-w-xl text-sm leading-7 text-white/75">
-                     {content.purpose.visionDescription}
-                    </p>
-                  </div>
-                </div>
-              </motion.article>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* =========================================================
-            COMPANY VALUES
-        ========================================================== */}
-        <section className="relative overflow-hidden bg-[#f7f6f4]">
-          <motion.div
-            aria-hidden="true"
-            animate={{
-              opacity: [0.25, 0.48, 0.25],
-              scale: [1, 1.06, 1],
-            }}
-            transition={{
-              duration: 7,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="pointer-events-none absolute right-0 top-0 h-80 w-80"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle, rgba(104,23,97,0.16) 1px, transparent 1.5px)",
-              backgroundSize: "18px 18px",
-              WebkitMaskImage:
-                "linear-gradient(to left, black, rgba(0,0,0,0.35), transparent)",
-              maskImage:
-                "linear-gradient(to left, black, rgba(0,0,0,0.35), transparent)",
-            }}
-          />
-
-          <div className="relative mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              className="mx-auto max-w-4xl text-center"
-            >
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
-                {content.values.eyebrow}
-              </p>
-
-              <h2 className="mt-5 text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.06] tracking-[-0.04em]">
-                {content.values.title}
-              </h2>
-            </motion.div>
-
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              className="mt-12 grid border-l border-t border-black/10 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4"
-            >
-              {content.values.items.map((value, index) => {
-  const Icon = valueIcons[value.key];
-
-                return (
-                  <motion.article
-                    key={value.key}
-                    variants={staggerItem}
-                    whileHover={{ y: -9 }}
-                    className="group min-h-[310px] border-b border-r border-black/10 bg-white p-7 transition duration-300 hover:z-10 hover:border-[#681761]/30 hover:shadow-[0_24px_60px_rgba(50,14,49,0.10)]"
-                  >
-                    <div className="flex items-start justify-between">
-                      <motion.span
-                        whileHover={{
-                          scale: 1.12,
-                          rotate: 8,
-                        }}
-                        className="flex h-12 w-12 items-center justify-center rounded-full bg-[#681761]/10 text-[#681761] transition duration-300 group-hover:bg-[#681761] group-hover:text-white"
-                      >
-                        <Icon className="h-5 w-5" />
-                      </motion.span>
-
-                      <span className="text-sm text-black/25">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                    </div>
-
-                    <h3 className="mt-16 text-xl font-medium">
-                      {value.title}
-                    </h3>
-
-                    <p className="mt-4 text-sm leading-7 text-black/55">
-                      {value.description}
-                    </p>
-                  </motion.article>
-                );
-              })}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* =========================================================
-            TECHNOLOGY VIDEO
-        ========================================================== */}
-        <section className="relative overflow-hidden bg-[#1e0c21] text-white">
-          <motion.div
-            aria-hidden="true"
-            animate={{
-              backgroundPosition: ["0px 0px", "24px 24px"],
-            }}
-            transition={{
-              duration: 7,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="pointer-events-none absolute inset-0 opacity-[0.07]"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-              backgroundSize: "24px 24px",
-            }}
-          />
-
-          <div className="relative mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
-            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
-              <motion.div
-                variants={fadeLeft}
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewport}
-              >
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#d89ad0] sm:text-xs">
-                  {content.technology.eyebrow}
-                </p>
-
-                <h2 className="mt-4 max-w-2xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
-                  {content.technology.title}
-                </h2>
-              </motion.div>
-
-              <motion.p
-                variants={fadeRight}
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewport}
-                className="max-w-xl text-sm leading-7 text-white/60 lg:justify-self-end"
-              >
-                {content.technology.description}
-              </motion.p>
-            </div>
-
-            <motion.div
-              variants={revealFromLeft}
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              className="relative mt-12 overflow-hidden border border-white/15 bg-black lg:mt-16"
-            >
-              <div className="aspect-video">
-                <Video
-                  src={aboutTechnologyVideo}
-                  controls
-                  playsInline
-                  preload="metadata"
-                  className="h-full w-full object-cover"
-                />
+                <motion.p
+                  initial={{
+                    opacity: 0,
+                    y: 35,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  transition={{
+                    delay: 0.2,
+                    duration: 0.7,
+                  }}
+                  className="max-w-xl text-sm leading-7 text-white/70 sm:text-base lg:justify-self-end"
+                >
+                  We combine modern purification technology, intelligent
+                  dispensing and environmental responsibility to help people
+                  access cleaner and safer drinking water.
+                </motion.p>
               </div>
 
               <motion.div
                 initial={{
-                  opacity: 0,
-                  x: -20,
+                  scaleX: 0,
                 }}
-                whileInView={{
-                  opacity: 1,
-                  x: 0,
+                animate={{
+                  scaleX: 1,
                 }}
                 transition={{
-                  delay: 0.5,
-                  duration: 0.6,
-                  ease: easeOut,
+                  delay: 0.3,
+                  duration: 0.7,
                 }}
-                viewport={viewport}
-                className="pointer-events-none absolute left-5 top-5 z-10 hidden items-center gap-3 rounded-full border border-white/20 bg-black/25 px-4 py-2 text-xs text-white backdrop-blur-md sm:flex"
-              >
-                <motion.span
-                  animate={{
-                    scale: [1, 1.15, 1],
-                  }}
-                  transition={{
-                    duration: 2.2,
-                    repeat: Infinity,
-                  }}
-                >
-                  <Play className="h-3.5 w-3.5" />
-                </motion.span>
-
-                <span>{content.technology.videoLabel}</span>
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              className="mt-8 grid gap-px border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3"
-            >
-              {content.technology.items.map((item) => {
-  const Icon = technologyIcons[item.key];
-
-                return (
-                  <motion.article
-                    key={item.key}
-                    variants={staggerItem}
-                    whileHover={{ y: -7 }}
-                    className="group min-h-[310px] bg-[#1e0c21] p-7 transition duration-300 hover:bg-[#681761] sm:p-8"
-                  >
-                    <div className="flex items-start justify-between">
-                      <motion.span
-                        whileHover={{
-                          scale: 1.12,
-                          rotate: -8,
-                        }}
-                        className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5"
-                      >
-                        <Icon className="h-5 w-5" />
-                      </motion.span>
-
-                      <span className="text-3xl font-light text-white/20">
-                        {item.number}
-                      </span>
-                    </div>
-
-                    <h3 className="mt-14 text-xl font-medium">{item.title}</h3>
-
-                    <p className="mt-4 text-sm leading-7 text-white/60 transition group-hover:text-white/75">
-                      {item.description}
-                    </p>
-                  </motion.article>
-                );
-              })}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* =========================================================
-            COMMUNITY IMPACT GALLERY
-        ========================================================== */}
-        <section className="bg-white">
-          <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
-            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
-              <motion.div
-                variants={fadeLeft}
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewport}
-              >
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
-                  {content.impact.eyebrow}
-                </p>
-
-                <h2 className="mt-4 max-w-2xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
-                  {content.impact.title}
-                </h2>
-              </motion.div>
-
-              <motion.p
-                variants={fadeRight}
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewport}
-                className="max-w-xl text-sm leading-7 text-black/60 lg:justify-self-end"
-              >
-                {content.impact.description}
-              </motion.p>
-            </div>
-
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              className="mt-12 grid gap-5 lg:mt-16 lg:grid-cols-3"
-            >
-              {content.impact.items.map((item, index) => {
-  const image = impactImages[item.key];
-
-  return (
-    <motion.article
-      key={item.key}
-      variants={staggerItem}
-      whileHover={{
-        y: index === 1 ? 30 : -10,
-      }}
-      className={`group relative overflow-hidden ${
-        index === 1
-          ? "lg:translate-y-10"
-          : ""
-      }`}
-    >
-      <div className="relative aspect-[4/5] min-h-[440px] overflow-hidden bg-[#ded8df]">
-        <Image
-          src={image}
-          alt={item.title}
-          fill
-          className="object-cover transition duration-700 group-hover:scale-[1.06]"
-          sizes="(max-width: 1024px) 100vw, 34vw"
-        />
-
-        <div className="absolute inset-0 bg-gradient-to-t from-[#170719]/90 via-[#170719]/15 to-transparent" />
-
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: 25,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            delay: 0.25 + index * 0.1,
-            duration: 0.62,
-          }}
-          viewport={viewport}
-          className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-7"
-        >
-          <span className="text-xs text-white/50">
-            {String(index + 1).padStart(
-              2,
-              "0",
-            )}
-          </span>
-
-          <h3 className="mt-3 text-2xl font-normal">
-            {item.title}
-          </h3>
-
-          <p className="mt-3 max-w-sm text-sm leading-6 text-white/65">
-            {item.description}
-          </p>
-        </motion.div>
-      </div>
-    </motion.article>
-  );
-})}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* =========================================================
-            SUSTAINABILITY
-        ========================================================== */}
-        <section className="relative overflow-hidden bg-[#f7f6f4]">
-          <motion.div
-            aria-hidden="true"
-            animate={{
-              y: [0, -12, 0],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: 6.5,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="pointer-events-none absolute right-0 top-0 h-72 w-72"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle, rgba(21,148,71,0.18) 1px, transparent 1.5px)",
-              backgroundSize: "18px 18px",
-              WebkitMaskImage:
-                "linear-gradient(to left, black, rgba(0,0,0,0.3), transparent)",
-              maskImage:
-                "linear-gradient(to left, black, rgba(0,0,0,0.3), transparent)",
-            }}
-          />
-
-          <div className="relative mx-auto grid max-w-[1440px] gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-20 lg:px-12 lg:py-28 xl:px-16">
-            <motion.div
-              variants={revealFromLeft}
-              initial="hidden"
-              whileInView="visible"
-              viewport={viewport}
-              className="relative aspect-[16/11] min-h-[440px] overflow-hidden bg-[#d9d2db]"
-            >
-              <Image
-                src={aboutSustainabilityImage}
-                alt="Reusable bottles and sustainable drinking-water access"
-                fill
-                className="object-cover transition duration-700 hover:scale-[1.035]"
-                sizes="(max-width: 1024px) 100vw, 56vw"
+                className="mt-9 h-px w-full origin-left bg-white/25"
               />
-
-              <div className="absolute inset-0 bg-gradient-to-t from-[#180719]/70 via-transparent to-transparent" />
 
               <motion.div
                 initial={{
                   opacity: 0,
                   y: 25,
                 }}
-                whileInView={{
+                animate={{
                   opacity: 1,
                   y: 0,
                 }}
                 transition={{
                   delay: 0.4,
-                  duration: 0.65,
-                  ease: easeOut,
+                  duration: 0.7,
                 }}
-                viewport={viewport}
-                className="absolute bottom-6 left-6 right-6 text-white sm:bottom-8 sm:left-8 sm:right-8"
+                className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"
               >
-                <div className="flex items-center gap-3">
-                  <motion.span
-                    animate={{
-                      rotate: [0, 8, -8, 0],
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                    }}
-                  >
-                    <Recycle className="h-5 w-5" />
-                  </motion.span>
-
-                  <span className="text-xs uppercase tracking-[0.2em] text-white/70">
-                    {content.sustainability.imageEyebrow}
-                  </span>
-                </div>
-
-                <p className="mt-3 max-w-lg text-xl leading-tight sm:text-2xl">
-                  {content.sustainability.imageText}
+                <p className="max-w-lg text-xs leading-6 text-white/55 sm:text-sm">
+                  Serving schools, businesses, healthcare facilities,
+                  hospitality organisations, homes and communities.
                 </p>
-              </motion.div>
-            </motion.div>
 
+                <Link
+                  href="/contact"
+                  className="group inline-flex w-fit items-center gap-3 border-b border-white/45 pb-2 text-sm font-medium text-white transition hover:border-white"
+                >
+                  <span>Speak with our team</span>
+
+                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </Link>
+              </motion.div>
+            </div>
+          </div>
+        </BackgroundVideo>
+      </section>
+
+      {/* =========================================================
+          COMPANY STORY
+      ========================================================== */}
+      <section className="relative overflow-hidden bg-[#f7f6f4]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 top-0 h-72 w-72 opacity-40"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(104,23,97,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(104,23,97,0.08) 1px, transparent 1px)",
+            backgroundSize: "18px 18px",
+            WebkitMaskImage:
+              "linear-gradient(to right, black, rgba(0,0,0,0.3), transparent)",
+            maskImage:
+              "linear-gradient(to right, black, rgba(0,0,0,0.3), transparent)",
+          }}
+        />
+
+        <div className="relative mx-auto grid max-w-360 gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-20 lg:px-12 lg:py-28 xl:px-16">
+          <motion.div
+            variants={slideFromLeft}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
+              Our Story
+            </p>
+
+            <h2 className="mt-4 max-w-xl text-[clamp(2rem,4vw,4.15rem)] font-normal leading-[1.04] tracking-[-0.045em]">
+              Rethinking How People Access Safe Drinking Water
+            </h2>
+
+            <div className="mt-8 max-w-xl space-y-5 text-sm leading-7 text-black/60 sm:text-[15px]">
+              <p>
+                Anors.Z Global Water Station is a water-refilling company
+                focused on making pure, safe, reliable and affordable drinking
+                water available for everyday consumption.
+              </p>
+
+              <p>
+                Our solutions are designed for schools, companies, hospitals,
+                restaurants, hotels, homes, government institutions and
+                communities that require dependable water access.
+              </p>
+
+              <p>
+                Through advanced purification and smart dispensing
+                technologies, we seek to improve public health while reducing
+                environmental waste from disposable bottles and sachet water.
+              </p>
+            </div>
+
+            <Link
+              href="/solutions"
+              className="group mt-8 inline-flex items-center gap-3 border-b border-[#681761]/40 pb-2 text-sm font-medium text-[#681761] transition hover:border-[#681761]"
+            >
+              <span>Explore our water solutions</span>
+
+              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+          </motion.div>
+
+          <motion.div
+            variants={slideFromRight}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="relative"
+          >
+            <div className="relative aspect-[4/4.5] min-h-[500px] overflow-hidden bg-[#ddd6de]">
+              <Image
+                src={aboutStoryImage}
+                alt="Anors.Z water station and company operations"
+                fill
+                className="object-cover transition duration-700 hover:scale-[1.025]"
+                sizes="(max-width: 1024px) 100vw, 53vw"
+              />
+
+              <div className="absolute inset-0 bg-gradient-to-t from-[#160b19]/65 via-transparent to-transparent" />
+
+              <div className="absolute bottom-6 left-6 right-6 border-t border-white/35 pt-5 text-white sm:bottom-8 sm:left-8 sm:right-8">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-white/65">
+                  Our Belief
+                </p>
+
+                <p className="mt-2 max-w-md text-xl leading-tight sm:text-2xl">
+                  Water is life. Pure water makes healthier living possible.
+                </p>
+              </div>
+            </div>
+
+            <div className="absolute -bottom-5 -right-5 hidden h-28 w-28 border-b border-r border-[#681761]/40 lg:block" />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          MISSION AND VISION
+      ========================================================== */}
+      <section className="bg-white">
+        <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <motion.div
-              variants={fadeRight}
+              variants={slideFromLeft}
               initial="hidden"
               whileInView="visible"
               viewport={viewport}
             >
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#159447] sm:text-xs">
-                {content.sustainability.eyebrow}
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
+                Why We Exist
               </p>
 
               <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
-                {content.sustainability.title}.
+                Guided by Purpose and Long-Term Impact
+              </h2>
+            </motion.div>
+
+            <motion.p
+              variants={slideFromRight}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="max-w-xl text-sm leading-7 text-black/60 lg:justify-self-end"
+            >
+              Our mission and vision guide how we design water systems, work
+              with institutions and measure our impact on people and the
+              environment.
+            </motion.p>
+          </div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mt-12 grid gap-5 lg:mt-16 lg:grid-cols-2"
+          >
+            <motion.article
+              variants={staggerItem}
+              whileHover={{ y: -8 }}
+              className="group relative min-h-[540px] overflow-hidden bg-[#241026] text-white"
+            >
+              <Image
+                src={aboutMissionImage}
+                alt="People accessing safe drinking water"
+                fill
+                className="object-cover opacity-60 transition duration-700 group-hover:scale-[1.025]"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+
+              <div className="absolute inset-0 bg-gradient-to-t from-[#180719] via-[#241026]/65 to-[#241026]/20" />
+
+              <div className="relative flex min-h-[540px] flex-col p-7 sm:p-10 lg:p-12">
+                <div className="flex items-start justify-between">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/15 backdrop-blur-md">
+                    <Target className="h-5 w-5" />
+                  </span>
+
+                  <span className="text-5xl font-light text-white/30">01</span>
+                </div>
+
+                <div className="mt-auto pt-24">
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/55">
+                    Our Mission
+                  </p>
+
+                  <h3 className="mt-4 max-w-xl text-2xl font-normal leading-tight sm:text-3xl">
+                    Make clean and safe drinking water accessible and
+                    affordable.
+                  </h3>
+
+                  <p className="mt-5 max-w-xl text-sm leading-7 text-white/70">
+                    We provide dependable water stations that combine modern
+                    purification, convenient smart-card access and reusable
+                    bottles to protect health and reduce waste.
+                  </p>
+                </div>
+              </div>
+            </motion.article>
+
+            <motion.article
+              variants={staggerItem}
+              whileHover={{ y: -8 }}
+              className="group relative min-h-[540px] overflow-hidden bg-[#681761] text-white"
+            >
+              <Image
+                src={aboutVisionImage}
+                alt="A healthier and more sustainable community"
+                fill
+                className="object-cover opacity-55 transition duration-700 group-hover:scale-[1.025]"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+
+              <div className="absolute inset-0 bg-gradient-to-t from-[#4b1048] via-[#681761]/65 to-[#681761]/20" />
+
+              <div className="relative flex min-h-[540px] flex-col p-7 sm:p-10 lg:p-12">
+                <div className="flex items-start justify-between">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/15 backdrop-blur-md">
+                    <Eye className="h-5 w-5" />
+                  </span>
+
+                  <span className="text-5xl font-light text-white/30">02</span>
+                </div>
+
+                <div className="mt-auto pt-24">
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/55">
+                    Our Vision
+                  </p>
+
+                  <h3 className="mt-4 max-w-xl text-2xl font-normal leading-tight sm:text-3xl">
+                    Build healthier communities and a more sustainable future.
+                  </h3>
+
+                  <p className="mt-5 max-w-xl text-sm leading-7 text-white/75">
+                    We aim to create positive global impact by improving access
+                    to safe water, protecting the environment and supporting
+                    future generations.
+                  </p>
+                </div>
+              </div>
+            </motion.article>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          COMPANY VALUES
+      ========================================================== */}
+      <section className="relative overflow-hidden bg-[#f7f6f4]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-0 h-80 w-80 opacity-40"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, rgba(104,23,97,0.16) 1px, transparent 1.5px)",
+            backgroundSize: "18px 18px",
+            WebkitMaskImage:
+              "linear-gradient(to left, black, rgba(0,0,0,0.35), transparent)",
+            maskImage:
+              "linear-gradient(to left, black, rgba(0,0,0,0.35), transparent)",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mx-auto max-w-4xl text-center"
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
+              What Guides Us
+            </p>
+
+            <h2 className="mt-5 text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.06] tracking-[-0.04em]">
+              Values That Shape Every Solution We Deliver
+            </h2>
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mt-12 grid border-l border-t border-black/10 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4"
+          >
+            {companyValues.map((value, index) => {
+              const Icon = value.icon;
+
+              return (
+                <motion.article
+                  key={value.title}
+                  variants={staggerItem}
+                  whileHover={{ y: -7 }}
+                  className="group min-h-[310px] border-b border-r border-black/10 bg-white p-7 transition duration-300 hover:z-10 hover:border-[#681761]/30 hover:shadow-[0_24px_60px_rgba(50,14,49,0.10)]"
+                >
+                  <div className="flex items-start justify-between">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#681761]/10 text-[#681761] transition duration-300 group-hover:bg-[#681761] group-hover:text-white">
+                      <Icon className="h-5 w-5" />
+                    </span>
+
+                    <span className="text-sm text-black/25">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-16 text-xl font-medium">{value.title}</h3>
+
+                  <p className="mt-4 text-sm leading-7 text-black/55">
+                    {value.description}
+                  </p>
+                </motion.article>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          TECHNOLOGY VIDEO
+      ========================================================== */}
+      <section className="relative overflow-hidden bg-[#1e0c21] text-white">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+            <motion.div
+              variants={slideFromLeft}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#d89ad0] sm:text-xs">
+                Our Technology
+              </p>
+
+              <h2 className="mt-4 max-w-2xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
+                Intelligent Systems Behind Every Drop
+              </h2>
+            </motion.div>
+
+            <motion.p
+              variants={slideFromRight}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="max-w-xl text-sm leading-7 text-white/60 lg:justify-self-end"
+            >
+              Our water stations combine filtration, sterilisation, smart-card
+              access, real-time information and modern dispensing technology in
+              one integrated solution.
+            </motion.p>
+          </div>
+
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="relative mt-12 overflow-hidden border border-white/15 bg-black lg:mt-16"
+          >
+            <div className="aspect-video">
+              <Video
+                src={aboutTechnologyVideo}
+                controls
+                playsInline
+                preload="metadata"
+                className="h-full w-full object-cover"
+              />
+            </div>
+
+            <div className="pointer-events-none absolute left-5 top-5 z-10 hidden items-center gap-3 rounded-full border border-white/20 bg-black/25 px-4 py-2 text-xs text-white backdrop-blur-md sm:flex">
+              <Play className="h-3.5 w-3.5" />
+              <span>Technology demonstration</span>
+            </div>
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mt-8 grid gap-px border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {technologyItems.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <motion.article
+                  key={item.number}
+                  variants={staggerItem}
+                  whileHover={{ y: -7 }}
+                  className="group min-h-[310px] bg-[#1e0c21] p-7 transition duration-300 hover:bg-[#681761] sm:p-8"
+                >
+                  <div className="flex items-start justify-between">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5">
+                      <Icon className="h-5 w-5" />
+                    </span>
+
+                    <span className="text-3xl font-light text-white/20">
+                      {item.number}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-14 text-xl font-medium">{item.title}</h3>
+
+                  <p className="mt-4 text-sm leading-7 text-white/60 transition group-hover:text-white/75">
+                    {item.description}
+                  </p>
+                </motion.article>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          COMMUNITY IMPACT GALLERY
+      ========================================================== */}
+      <section className="bg-white">
+        <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+            <motion.div
+              variants={slideFromLeft}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
+                Where We Make an Impact
+              </p>
+
+              <h2 className="mt-4 max-w-2xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
+                Water Solutions Designed for Different Environments
+              </h2>
+            </motion.div>
+
+            <motion.p
+              variants={slideFromRight}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="max-w-xl text-sm leading-7 text-black/60 lg:justify-self-end"
+            >
+              Station size, faucet configuration, temperature options and
+              purification capacity can be selected according to the
+              environment and expected number of users.
+            </motion.p>
+          </div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="mt-12 grid gap-5 lg:mt-16 lg:grid-cols-3"
+          >
+            {impactItems.map((item, index) => (
+              <motion.article
+                key={item.title}
+                variants={staggerItem}
+                whileHover={{ y: -8 }}
+                className={`group relative overflow-hidden ${
+                  index === 1 ? "lg:translate-y-10" : ""
+                }`}
+              >
+                <div className="relative aspect-[4/5] min-h-[440px] overflow-hidden bg-[#ded8df]">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-cover transition duration-700 group-hover:scale-[1.04]"
+                    sizes="(max-width: 1024px) 100vw, 34vw"
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#170719]/90 via-[#170719]/15 to-transparent" />
+
+                  <div className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-7">
+                    <span className="text-xs text-white/50">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+
+                    <h3 className="mt-3 text-2xl font-normal">{item.title}</h3>
+
+                    <p className="mt-3 max-w-sm text-sm leading-6 text-white/65">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              </motion.article>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          SUSTAINABILITY
+      ========================================================== */}
+      <section className="relative overflow-hidden bg-[#f7f6f4]">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-0 top-0 h-72 w-72 opacity-40"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, rgba(21,148,71,0.18) 1px, transparent 1.5px)",
+            backgroundSize: "18px 18px",
+            WebkitMaskImage:
+              "linear-gradient(to left, black, rgba(0,0,0,0.3), transparent)",
+            maskImage:
+              "linear-gradient(to left, black, rgba(0,0,0,0.3), transparent)",
+          }}
+        />
+
+        <div className="relative mx-auto grid max-w-[1440px] gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-20 lg:px-12 lg:py-28 xl:px-16">
+          <motion.div
+            variants={slideFromLeft}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+            className="relative aspect-[16/11] min-h-[440px] overflow-hidden bg-[#d9d2db]"
+          >
+            <Image
+              src={aboutSustainabilityImage}
+              alt="Reusable bottles and sustainable drinking-water access"
+              fill
+              className="object-cover transition duration-700 hover:scale-[1.025]"
+              sizes="(max-width: 1024px) 100vw, 56vw"
+            />
+
+            <div className="absolute inset-0 bg-gradient-to-t from-[#180719]/70 via-transparent to-transparent" />
+
+            <div className="absolute bottom-6 left-6 right-6 text-white sm:bottom-8 sm:left-8 sm:right-8">
+              <div className="flex items-center gap-3">
+                <Recycle className="h-5 w-5" />
+
+                <span className="text-xs uppercase tracking-[0.2em] text-white/70">
+                  Environmental Responsibility
+                </span>
+              </div>
+
+              <p className="mt-3 max-w-lg text-xl leading-tight sm:text-2xl">
+                Cleaner water access with less dependence on disposable
+                packaging.
+              </p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            variants={slideFromRight}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#159447] sm:text-xs">
+              Sustainability
+            </p>
+
+            <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
+              Better for People. More Responsible for the Environment.
+            </h2>
+
+            <p className="mt-6 max-w-xl text-sm leading-7 text-black/60">
+              Our refill model encourages customers to carry reusable bottles
+              instead of depending exclusively on disposable bottled and
+              sachet water. It connects access to safe water with practical
+              action against plastic pollution.
+            </p>
+
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="mt-8 space-y-4"
+            >
+              {sustainabilityPoints.map((point) => (
+                <motion.div
+                  key={point}
+                  variants={staggerItem}
+                  className="flex items-start gap-4 border-b border-black/10 pb-4"
+                >
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#159447]/10 text-[#159447]">
+                    <Check className="h-3.5 w-3.5" />
+                  </span>
+
+                  <p className="text-sm leading-6 text-black/65">{point}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          INSTALLATION AND SUPPORT VIDEO
+      ========================================================== */}
+      <section className="bg-white">
+        <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+          <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-20">
+            <motion.div
+              variants={slideFromLeft}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
+                Installation and Support
+              </p>
+
+              <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
+                Support That Continues Beyond Installation
               </h2>
 
               <p className="mt-6 max-w-xl text-sm leading-7 text-black/60">
-                {content.sustainability.description}
+                We work with each client to understand their environment,
+                expected number of users, water requirements and preferred
+                station configuration.
               </p>
 
               <motion.div
@@ -1179,298 +1024,218 @@ export default function AboutPageClient({
                 initial="hidden"
                 whileInView="visible"
                 viewport={viewport}
-                className="mt-8 space-y-4"
+                className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2"
               >
-                {content.sustainability.points.map((point) => (
+                {[
+                  {
+                    title: "Site Assessment",
+                    description:
+                      "Understanding the location, water source and expected usage.",
+                    icon: Eye,
+                  },
+                  {
+                    title: "System Selection",
+                    description:
+                      "Choosing the suitable station size and purification capacity.",
+                    icon: Gauge,
+                  },
+                  {
+                    title: "Installation",
+                    description:
+                      "Professional setup, testing and commissioning of the station.",
+                    icon: Wrench,
+                  },
+                  {
+                    title: "Training and Support",
+                    description:
+                      "User guidance and continued technical assistance.",
+                    icon: Handshake,
+                  },
+                ].map(({ title, description, icon: Icon }) => (
                   <motion.div
-                    key={point}
+                    key={title}
                     variants={staggerItem}
-                    whileHover={{ x: 6 }}
-                    className="flex items-start gap-4 border-b border-black/10 pb-4"
+                    whileHover={{ y: -6 }}
+                    className="border border-black/10 bg-[#f7f6f4] p-5 transition duration-300 hover:border-[#681761]/25 hover:shadow-[0_16px_40px_rgba(48,13,45,0.08)]"
                   >
-                    <motion.span
-                      whileHover={{ scale: 1.15 }}
-                      className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#159447]/10 text-[#159447]"
-                    >
-                      <Check className="h-3.5 w-3.5" />
-                    </motion.span>
+                    <Icon className="h-5 w-5 text-[#681761]" />
 
-                    <p className="text-sm leading-6 text-black/65">{point}</p>
+                    <h3 className="mt-5 text-base font-medium">{title}</h3>
+
+                    <p className="mt-2 text-sm leading-6 text-black/55">
+                      {description}
+                    </p>
                   </motion.div>
                 ))}
               </motion.div>
             </motion.div>
-          </div>
-        </section>
 
-        {/* =========================================================
-            INSTALLATION AND SUPPORT VIDEO
-        ========================================================== */}
-        <section className="bg-white">
-          <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
-            <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-20">
-              <motion.div
-                variants={fadeLeft}
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewport}
-              >
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
-                  {content.support.eyebrow}
-                </p>
-
-                <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
-                  {content.support.title}
-                </h2>
-
-                <p className="mt-6 max-w-xl text-sm leading-7 text-black/60">
-                  {content.support.description}
-                </p>
-
-                <motion.div
-                  variants={staggerContainer}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={viewport}
-                  className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2"
-                >
-                  {content.support.items.map((item) => {
-  const Icon = supportIcons[item.key];
-
-  return (
-    <motion.div
-      key={item.key}
-      variants={staggerItem}
-      whileHover={{ y: -6 }}
-      className="group border border-black/10 bg-[#f7f6f4] p-5 transition duration-300 hover:border-[#681761]/25 hover:shadow-[0_16px_40px_rgba(48,13,45,0.08)]"
-    >
-      <motion.div
-        whileHover={{
-          scale: 1.1,
-          rotate: 7,
-        }}
-      >
-        <Icon className="h-5 w-5 text-[#681761]" />
-      </motion.div>
-
-      <h3 className="mt-5 text-base font-medium">
-        {item.title}
-      </h3>
-
-      <p className="mt-2 text-sm leading-6 text-black/55">
-        {item.description}
-      </p>
-    </motion.div>
-  );
-})}
-                </motion.div>
-              </motion.div>
-
-              <motion.div
-                variants={fadeRight}
-                initial="hidden"
-                whileInView="visible"
-                viewport={viewport}
-                className="space-y-5"
-              >
-                <motion.div
-                  variants={revealFromRight}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={viewport}
-                  className="relative aspect-video overflow-hidden bg-black"
-                >
-                  <Video
-                    src={aboutInstallationVideo}
-                    controls
-                    playsInline
-                    preload="metadata"
-                    className="h-full w-full object-cover"
-                  />
-                </motion.div>
-
-                <motion.div
-                  variants={revealFromLeft}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={viewport}
-                  className="relative aspect-[16/7] min-h-[230px] overflow-hidden bg-[#ded7df]"
-                >
-                  <Image
-                    src={aboutSupportImage}
-                    alt="Anors.Z installation and technical support"
-                    fill
-                    className="object-cover transition duration-700 hover:scale-[1.03]"
-                    sizes="(max-width: 1024px) 100vw, 55vw"
-                  />
-
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#160b19]/65 to-transparent" />
-
-                  <motion.div
-                    initial={{
-                      opacity: 0,
-                      x: -24,
-                    }}
-                    whileInView={{
-                      opacity: 1,
-                      x: 0,
-                    }}
-                    transition={{
-                      delay: 0.38,
-                      duration: 0.65,
-                      ease: easeOut,
-                    }}
-                    viewport={viewport}
-                    className="absolute bottom-6 left-6 max-w-sm text-white"
-                  >
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/60">
-                     {content.support.imageEyebrow}
-                    </p>
-
-                    <p className="mt-2 text-xl leading-tight">
-                      {content.support.imageText}
-                    </p>
-                  </motion.div>
-                </motion.div>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* =========================================================
-            FINAL CTA
-        ========================================================== */}
-        <section className="bg-white px-3 pb-3 sm:px-5 sm:pb-5">
-          <motion.div
-            initial={{
-              opacity: 0,
-              scale: 0.97,
-            }}
-            whileInView={{
-              opacity: 1,
-              scale: 1,
-            }}
-            transition={{
-              duration: 0.85,
-              ease: easeOut,
-            }}
-            viewport={viewport}
-            className="relative mx-auto min-h-[430px] max-w-[1440px] overflow-hidden"
-          >
             <motion.div
-              animate={{
-                scale: [1, 1.035, 1],
-              }}
-              transition={{
-                duration: 12,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="absolute inset-0"
+              variants={slideFromRight}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="space-y-5"
             >
-              <Image
-                src={ctaBackground}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="(max-width: 1440px) 100vw, 1440px"
-              />
-            </motion.div>
-
-            <div className="absolute inset-0 bg-[#210b25]/65" />
-
-            <div className="absolute inset-0 bg-gradient-to-r from-[#160719]/85 via-[#681761]/35 to-[#0f1c19]/55" />
-
-            <motion.div
-              aria-hidden="true"
-              animate={{
-                x: [0, 18, 0],
-                opacity: [0.14, 0.24, 0.14],
-              }}
-              transition={{
-                duration: 7,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="absolute left-0 top-0 hidden h-full w-52 sm:block"
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle, white 1px, transparent 1.5px)",
-                backgroundSize: "16px 16px",
-                WebkitMaskImage:
-                  "linear-gradient(to right, black, transparent)",
-                maskImage: "linear-gradient(to right, black, transparent)",
-              }}
-            />
-
-            <div className="relative z-10 flex min-h-[430px] items-center justify-center px-5 py-16 text-center text-white sm:px-8">
               <motion.div
-                variants={staggerContainer}
+                variants={fadeUp}
                 initial="hidden"
                 whileInView="visible"
                 viewport={viewport}
-                className="max-w-3xl"
+                className="relative aspect-video overflow-hidden bg-black"
               >
-                <motion.div variants={staggerItem}>
-                  <motion.span
-                    animate={{
-                      y: [0, -7, 0],
-                    }}
-                    transition={{
-                      duration: 2.8,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                    className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 backdrop-blur-sm"
-                  >
-                    <Droplets className="h-5 w-5" />
-                  </motion.span>
-                </motion.div>
-
-                <motion.p
-                  variants={staggerItem}
-                  className="mt-6 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/65 sm:text-xs"
-                >
-                  {content.cta.eyebrow}
-                </motion.p>
-
-                <motion.h2
-                  variants={staggerItem}
-                  className="mt-4 text-[clamp(2rem,4vw,4rem)] font-normal leading-[1.05] tracking-[-0.04em]"
-                >
-                  {content.cta.title}
-                </motion.h2>
-
-                <motion.p
-                  variants={staggerItem}
-                  className="mx-auto mt-5 max-w-xl text-sm leading-7 text-white/70"
-                >
-                  {content.cta.description}
-                </motion.p>
-
-                <motion.div
-                  variants={staggerItem}
-                  className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
-                >
-                  <Link href={content.cta.primaryButtonHref}
-                    className="group inline-flex min-w-[190px] items-center justify-center gap-3 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-[#681761] transition duration-300 hover:-translate-y-1 hover:shadow-xl"
-                  >
-                    <span>{content.cta.primaryButtonLabel}</span>
-
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-
-                  <Link href={content.cta.secondaryButtonHref}
-                    className="inline-flex min-w-[190px] items-center justify-center gap-3 rounded-full border border-white/30 bg-white/10 px-6 py-3.5 text-sm font-medium text-white backdrop-blur-md transition hover:-translate-y-1 hover:bg-white/20"
-                  >
-                    {content.cta.secondaryButtonLabel}
-                  </Link>
-                </motion.div>
+                <Video
+                  src={aboutInstallationVideo}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="h-full w-full object-cover"
+                />
               </motion.div>
-            </div>
-          </motion.div>
-        </section>
-      </main>
-    </MotionConfig>
+
+              <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={viewport}
+                className="relative aspect-[16/7] min-h-[230px] overflow-hidden bg-[#ded7df]"
+              >
+                <Image
+                  src={aboutSupportImage}
+                  alt="Anors.Z installation and technical support"
+                  fill
+                  className="object-cover transition duration-700 hover:scale-[1.025]"
+                  sizes="(max-width: 1024px) 100vw, 55vw"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-r from-[#160b19]/65 to-transparent" />
+
+                <div className="absolute bottom-6 left-6 max-w-sm text-white">
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/60">
+                    A Long-Term Partner
+                  </p>
+
+                  <p className="mt-2 text-xl leading-tight">
+                    Training, technical guidance and flexible support packages.
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          FINAL CTA
+      ========================================================== */}
+      <section className="bg-white px-3 pb-3 sm:px-5 sm:pb-5">
+        <motion.div
+          initial={{
+            opacity: 0,
+            scale: 0.98,
+          }}
+          whileInView={{
+            opacity: 1,
+            scale: 1,
+          }}
+          transition={{
+            duration: 0.75,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          viewport={viewport}
+          className="relative mx-auto min-h-[430px] max-w-[1440px] overflow-hidden"
+        >
+          <Image
+            src={ctaBackground}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="(max-width: 1440px) 100vw, 1440px"
+          />
+
+          <div className="absolute inset-0 bg-[#210b25]/65" />
+
+          <div className="absolute inset-0 bg-gradient-to-r from-[#160719]/85 via-[#681761]/35 to-[#0f1c19]/55" />
+
+          <div
+            aria-hidden="true"
+            className="absolute left-0 top-0 hidden h-full w-52 opacity-20 sm:block"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle, white 1px, transparent 1.5px)",
+              backgroundSize: "16px 16px",
+              WebkitMaskImage:
+                "linear-gradient(to right, black, transparent)",
+              maskImage: "linear-gradient(to right, black, transparent)",
+            }}
+          />
+
+          <div className="relative z-10 flex min-h-[430px] items-center justify-center px-5 py-16 text-center text-white sm:px-8">
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewport}
+              className="max-w-3xl"
+            >
+              <motion.span
+                variants={staggerItem}
+                whileHover={{
+                  scale: 1.1,
+                  rotate: 8,
+                }}
+                className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 backdrop-blur-sm"
+              >
+                <Droplets className="h-5 w-5" />
+              </motion.span>
+
+              <motion.p
+                variants={staggerItem}
+                className="mt-6 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/65 sm:text-xs"
+              >
+                Work With Anors.Z
+              </motion.p>
+
+              <motion.h2
+                variants={staggerItem}
+                className="mt-4 text-[clamp(2rem,4vw,4rem)] font-normal leading-[1.05] tracking-[-0.04em]"
+              >
+                Let’s Build a Cleaner and Safer Water Future
+              </motion.h2>
+
+              <motion.p
+                variants={staggerItem}
+                className="mx-auto mt-5 max-w-xl text-sm leading-7 text-white/70"
+              >
+                Speak with our team about a water station or purification
+                solution suited to your institution, organisation or
+                community.
+              </motion.p>
+
+              <motion.div
+                variants={staggerItem}
+                className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
+              >
+                <Link
+                  href="/contact"
+                  className="group inline-flex min-w-[190px] items-center justify-center gap-3 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-[#681761] transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+                >
+                  <span>Start an Enquiry</span>
+
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+
+                <Link
+                  href="/solutions"
+                  className="inline-flex min-w-[190px] items-center justify-center gap-3 rounded-full border border-white/30 bg-white/10 px-6 py-3.5 text-sm font-medium text-white backdrop-blur-md transition hover:bg-white/20"
+                >
+                  View Our Solutions
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
+        </motion.div>
+      </section>
+    </main>
   );
 }
