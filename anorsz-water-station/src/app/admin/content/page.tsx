@@ -25,7 +25,7 @@ const pages = [
       "Company story, mission, vision, values and sustainability.",
     href: "/admin/content/about",
     icon: Building2,
-    status: "Next",
+    status: "Available",
   },
 
   {

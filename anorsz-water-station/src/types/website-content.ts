@@ -115,3 +115,156 @@ export type HomePageContent = {
     phoneHref: string;
   };
 };
+
+export type AboutValueKey =
+  | "waterQuality"
+  | "accessibility"
+  | "innovation"
+  | "sustainability";
+
+export type AboutTechnologyKey =
+  | "smartCard"
+  | "display"
+  | "ultrafiltration"
+  | "uv"
+  | "reverseOsmosis"
+  | "highCapacity";
+
+export type AboutImpactKey =
+  | "education"
+  | "business"
+  | "communities";
+
+export type AboutSupportKey =
+  | "siteAssessment"
+  | "systemSelection"
+  | "installation"
+  | "trainingSupport";
+
+export type AboutValue = {
+  key: AboutValueKey;
+  title: string;
+  description: string;
+};
+
+export type AboutTechnologyItem = {
+  key: AboutTechnologyKey;
+  number: string;
+  title: string;
+  description: string;
+};
+
+export type AboutImpactItem = {
+  key: AboutImpactKey;
+  title: string;
+  description: string;
+};
+
+export type AboutSupportItem = {
+  key: AboutSupportKey;
+  title: string;
+  description: string;
+};
+
+export type AboutPageContent = {
+  hero: {
+    breadcrumbLabel: string;
+
+    titleLineOne: string;
+    titleLineTwo: string;
+
+    description: string;
+    audienceDescription: string;
+
+    linkLabel: string;
+    linkHref: string;
+  };
+
+  story: {
+    eyebrow: string;
+    title: string;
+
+    paragraphOne: string;
+    paragraphTwo: string;
+    paragraphThree: string;
+
+    linkLabel: string;
+    linkHref: string;
+
+    beliefEyebrow: string;
+    beliefText: string;
+  };
+
+  purpose: {
+    eyebrow: string;
+    title: string;
+    description: string;
+
+    missionEyebrow: string;
+    missionTitle: string;
+    missionDescription: string;
+
+    visionEyebrow: string;
+    visionTitle: string;
+    visionDescription: string;
+  };
+
+  values: {
+    eyebrow: string;
+    title: string;
+
+    items: AboutValue[];
+  };
+
+  technology: {
+    eyebrow: string;
+    title: string;
+    description: string;
+
+    videoLabel: string;
+
+    items: AboutTechnologyItem[];
+  };
+
+  impact: {
+    eyebrow: string;
+    title: string;
+    description: string;
+
+    items: AboutImpactItem[];
+  };
+
+  sustainability: {
+    eyebrow: string;
+    title: string;
+    description: string;
+
+    imageEyebrow: string;
+    imageText: string;
+
+    points: string[];
+  };
+
+  support: {
+    eyebrow: string;
+    title: string;
+    description: string;
+
+    items: AboutSupportItem[];
+
+    imageEyebrow: string;
+    imageText: string;
+  };
+
+  cta: {
+    eyebrow: string;
+    title: string;
+    description: string;
+
+    primaryButtonLabel: string;
+    primaryButtonHref: string;
+
+    secondaryButtonLabel: string;
+    secondaryButtonHref: string;
+  };
+};
