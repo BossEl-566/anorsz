@@ -1,7 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
+import Image, {
+  type StaticImageData,
+} from "next/image";
 import Link from "next/link";
 import Video from "next-video";
 import BackgroundVideo from "next-video/background-video";
@@ -35,6 +37,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import type { AboutPageContent } from "@/types/website-content";
 import aboutCommunityOne from "@/assets/images/about-community-1.jpeg";
 import aboutCommunityTwo from "@/assets/images/about-community-2.jpeg";
 import aboutCommunityThree from "@/assets/images/about-community-3.jpeg";
@@ -49,24 +52,6 @@ import aboutHeroVideo from "@videos/mission.mp4";
 import aboutInstallationVideo from "@videos/about-installation-video.mp4";
 import aboutTechnologyVideo from "@videos/about-technology-video.mp4";
 
-type ValueItem = {
-  title: string;
-  description: string;
-  icon: LucideIcon;
-};
-
-type TechnologyItem = {
-  number: string;
-  title: string;
-  description: string;
-  icon: LucideIcon;
-};
-
-type ImpactItem = {
-  title: string;
-  description: string;
-  image: typeof aboutCommunityOne;
-};
 
 const viewport = {
   once: true,
@@ -181,108 +166,54 @@ const revealFromRight: Variants = {
   },
 };
 
-const companyValues: ValueItem[] = [
-  {
-    title: "Water Quality",
-    description:
-      "We place clean, safe and dependable drinking water at the centre of every solution we deliver.",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Accessibility",
-    description:
-      "Our systems make quality drinking water easier to access across institutions and communities.",
-    icon: Users,
-  },
-  {
-    title: "Innovation",
-    description:
-      "We use smart-card access, intelligent displays and modern purification systems to improve water access.",
-    icon: Sparkles,
-  },
-  {
-    title: "Sustainability",
-    description:
-      "We encourage reusable bottles and help reduce waste from disposable plastic and sachet-water packaging.",
-    icon: Leaf,
-  },
-];
+const valueIcons = {
+  waterQuality: ShieldCheck,
+  accessibility: Users,
+  innovation: Sparkles,
+  sustainability: Leaf,
+} satisfies Record<
+  AboutPageContent["values"]["items"][number]["key"],
+  LucideIcon
+>;
 
-const technologyItems: TechnologyItem[] = [
-  {
-    number: "01",
-    title: "Smart Water Card",
-    description:
-      "Customers use a dedicated smart card to access water conveniently and securely.",
-    icon: CreditCard,
-  },
-  {
-    number: "02",
-    title: "Intelligent Display",
-    description:
-      "Digital screens show temperature, water volume, TDS readings, date, time and card information.",
-    icon: MonitorSmartphone,
-  },
-  {
-    number: "03",
-    title: "Ultrafiltration",
-    description:
-      "The filtration system removes suspended solids, sediments and fine colloidal particles.",
-    icon: Droplets,
-  },
-  {
-    number: "04",
-    title: "UV Sterilisation",
-    description:
-      "Ultraviolet treatment helps eliminate bacteria, viruses and other harmful microorganisms.",
-    icon: Zap,
-  },
-  {
-    number: "05",
-    title: "Reverse Osmosis",
-    description:
-      "Reverse osmosis removes dissolved substances, impurities and unwanted chemicals.",
-    icon: Waves,
-  },
-  {
-    number: "06",
-    title: "High-Capacity Output",
-    description:
-      "Available configurations include multiple faucets and cold, warm or hot-water dispensing.",
-    icon: Gauge,
-  },
-];
+const technologyIcons = {
+  smartCard: CreditCard,
+  display: MonitorSmartphone,
+  ultrafiltration: Droplets,
+  uv: Zap,
+  reverseOsmosis: Waves,
+  highCapacity: Gauge,
+} satisfies Record<
+  AboutPageContent["technology"]["items"][number]["key"],
+  LucideIcon
+>;
 
-const impactItems: ImpactItem[] = [
-  {
-    title: "Education",
-    description:
-      "Supporting basic, secondary and tertiary institutions with dependable access to safe drinking water.",
-    image: aboutCommunityOne,
-  },
-  {
-    title: "Business and Industry",
-    description:
-      "Providing scalable systems for offices, corporate institutions, factories and commercial facilities.",
-    image: aboutCommunityTwo,
-  },
-  {
-    title: "Communities and Public Spaces",
-    description:
-      "Creating convenient refill access for communities, hospitals, hotels and public institutions.",
-    image: aboutCommunityThree,
-  },
-];
+const impactImages = {
+  education: aboutCommunityOne,
+  business: aboutCommunityTwo,
+  communities: aboutCommunityThree,
+} satisfies Record<
+  AboutPageContent["impact"]["items"][number]["key"],
+  StaticImageData
+>;
 
-const sustainabilityPoints = [
-  "Promotes the use of reusable water bottles",
-  "Reduces dependence on disposable plastic bottles",
-  "Helps reduce sachet-water waste",
-  "Uses efficient modern purification technologies",
-  "Supports healthier institutions and communities",
-];
+const supportIcons = {
+  siteAssessment: Eye,
+  systemSelection: Gauge,
+  installation: Wrench,
+  trainingSupport: Handshake,
+} satisfies Record<
+  AboutPageContent["support"]["items"][number]["key"],
+  LucideIcon
+>;
 
-export default function AboutPageClient() {
+type AboutPageClientProps = {
+  content: AboutPageContent;
+};
+
+export default function AboutPageClient({
+  content,
+}: AboutPageClientProps) {
   const heroRef = useRef<HTMLElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -414,7 +345,7 @@ export default function AboutPageClient() {
                     className="h-px w-5 origin-left bg-white/40"
                   />
 
-                  <span>About Us</span>
+                  <span>{content.hero.breadcrumbLabel}</span>
                 </motion.div>
 
                 <div className="mt-6 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
@@ -435,26 +366,20 @@ export default function AboutPageClient() {
                     }}
                     className="max-w-4xl text-[clamp(2.5rem,5.7vw,5.6rem)] font-normal leading-[0.99] tracking-[-0.05em]"
                   >
-                    Pure Water.
+                    {content.hero.titleLineOne}
 
-                    <motion.span
-                      initial={{
-                        opacity: 0,
-                        x: -24,
-                      }}
-                      animate={{
-                        opacity: 1,
-                        x: 0,
-                      }}
-                      transition={{
-                        delay: 0.48,
-                        duration: 0.75,
-                        ease: easeOut,
-                      }}
-                      className="block"
-                    >
-                      Positive Impact.
-                    </motion.span>
+<motion.span
+  initial={{ opacity: 0, x: -24 }}
+  animate={{ opacity: 1, x: 0 }}
+  transition={{
+    delay: 0.48,
+    duration: 0.75,
+    ease: easeOut,
+  }}
+  className="block"
+>
+  {content.hero.titleLineTwo}
+</motion.span>
                   </motion.h1>
 
                   <motion.p
@@ -473,9 +398,7 @@ export default function AboutPageClient() {
                     }}
                     className="max-w-xl text-sm leading-7 text-white/70 sm:text-base lg:justify-self-end"
                   >
-                    We combine modern purification technology, intelligent
-                    dispensing and environmental responsibility to help people
-                    access cleaner and safer drinking water.
+                    {content.hero.description}
                   </motion.p>
                 </div>
 
@@ -507,16 +430,14 @@ export default function AboutPageClient() {
                   className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <p className="max-w-lg text-xs leading-6 text-white/55 sm:text-sm">
-                    Serving schools, businesses, healthcare facilities,
-                    hospitality organisations, homes and communities.
+                    {content.hero.audienceDescription}
                   </p>
 
                   <motion.div whileHover={{ x: 4 }}>
-                    <Link
-                      href="/contact"
+                    <Link href={content.hero.linkHref}
                       className="group inline-flex w-fit items-center gap-3 border-b border-white/45 pb-2 text-sm font-medium text-white transition hover:border-white"
                     >
-                      <span>Speak with our team</span>
+                      <span>{content.hero.linkLabel}</span>
 
                       <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                     </Link>
@@ -562,11 +483,11 @@ export default function AboutPageClient() {
               viewport={viewport}
             >
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
-                Our Story
+                {content.story.eyebrow}
               </p>
 
               <h2 className="mt-4 max-w-xl text-[clamp(2rem,4vw,4.15rem)] font-normal leading-[1.04] tracking-[-0.045em]">
-                Rethinking How People Access Safe Drinking Water
+                {content.story.title}
               </h2>
 
               <motion.div
@@ -577,30 +498,23 @@ export default function AboutPageClient() {
                 className="mt-8 max-w-xl space-y-5 text-sm leading-7 text-black/60 sm:text-[15px]"
               >
                 <motion.p variants={staggerItem}>
-                  Anors.Z Global Water Station is a water-refilling company
-                  focused on making pure, safe, reliable and affordable drinking
-                  water available for everyday consumption.
-                </motion.p>
+  {content.story.paragraphOne}
+</motion.p>
 
-                <motion.p variants={staggerItem}>
-                  Our solutions are designed for schools, companies, hospitals,
-                  restaurants, hotels, homes, government institutions and
-                  communities that require dependable water access.
-                </motion.p>
+<motion.p variants={staggerItem}>
+  {content.story.paragraphTwo}
+</motion.p>
 
-                <motion.p variants={staggerItem}>
-                  Through advanced purification and smart dispensing
-                  technologies, we seek to improve public health while reducing
-                  environmental waste from disposable bottles and sachet water.
-                </motion.p>
+<motion.p variants={staggerItem}>
+  {content.story.paragraphThree}
+</motion.p>
               </motion.div>
 
               <motion.div whileHover={{ x: 5 }} className="w-fit">
-                <Link
-                  href="/solutions"
+                <Link href={content.story.linkHref}
                   className="group mt-8 inline-flex items-center gap-3 border-b border-[#681761]/40 pb-2 text-sm font-medium text-[#681761] transition hover:border-[#681761]"
                 >
-                  <span>Explore our water solutions</span>
+                  <span>{content.story.linkLabel}</span>
 
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </Link>
@@ -647,11 +561,11 @@ export default function AboutPageClient() {
                   className="absolute bottom-6 left-6 right-6 border-t border-white/35 pt-5 text-white sm:bottom-8 sm:left-8 sm:right-8"
                 >
                   <p className="text-[10px] uppercase tracking-[0.2em] text-white/65">
-                    Our Belief
+                   {content.story.beliefEyebrow}
                   </p>
 
                   <p className="mt-2 max-w-md text-xl leading-tight sm:text-2xl">
-                    Water is life. Pure water makes healthier living possible.
+                    {content.story.beliefText}
                   </p>
                 </motion.div>
               </motion.div>
@@ -690,11 +604,11 @@ export default function AboutPageClient() {
                 viewport={viewport}
               >
                 <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
-                  Why We Exist
+                  {content.purpose.eyebrow}
                 </p>
 
                 <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
-                  Guided by Purpose and Long-Term Impact
+                  {content.purpose.title}
                 </h2>
               </motion.div>
 
@@ -705,9 +619,7 @@ export default function AboutPageClient() {
                 viewport={viewport}
                 className="max-w-xl text-sm leading-7 text-black/60 lg:justify-self-end"
               >
-                Our mission and vision guide how we design water systems, work
-                with institutions and measure our impact on people and the
-                environment.
+                {content.purpose.description}
               </motion.p>
             </div>
 
@@ -752,18 +664,15 @@ export default function AboutPageClient() {
 
                   <div className="mt-auto pt-24">
                     <p className="text-xs uppercase tracking-[0.2em] text-white/55">
-                      Our Mission
+                      {content.purpose.missionEyebrow}
                     </p>
 
                     <h3 className="mt-4 max-w-xl text-2xl font-normal leading-tight sm:text-3xl">
-                      Make clean and safe drinking water accessible and
-                      affordable.
+                      {content.purpose.missionTitle}
                     </h3>
 
                     <p className="mt-5 max-w-xl text-sm leading-7 text-white/70">
-                      We provide dependable water stations that combine modern
-                      purification, convenient smart-card access and reusable
-                      bottles to protect health and reduce waste.
+                      {content.purpose.missionDescription}
                     </p>
                   </div>
                 </div>
@@ -803,17 +712,15 @@ export default function AboutPageClient() {
 
                   <div className="mt-auto pt-24">
                     <p className="text-xs uppercase tracking-[0.2em] text-white/55">
-                      Our Vision
+                      {content.purpose.visionEyebrow}
                     </p>
 
                     <h3 className="mt-4 max-w-xl text-2xl font-normal leading-tight sm:text-3xl">
-                      Build healthier communities and a more sustainable future.
+                      {content.purpose.visionTitle}
                     </h3>
 
                     <p className="mt-5 max-w-xl text-sm leading-7 text-white/75">
-                      We aim to create positive global impact by improving
-                      access to safe water, protecting the environment and
-                      supporting future generations.
+                     {content.purpose.visionDescription}
                     </p>
                   </div>
                 </div>
@@ -858,11 +765,11 @@ export default function AboutPageClient() {
               className="mx-auto max-w-4xl text-center"
             >
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
-                What Guides Us
+                {content.values.eyebrow}
               </p>
 
               <h2 className="mt-5 text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.06] tracking-[-0.04em]">
-                Values That Shape Every Solution We Deliver
+                {content.values.title}
               </h2>
             </motion.div>
 
@@ -873,12 +780,12 @@ export default function AboutPageClient() {
               viewport={viewport}
               className="mt-12 grid border-l border-t border-black/10 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4"
             >
-              {companyValues.map((value, index) => {
-                const Icon = value.icon;
+              {content.values.items.map((value, index) => {
+  const Icon = valueIcons[value.key];
 
                 return (
                   <motion.article
-                    key={value.title}
+                    key={value.key}
                     variants={staggerItem}
                     whileHover={{ y: -9 }}
                     className="group min-h-[310px] border-b border-r border-black/10 bg-white p-7 transition duration-300 hover:z-10 hover:border-[#681761]/30 hover:shadow-[0_24px_60px_rgba(50,14,49,0.10)]"
@@ -944,11 +851,11 @@ export default function AboutPageClient() {
                 viewport={viewport}
               >
                 <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#d89ad0] sm:text-xs">
-                  Our Technology
+                  {content.technology.eyebrow}
                 </p>
 
                 <h2 className="mt-4 max-w-2xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
-                  Intelligent Systems Behind Every Drop
+                  {content.technology.title}
                 </h2>
               </motion.div>
 
@@ -959,9 +866,7 @@ export default function AboutPageClient() {
                 viewport={viewport}
                 className="max-w-xl text-sm leading-7 text-white/60 lg:justify-self-end"
               >
-                Our water stations combine filtration, sterilisation,
-                smart-card access, real-time information and modern dispensing
-                technology in one integrated solution.
+                {content.technology.description}
               </motion.p>
             </div>
 
@@ -1011,7 +916,7 @@ export default function AboutPageClient() {
                   <Play className="h-3.5 w-3.5" />
                 </motion.span>
 
-                <span>Technology demonstration</span>
+                <span>{content.technology.videoLabel}</span>
               </motion.div>
             </motion.div>
 
@@ -1022,12 +927,12 @@ export default function AboutPageClient() {
               viewport={viewport}
               className="mt-8 grid gap-px border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3"
             >
-              {technologyItems.map((item) => {
-                const Icon = item.icon;
+              {content.technology.items.map((item) => {
+  const Icon = technologyIcons[item.key];
 
                 return (
                   <motion.article
-                    key={item.number}
+                    key={item.key}
                     variants={staggerItem}
                     whileHover={{ y: -7 }}
                     className="group min-h-[310px] bg-[#1e0c21] p-7 transition duration-300 hover:bg-[#681761] sm:p-8"
@@ -1073,11 +978,11 @@ export default function AboutPageClient() {
                 viewport={viewport}
               >
                 <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
-                  Where We Make an Impact
+                  {content.impact.eyebrow}
                 </p>
 
                 <h2 className="mt-4 max-w-2xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
-                  Water Solutions Designed for Different Environments
+                  {content.impact.title}
                 </h2>
               </motion.div>
 
@@ -1088,9 +993,7 @@ export default function AboutPageClient() {
                 viewport={viewport}
                 className="max-w-xl text-sm leading-7 text-black/60 lg:justify-self-end"
               >
-                Station size, faucet configuration, temperature options and
-                purification capacity can be selected according to the
-                environment and expected number of users.
+                {content.impact.description}
               </motion.p>
             </div>
 
@@ -1101,59 +1004,68 @@ export default function AboutPageClient() {
               viewport={viewport}
               className="mt-12 grid gap-5 lg:mt-16 lg:grid-cols-3"
             >
-              {impactItems.map((item, index) => (
-                <motion.article
-                  key={item.title}
-                  variants={staggerItem}
-                  whileHover={{
-                    y: index === 1 ? 30 : -10,
-                  }}
-                  className={`group relative overflow-hidden ${
-                    index === 1 ? "lg:translate-y-10" : ""
-                  }`}
-                >
-                  <div className="relative aspect-[4/5] min-h-[440px] overflow-hidden bg-[#ded8df]">
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      className="object-cover transition duration-700 group-hover:scale-[1.06]"
-                      sizes="(max-width: 1024px) 100vw, 34vw"
-                    />
+              {content.impact.items.map((item, index) => {
+  const image = impactImages[item.key];
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#170719]/90 via-[#170719]/15 to-transparent" />
+  return (
+    <motion.article
+      key={item.key}
+      variants={staggerItem}
+      whileHover={{
+        y: index === 1 ? 30 : -10,
+      }}
+      className={`group relative overflow-hidden ${
+        index === 1
+          ? "lg:translate-y-10"
+          : ""
+      }`}
+    >
+      <div className="relative aspect-[4/5] min-h-[440px] overflow-hidden bg-[#ded8df]">
+        <Image
+          src={image}
+          alt={item.title}
+          fill
+          className="object-cover transition duration-700 group-hover:scale-[1.06]"
+          sizes="(max-width: 1024px) 100vw, 34vw"
+        />
 
-                    <motion.div
-                      initial={{
-                        opacity: 0,
-                        y: 25,
-                      }}
-                      whileInView={{
-                        opacity: 1,
-                        y: 0,
-                      }}
-                      transition={{
-                        delay: 0.25 + index * 0.1,
-                        duration: 0.62,
-                      }}
-                      viewport={viewport}
-                      className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-7"
-                    >
-                      <span className="text-xs text-white/50">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#170719]/90 via-[#170719]/15 to-transparent" />
 
-                      <h3 className="mt-3 text-2xl font-normal">
-                        {item.title}
-                      </h3>
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 25,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            delay: 0.25 + index * 0.1,
+            duration: 0.62,
+          }}
+          viewport={viewport}
+          className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-7"
+        >
+          <span className="text-xs text-white/50">
+            {String(index + 1).padStart(
+              2,
+              "0",
+            )}
+          </span>
 
-                      <p className="mt-3 max-w-sm text-sm leading-6 text-white/65">
-                        {item.description}
-                      </p>
-                    </motion.div>
-                  </div>
-                </motion.article>
-              ))}
+          <h3 className="mt-3 text-2xl font-normal">
+            {item.title}
+          </h3>
+
+          <p className="mt-3 max-w-sm text-sm leading-6 text-white/65">
+            {item.description}
+          </p>
+        </motion.div>
+      </div>
+    </motion.article>
+  );
+})}
             </motion.div>
           </div>
         </section>
@@ -1234,13 +1146,12 @@ export default function AboutPageClient() {
                   </motion.span>
 
                   <span className="text-xs uppercase tracking-[0.2em] text-white/70">
-                    Environmental Responsibility
+                    {content.sustainability.imageEyebrow}
                   </span>
                 </div>
 
                 <p className="mt-3 max-w-lg text-xl leading-tight sm:text-2xl">
-                  Cleaner water access with less dependence on disposable
-                  packaging.
+                  {content.sustainability.imageText}
                 </p>
               </motion.div>
             </motion.div>
@@ -1252,18 +1163,15 @@ export default function AboutPageClient() {
               viewport={viewport}
             >
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#159447] sm:text-xs">
-                Sustainability
+                {content.sustainability.eyebrow}
               </p>
 
               <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
-                Better for People. More Responsible for the Environment.
+                {content.sustainability.title}.
               </h2>
 
               <p className="mt-6 max-w-xl text-sm leading-7 text-black/60">
-                Our refill model encourages customers to carry reusable bottles
-                instead of depending exclusively on disposable bottled and
-                sachet water. It connects access to safe water with practical
-                action against plastic pollution.
+                {content.sustainability.description}
               </p>
 
               <motion.div
@@ -1273,7 +1181,7 @@ export default function AboutPageClient() {
                 viewport={viewport}
                 className="mt-8 space-y-4"
               >
-                {sustainabilityPoints.map((point) => (
+                {content.sustainability.points.map((point) => (
                   <motion.div
                     key={point}
                     variants={staggerItem}
@@ -1308,17 +1216,15 @@ export default function AboutPageClient() {
                 viewport={viewport}
               >
                 <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#681761] sm:text-xs">
-                  Installation and Support
+                  {content.support.eyebrow}
                 </p>
 
                 <h2 className="mt-4 max-w-xl text-[clamp(2rem,3.8vw,3.8rem)] font-normal leading-[1.05] tracking-[-0.04em]">
-                  Support That Continues Beyond Installation
+                  {content.support.title}
                 </h2>
 
                 <p className="mt-6 max-w-xl text-sm leading-7 text-black/60">
-                  We work with each client to understand their environment,
-                  expected number of users, water requirements and preferred
-                  station configuration.
+                  {content.support.description}
                 </p>
 
                 <motion.div
@@ -1328,54 +1234,35 @@ export default function AboutPageClient() {
                   viewport={viewport}
                   className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2"
                 >
-                  {[
-                    {
-                      title: "Site Assessment",
-                      description:
-                        "Understanding the location, water source and expected usage.",
-                      icon: Eye,
-                    },
-                    {
-                      title: "System Selection",
-                      description:
-                        "Choosing the suitable station size and purification capacity.",
-                      icon: Gauge,
-                    },
-                    {
-                      title: "Installation",
-                      description:
-                        "Professional setup, testing and commissioning of the station.",
-                      icon: Wrench,
-                    },
-                    {
-                      title: "Training and Support",
-                      description:
-                        "User guidance and continued technical assistance.",
-                      icon: Handshake,
-                    },
-                  ].map(({ title, description, icon: Icon }) => (
-                    <motion.div
-                      key={title}
-                      variants={staggerItem}
-                      whileHover={{ y: -6 }}
-                      className="group border border-black/10 bg-[#f7f6f4] p-5 transition duration-300 hover:border-[#681761]/25 hover:shadow-[0_16px_40px_rgba(48,13,45,0.08)]"
-                    >
-                      <motion.div
-                        whileHover={{
-                          scale: 1.1,
-                          rotate: 7,
-                        }}
-                      >
-                        <Icon className="h-5 w-5 text-[#681761]" />
-                      </motion.div>
+                  {content.support.items.map((item) => {
+  const Icon = supportIcons[item.key];
 
-                      <h3 className="mt-5 text-base font-medium">{title}</h3>
+  return (
+    <motion.div
+      key={item.key}
+      variants={staggerItem}
+      whileHover={{ y: -6 }}
+      className="group border border-black/10 bg-[#f7f6f4] p-5 transition duration-300 hover:border-[#681761]/25 hover:shadow-[0_16px_40px_rgba(48,13,45,0.08)]"
+    >
+      <motion.div
+        whileHover={{
+          scale: 1.1,
+          rotate: 7,
+        }}
+      >
+        <Icon className="h-5 w-5 text-[#681761]" />
+      </motion.div>
 
-                      <p className="mt-2 text-sm leading-6 text-black/55">
-                        {description}
-                      </p>
-                    </motion.div>
-                  ))}
+      <h3 className="mt-5 text-base font-medium">
+        {item.title}
+      </h3>
+
+      <p className="mt-2 text-sm leading-6 text-black/55">
+        {item.description}
+      </p>
+    </motion.div>
+  );
+})}
                 </motion.div>
               </motion.div>
 
@@ -1437,12 +1324,11 @@ export default function AboutPageClient() {
                     className="absolute bottom-6 left-6 max-w-sm text-white"
                   >
                     <p className="text-xs uppercase tracking-[0.2em] text-white/60">
-                      A Long-Term Partner
+                     {content.support.imageEyebrow}
                     </p>
 
                     <p className="mt-2 text-xl leading-tight">
-                      Training, technical guidance and flexible support
-                      packages.
+                      {content.support.imageText}
                     </p>
                   </motion.div>
                 </motion.div>
@@ -1545,43 +1431,39 @@ export default function AboutPageClient() {
                   variants={staggerItem}
                   className="mt-6 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/65 sm:text-xs"
                 >
-                  Work With Anors.Z
+                  {content.cta.eyebrow}
                 </motion.p>
 
                 <motion.h2
                   variants={staggerItem}
                   className="mt-4 text-[clamp(2rem,4vw,4rem)] font-normal leading-[1.05] tracking-[-0.04em]"
                 >
-                  Let’s Build a Cleaner and Safer Water Future
+                  {content.cta.title}
                 </motion.h2>
 
                 <motion.p
                   variants={staggerItem}
                   className="mx-auto mt-5 max-w-xl text-sm leading-7 text-white/70"
                 >
-                  Speak with our team about a water station or purification
-                  solution suited to your institution, organisation or
-                  community.
+                  {content.cta.description}
                 </motion.p>
 
                 <motion.div
                   variants={staggerItem}
                   className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
                 >
-                  <Link
-                    href="/contact"
+                  <Link href={content.cta.primaryButtonHref}
                     className="group inline-flex min-w-[190px] items-center justify-center gap-3 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-[#681761] transition duration-300 hover:-translate-y-1 hover:shadow-xl"
                   >
-                    <span>Start an Enquiry</span>
+                    <span>{content.cta.primaryButtonLabel}</span>
 
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
 
-                  <Link
-                    href="/solutions"
+                  <Link href={content.cta.secondaryButtonHref}
                     className="inline-flex min-w-[190px] items-center justify-center gap-3 rounded-full border border-white/30 bg-white/10 px-6 py-3.5 text-sm font-medium text-white backdrop-blur-md transition hover:-translate-y-1 hover:bg-white/20"
                   >
-                    View Our Solutions
+                    {content.cta.secondaryButtonLabel}
                   </Link>
                 </motion.div>
               </motion.div>
