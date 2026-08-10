@@ -1,53 +1,23 @@
 "use server";
 
-import {
-  revalidatePath,
-} from "next/cache";
+import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
 
-type UploadMediaResult = {
+type DeleteMediaResult = {
   success: boolean;
   message: string;
-
-  media?: {
-    id: string;
-    publicUrl: string;
-  };
 };
 
-const ALLOWED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/avif",
-];
-
-const MAX_IMAGE_SIZE =
-  10 * 1024 * 1024;
-
-function sanitizeFileName(
-  fileName: string,
-) {
-  return fileName
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(
-      /[^a-z0-9.\-_]/g,
-      "",
-    );
-}
-
-export async function uploadMedia(
-  formData: FormData,
-): Promise<UploadMediaResult> {
-  const supabase =
-    await createClient();
+export async function deleteMedia(
+  mediaId: string,
+): Promise<DeleteMediaResult> {
+  const supabase = await createClient();
 
   /*
-   * -----------------------------------------
-   * Verify user
-   * -----------------------------------------
+   * =========================================================
+   * VERIFY AUTHENTICATION
+   * =========================================================
    */
 
   const {
@@ -56,12 +26,11 @@ export async function uploadMedia(
   } = await supabase.auth.getClaims();
 
   const userId =
-    claimsData?.claims?.sub;
+    typeof claimsData?.claims?.sub === "string"
+      ? claimsData.claims.sub
+      : null;
 
-  if (
-    claimsError ||
-    !userId
-  ) {
+  if (claimsError || !userId) {
     return {
       success: false,
       message:
@@ -70,9 +39,9 @@ export async function uploadMedia(
   }
 
   /*
-   * -----------------------------------------
-   * Verify admin permissions
-   * -----------------------------------------
+   * =========================================================
+   * VERIFY ADMIN PERMISSION
+   * =========================================================
    */
 
   const {
@@ -80,13 +49,8 @@ export async function uploadMedia(
     error: adminError,
   } = await supabase
     .from("admin_users")
-    .select(
-      "role, is_active",
-    )
-    .eq(
-      "user_id",
-      userId,
-    )
+    .select("role, is_active")
+    .eq("user_id", userId)
     .maybeSingle();
 
   if (
@@ -97,247 +61,105 @@ export async function uploadMedia(
     return {
       success: false,
       message:
-        "You are not authorised to upload media.",
+        "You are not authorised to delete media.",
     };
   }
 
   if (
-    administrator.role !==
-      "admin" &&
-    administrator.role !==
-      "super_admin"
+    administrator.role !== "admin" &&
+    administrator.role !== "super_admin"
   ) {
     return {
       success: false,
       message:
-        "Your account cannot upload website media.",
+        "Your account cannot delete website media.",
     };
   }
 
   /*
-   * -----------------------------------------
-   * Read form
-   * -----------------------------------------
-   */
-
-  const file =
-    formData.get("file");
-
-  const name =
-    String(
-      formData.get(
-        "name",
-      ) ?? "",
-    ).trim();
-
-  const altText =
-    String(
-      formData.get(
-        "altText",
-      ) ?? "",
-    ).trim();
-
-  const pageUsage =
-    String(
-      formData.get(
-        "pageUsage",
-      ) ?? "global",
-    ).trim();
-
-  if (
-    !(file instanceof File)
-  ) {
-    return {
-      success: false,
-      message:
-        "Please select an image.",
-    };
-  }
-
-  /*
-   * -----------------------------------------
-   * Validate file
-   * -----------------------------------------
-   */
-
-  if (
-    !ALLOWED_IMAGE_TYPES.includes(
-      file.type,
-    )
-  ) {
-    return {
-      success: false,
-      message:
-        "Only JPG, PNG, WebP and AVIF images are allowed.",
-    };
-  }
-
-  if (
-    file.size >
-    MAX_IMAGE_SIZE
-  ) {
-    return {
-      success: false,
-      message:
-        "The image must be 10 MB or smaller.",
-    };
-  }
-
-  /*
-   * -----------------------------------------
-   * Build storage path
-   * -----------------------------------------
-   */
-
-  const safeName =
-    sanitizeFileName(
-      file.name,
-    );
-
-  const storagePath =
-    `${pageUsage}/${Date.now()}-${safeName}`;
-
-  /*
-   * -----------------------------------------
-   * Upload to Supabase Storage
-   * -----------------------------------------
-   */
-
-  const {
-    error: uploadError,
-  } = await supabase.storage
-    .from("site-media")
-    .upload(
-      storagePath,
-      file,
-      {
-        cacheControl: "3600",
-        upsert: false,
-        contentType:
-          file.type,
-      },
-    );
-
-  if (uploadError) {
-    console.error(
-      "Media upload error:",
-      uploadError,
-    );
-
-    return {
-      success: false,
-      message:
-        "The image could not be uploaded.",
-    };
-  }
-
-  /*
-   * -----------------------------------------
-   * Get permanent public URL
-   * -----------------------------------------
-   */
-
-  const {
-    data: publicUrlData,
-  } = supabase.storage
-    .from("site-media")
-    .getPublicUrl(
-      storagePath,
-    );
-
-  const publicUrl =
-    publicUrlData.publicUrl;
-
-  /*
-   * -----------------------------------------
-   * Store metadata
-   * -----------------------------------------
+   * =========================================================
+   * FIND MEDIA RECORD
+   * =========================================================
    */
 
   const {
     data: media,
+    error: mediaError,
+  } = await supabase
+    .from("media_library")
+    .select(
+      `
+        id,
+        bucket_name,
+        storage_path
+      `,
+    )
+    .eq("id", mediaId)
+    .maybeSingle();
+
+  if (mediaError || !media) {
+    return {
+      success: false,
+      message: "The media item could not be found.",
+    };
+  }
+
+  /*
+   * =========================================================
+   * DELETE ACTUAL STORAGE FILE
+   * =========================================================
+   */
+
+  const {
+    error: storageError,
+  } = await supabase.storage
+    .from(media.bucket_name)
+    .remove([media.storage_path]);
+
+  if (storageError) {
+    console.error(
+      "Unable to delete storage object:",
+      storageError,
+    );
+
+    return {
+      success: false,
+      message:
+        "The image could not be removed from storage.",
+    };
+  }
+
+  /*
+   * =========================================================
+   * DELETE DATABASE RECORD
+   * =========================================================
+   */
+
+  const {
     error: databaseError,
   } = await supabase
     .from("media_library")
-    .insert({
-      name:
-        name ||
-        file.name,
+    .delete()
+    .eq("id", mediaId);
 
-      alt_text:
-        altText || null,
-
-      media_type:
-        "image",
-
-      bucket_name:
-        "site-media",
-
-      storage_path:
-        storagePath,
-
-      public_url:
-        publicUrl,
-
-      mime_type:
-        file.type,
-
-      file_size:
-        file.size,
-
-      page_usage:
-        pageUsage,
-
-      uploaded_by:
-        userId,
-    })
-    .select(
-      "id, public_url",
-    )
-    .single();
-
-  if (
-    databaseError ||
-    !media
-  ) {
-    /*
-     * If DB insert fails,
-     * remove orphaned file.
-     */
-
-    await supabase.storage
-      .from("site-media")
-      .remove([
-        storagePath,
-      ]);
-
+  if (databaseError) {
     console.error(
-      "Media database error:",
+      "Unable to delete media record:",
       databaseError,
     );
 
     return {
       success: false,
       message:
-        "The media record could not be created.",
+        "The file was removed, but its database record could not be deleted.",
     };
   }
 
-  revalidatePath(
-    "/admin/media",
-  );
+  revalidatePath("/admin/media");
+  revalidatePath("/admin");
 
   return {
     success: true,
-
-    message:
-      "Image uploaded successfully.",
-
-    media: {
-      id: media.id,
-
-      publicUrl:
-        media.public_url,
-    },
+    message: "Image deleted successfully.",
   };
 }
