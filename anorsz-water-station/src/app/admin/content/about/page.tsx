@@ -15,7 +15,7 @@ import { defaultAboutContent } from "@/lib/content/default-about-content";
 import { mergeAboutContent } from "@/lib/content/merge-about-content";
 
 import type { AboutPageContent } from "@/types/website-content";
-
+import type { MediaItem } from "@/types/media";
 export default async function AdminAboutContentPage() {
   const supabase = await createClient();
 
@@ -24,6 +24,52 @@ export default async function AdminAboutContentPage() {
     .select("content, updated_at")
     .eq("slug", "about")
     .maybeSingle();
+ const {
+  data: mediaData,
+  error: mediaError,
+} = await supabase
+  .from("media_library")
+  .select(
+    `
+      id,
+      name,
+      alt_text,
+      media_type,
+      bucket_name,
+      storage_path,
+      public_url,
+      mime_type,
+      file_size,
+      page_usage,
+      uploaded_by,
+      created_at,
+      updated_at
+    `,
+  )
+  .eq("media_type", "image")
+  .in(
+    "page_usage",
+    [
+      "about",
+      "global",
+    ],
+  )
+  .order(
+    "created_at",
+    {
+      ascending: false,
+    },
+  );
+
+if (mediaError) {
+  console.error(
+    "Unable to load About page media:",
+    mediaError,
+  );
+}
+
+const media =
+  (mediaData ?? []) as MediaItem[];
 
   const databaseContent =
     data?.content as
@@ -33,6 +79,8 @@ export default async function AdminAboutContentPage() {
   const content = databaseContent
     ? mergeAboutContent(databaseContent)
     : defaultAboutContent;
+
+
 
   return (
     <div className="mx-auto max-w-[1300px] px-5 py-7 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
@@ -93,8 +141,9 @@ export default async function AdminAboutContentPage() {
 
       <div className="mt-8">
         <AboutContentForm
-          initialContent={content}
-        />
+  initialContent={content}
+  mediaLibrary={media}
+/>
       </div>
     </div>
   );
