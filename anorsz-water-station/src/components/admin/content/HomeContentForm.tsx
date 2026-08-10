@@ -25,10 +25,22 @@ import ContentSection from "@/components/admin/content/ContentSection";
 
 import { saveHomeContent } from "@/app/admin/content/home/actions";
 
-import type { HomePageContent } from "@/types/website-content";
+
+import MediaPickerField from "@/components/admin/media/MediaPickerField";
+
+import type {
+  MediaItem,
+} from "@/types/media";
+
+import type {
+  HomePageContent,
+  WebsiteMediaSelection,
+} from "@/types/website-content";
 
 type HomeContentFormProps = {
   initialContent: HomePageContent;
+
+  mediaLibrary: MediaItem[];
 };
 
 type Message =
@@ -40,6 +52,7 @@ type Message =
 
 export default function HomeContentForm({
   initialContent,
+  mediaLibrary,
 }: HomeContentFormProps) {
   const [content, setContent] =
     useState<HomePageContent>(initialContent);
@@ -72,6 +85,51 @@ export default function HomeContentForm({
       },
     }));
   }
+
+  function updateOverviewImage(
+  image:
+    | WebsiteMediaSelection
+    | null,
+) {
+  setContent((current) => ({
+    ...current,
+
+    overview: {
+      ...current.overview,
+      image,
+    },
+  }));
+}
+
+function updateWhoWeAreImage(
+  image:
+    | WebsiteMediaSelection
+    | null,
+) {
+  setContent((current) => ({
+    ...current,
+
+    whoWeAre: {
+      ...current.whoWeAre,
+      image,
+    },
+  }));
+}
+
+function updateCtaBackground(
+  backgroundImage:
+    | WebsiteMediaSelection
+    | null,
+) {
+  setContent((current) => ({
+    ...current,
+
+    cta: {
+      ...current.cta,
+      backgroundImage,
+    },
+  }));
+}
 
   /*
    * =========================================================
@@ -406,6 +464,13 @@ export default function HomeContentForm({
         title="Company Overview"
         description="Manage the company introduction, image label, feature highlights and About link."
       >
+        <MediaPickerField
+  label="Main Water Station Image"
+  description="This is the large water-station image shown beside the Company Overview heading."
+  value={content.overview.image}
+  media={mediaLibrary}
+  onChange={updateOverviewImage}
+/>
         <ContentField
           label="Section Eyebrow"
           value={content.overview.eyebrow}
@@ -922,6 +987,13 @@ export default function HomeContentForm({
         title="Who We Are"
         description="Manage the sustainability message, benefit points and purpose overlay."
       >
+        <MediaPickerField
+  label="Community Impact Image"
+  description="Large image displayed underneath the Who We Are content."
+  value={content.whoWeAre.image}
+  media={mediaLibrary}
+  onChange={updateWhoWeAreImage}
+/>
         <ContentField
           label="Section Eyebrow"
           value={content.whoWeAre.eyebrow}
@@ -1067,6 +1139,14 @@ export default function HomeContentForm({
             the bottom of the homepage.
           </p>
         </div>
+
+        <MediaPickerField
+  label="CTA Background Image"
+  description="Background image displayed behind the final homepage call-to-action."
+  value={content.cta.backgroundImage}
+  media={mediaLibrary}
+  onChange={updateCtaBackground}
+/>
 
         <ContentField
           label="Eyebrow"

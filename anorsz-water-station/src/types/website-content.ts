@@ -10,6 +10,13 @@ export type HomeStatistic = {
   label: string;
 };
 
+export type WebsiteMediaSelection = {
+  id: string;
+  name: string;
+  url: string;
+  alt: string;
+};
+
 export type HomeInstitution = {
   key:
     | "schools"
@@ -50,11 +57,14 @@ export type HomePageContent = {
 
     secondaryButtonLabel: string;
     secondaryButtonHref: string;
+    
   };
 
   overview: {
     eyebrow: string;
     title: string;
+
+    image: WebsiteMediaSelection | null;
 
     imageBadge: string;
 
@@ -65,6 +75,7 @@ export type HomePageContent = {
     linkHref: string;
 
     features: HomeFeature[];
+    
   };
 
   howItWorks: {
@@ -96,6 +107,8 @@ export type HomePageContent = {
     title: string;
     description: string;
 
+    image: WebsiteMediaSelection | null;
+
     points: HomePurposePoint[];
 
     purposeEyebrow: string;
@@ -106,6 +119,8 @@ export type HomePageContent = {
     eyebrow: string;
     title: string;
     description: string;
+
+    backgroundImage: WebsiteMediaSelection | null;
 
     primaryButtonLabel: string;
     primaryButtonHref: string;

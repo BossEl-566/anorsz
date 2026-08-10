@@ -20,6 +20,8 @@ export const defaultHomeContent: HomePageContent = {
     title:
       "From Water Challenges to Intelligent Solutions",
 
+    image: null,
+
     imageBadge: "Pure • Fresh • Safe",
 
     lowerTitle:
@@ -191,6 +193,8 @@ export const defaultHomeContent: HomePageContent = {
     description:
       "We believe that access to pure water supports healthier lives and stronger communities. Our model also encourages reusable bottles and reduces dependence on disposable plastic and sachet-water packaging.",
 
+    image: null,
+
     points: [
       {
         text: "Safe drinking water",
@@ -217,6 +221,8 @@ export const defaultHomeContent: HomePageContent = {
 
     description:
       "Speak with our team about the right water station, purification system or institutional package for your requirements.",
+
+    backgroundImage: null,
 
     primaryButtonLabel: "Make an Enquiry",
     primaryButtonHref: "/contact",

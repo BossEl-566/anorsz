@@ -103,6 +103,62 @@ export async function deleteMedia(
       message: "The media item could not be found.",
     };
   }
+  /*
+ * =========================================================
+ * CHECK WHETHER MEDIA IS CURRENTLY USED BY A PAGE
+ * =========================================================
+ */
+
+const {
+  data: websitePages,
+  error: pageLookupError,
+} = await supabase
+  .from("website_pages")
+  .select("slug, content");
+
+if (pageLookupError) {
+  console.error(
+    "Unable to verify media usage:",
+    pageLookupError,
+  );
+
+  return {
+    success: false,
+    message:
+      "Unable to verify whether this image is currently in use.",
+  };
+}
+
+const usedByPages =
+  (websitePages ?? [])
+    .filter((page) => {
+      const serialized =
+        JSON.stringify(
+          page.content ?? {},
+        );
+
+      return serialized.includes(
+        media.id,
+      );
+    })
+    .map(
+      (page) =>
+        page.slug,
+    );
+
+if (
+  usedByPages.length >
+  0
+) {
+  return {
+    success: false,
+
+    message:
+      `This image is currently used by: ${usedByPages.join(
+        ", ",
+      )}. Replace or remove it from those pages before deleting it.`,
+  };
+}
 
   /*
    * =========================================================

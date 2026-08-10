@@ -13,6 +13,9 @@ import type {
   HomePurposePoint,
   HomeStatistic,
 } from "@/types/website-content";
+import type {
+  WebsiteMediaSelection,
+} from "@/types/website-content";
 
 type SaveResult = {
   success: boolean;
@@ -25,6 +28,46 @@ function cleanText(value: unknown, fallback = "") {
   }
 
   return value.trim();
+}
+
+function cleanMediaSelection(
+  value:
+    | WebsiteMediaSelection
+    | null
+    | undefined,
+): WebsiteMediaSelection | null {
+  if (!value) {
+    return null;
+  }
+
+  if (
+    typeof value.id !== "string" ||
+    typeof value.name !== "string" ||
+    typeof value.url !== "string" ||
+    typeof value.alt !== "string"
+  ) {
+    return null;
+  }
+
+  const supabaseUrl =
+    process.env
+      .NEXT_PUBLIC_SUPABASE_URL;
+
+  if (
+    !supabaseUrl ||
+    !value.url.startsWith(
+      `${supabaseUrl}/storage/v1/object/public/site-media/`,
+    )
+  ) {
+    return null;
+  }
+
+  return {
+    id: value.id.trim(),
+    name: value.name.trim(),
+    url: value.url.trim(),
+    alt: value.alt.trim(),
+  };
 }
 
 function cleanHref(value: unknown, fallback = "/") {
@@ -286,6 +329,10 @@ export async function saveHomeContent(
         defaultHomeContent.overview.title,
       ),
 
+      image: cleanMediaSelection(
+  content.overview.image,
+),
+
       imageBadge: cleanText(
         content.overview.imageBadge,
         defaultHomeContent.overview.imageBadge,
@@ -395,6 +442,11 @@ export async function saveHomeContent(
         defaultHomeContent.whoWeAre.description,
       ),
 
+      image:
+  cleanMediaSelection(
+    content.whoWeAre.image,
+  ),
+
       points: cleanPurposePoints(
         content.whoWeAre.points,
       ),
@@ -425,6 +477,11 @@ export async function saveHomeContent(
         content.cta.description,
         defaultHomeContent.cta.description,
       ),
+
+      backgroundImage:
+  cleanMediaSelection(
+    content.cta.backgroundImage,
+  ),
 
       primaryButtonLabel: cleanText(
         content.cta.primaryButtonLabel,

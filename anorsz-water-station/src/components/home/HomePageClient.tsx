@@ -215,14 +215,24 @@ export default function HomePageClient({
               className="relative"
             >
               <div className="relative aspect-16/10 overflow-hidden bg-[#ded9df]">
-                <Image
-                  src={waterStationImage}
-                  alt="Anors.Z intelligent water station"
-                  fill
-                  priority={false}
-                  className="object-cover transition duration-700 hover:scale-[1.03]"
-                  sizes="(max-width: 1024px) 100vw, 58vw"
-                />
+                {content.overview.image ? (
+  // eslint-disable-next-line @next/next/no-img-element
+  <img
+    src={content.overview.image.url}
+    alt={content.overview.image.alt}
+    loading="lazy"
+    className="absolute inset-0 h-full w-full object-cover transition duration-700 hover:scale-[1.03]"
+  />
+) : (
+  <Image
+    src={waterStationImage}
+    alt="Anors.Z intelligent water station"
+    fill
+    priority={false}
+    className="object-cover transition duration-700 hover:scale-[1.03]"
+    sizes="(max-width: 1024px) 100vw, 58vw"
+  />
+)}
 
                 <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-[#1a091c]/35 via-transparent to-transparent" />
 
@@ -601,13 +611,23 @@ export default function HomePageClient({
             viewport={viewport}
             className="relative mt-12 aspect-[16/8.5] min-h-[360px] overflow-hidden bg-[#d8d2d9] lg:mt-16"
           >
-            <Image
-              src={communityImpactImage}
-              alt="Anors.Z supporting institutions and communities"
-              fill
-              className="object-cover transition duration-700 hover:scale-[1.02]"
-              sizes="(max-width: 1440px) 100vw, 1440px"
-            />
+            {content.whoWeAre.image ? (
+  // eslint-disable-next-line @next/next/no-img-element
+  <img
+    src={content.whoWeAre.image.url}
+    alt={content.whoWeAre.image.alt}
+    loading="lazy"
+    className="absolute inset-0 h-full w-full object-cover transition duration-700 hover:scale-[1.02]"
+  />
+) : (
+  <Image
+    src={communityImpactImage}
+    alt="Anors.Z supporting institutions and communities"
+    fill
+    className="object-cover transition duration-700 hover:scale-[1.02]"
+    sizes="(max-width: 1440px) 100vw, 1440px"
+  />
+)}
 
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#180719]/55 via-transparent to-transparent" />
 
@@ -644,13 +664,29 @@ export default function HomePageClient({
           viewport={viewport}
           className="relative mx-auto min-h-[390px] max-w-[1440px] overflow-hidden"
         >
-          <Image
-            src={ctaBackground}
-            alt=""
-            fill
-            className="object-cover"
-            sizes="(max-width: 1440px) 100vw, 1440px"
-          />
+          {content.cta.backgroundImage ? (
+  // eslint-disable-next-line @next/next/no-img-element
+  <img
+    src={
+      content.cta
+        .backgroundImage.url
+    }
+    alt={
+      content.cta
+        .backgroundImage.alt
+    }
+    loading="lazy"
+    className="absolute inset-0 h-full w-full object-cover"
+  />
+) : (
+  <Image
+    src={ctaBackground}
+    alt=""
+    fill
+    className="object-cover"
+    sizes="(max-width: 1440px) 100vw, 1440px"
+  />
+)}
 
           {/* Dark branded overlays */}
           <div className="absolute inset-0 bg-[#2c102d]/65" />

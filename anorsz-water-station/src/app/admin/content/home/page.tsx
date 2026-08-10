@@ -12,6 +12,11 @@ import { defaultHomeContent } from "@/lib/content/default-home-content";
 import { mergeHomeContent } from "@/lib/content/merge-home-content";
 
 import type { HomePageContent } from "@/types/website-content";
+import type {
+  MediaItem,
+} from "@/types/media";
+
+
 
 export default async function AdminHomeContentPage() {
   const supabase = await createClient();
@@ -21,6 +26,53 @@ export default async function AdminHomeContentPage() {
     .select("content, updated_at")
     .eq("slug", "home")
     .maybeSingle();
+
+ const {
+  data: mediaData,
+  error: mediaError,
+} = await supabase
+  .from("media_library")
+  .select(
+    `
+      id,
+      name,
+      alt_text,
+      media_type,
+      bucket_name,
+      storage_path,
+      public_url,
+      mime_type,
+      file_size,
+      page_usage,
+      uploaded_by,
+      created_at,
+      updated_at
+    `,
+  )
+  .eq("media_type", "image")
+  .in(
+    "page_usage",
+    [
+      "home",
+      "global",
+    ],
+  )
+  .order(
+    "created_at",
+    {
+      ascending: false,
+    },
+  );
+
+if (mediaError) {
+  console.error(
+    "Unable to load homepage media:",
+    mediaError,
+  );
+}
+
+const media =
+  (mediaData ?? []) as MediaItem[];
 
   const databaseContent =
     data?.content as Partial<HomePageContent> | null;
@@ -85,7 +137,10 @@ export default async function AdminHomeContentPage() {
       )}
 
       <div className="mt-8">
-        <HomeContentForm initialContent={content} />
+        <HomeContentForm
+  initialContent={content}
+  mediaLibrary={media}
+/>
       </div>
     </div>
   );
