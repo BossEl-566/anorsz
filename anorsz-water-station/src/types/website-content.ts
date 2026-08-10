@@ -173,6 +173,8 @@ export type AboutImpactItem = {
   key: AboutImpactKey;
   title: string;
   description: string;
+
+  image: WebsiteMediaSelection | null;
 };
 
 export type AboutSupportItem = {
@@ -199,6 +201,8 @@ export type AboutPageContent = {
     eyebrow: string;
     title: string;
 
+    image: WebsiteMediaSelection | null;
+
     paragraphOne: string;
     paragraphTwo: string;
     paragraphThree: string;
@@ -218,10 +222,12 @@ export type AboutPageContent = {
     missionEyebrow: string;
     missionTitle: string;
     missionDescription: string;
+    missionImage: WebsiteMediaSelection | null;
 
     visionEyebrow: string;
     visionTitle: string;
     visionDescription: string;
+    visionImage: WebsiteMediaSelection | null;
   };
 
   values: {
@@ -254,6 +260,8 @@ export type AboutPageContent = {
     title: string;
     description: string;
 
+    image: WebsiteMediaSelection | null;
+
     imageEyebrow: string;
     imageText: string;
 
@@ -264,6 +272,8 @@ export type AboutPageContent = {
     eyebrow: string;
     title: string;
     description: string;
+
+    image: WebsiteMediaSelection | null;
 
     items: AboutSupportItem[];
 

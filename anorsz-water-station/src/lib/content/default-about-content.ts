@@ -22,6 +22,7 @@ export const defaultAboutContent: AboutPageContent = {
 
     title:
       "Rethinking How People Access Safe Drinking Water",
+    image: null,
 
     paragraphOne:
       "Anors.Z Global Water Station is a water-refilling company focused on making pure, safe, reliable and affordable drinking water available for everyday consumption.",
@@ -58,6 +59,8 @@ export const defaultAboutContent: AboutPageContent = {
     missionDescription:
       "We provide dependable water stations that combine modern purification, convenient smart-card access and reusable bottles to protect health and reduce waste.",
 
+    missionImage: null,
+
     visionEyebrow: "Our Vision",
 
     visionTitle:
@@ -65,6 +68,8 @@ export const defaultAboutContent: AboutPageContent = {
 
     visionDescription:
       "We aim to create positive global impact by improving access to safe water, protecting the environment and supporting future generations.",
+
+    visionImage: null,
   },
 
   values: {
@@ -187,43 +192,49 @@ export const defaultAboutContent: AboutPageContent = {
   },
 
   impact: {
-    eyebrow: "Where We Make an Impact",
+  eyebrow: "Where We Make an Impact",
 
-    title:
-      "Water Solutions Designed for Different Environments",
+  title:
+    "Water Solutions Designed for Different Environments",
 
-    description:
-      "Station size, faucet configuration, temperature options and purification capacity can be selected according to the environment and expected number of users.",
+  description:
+    "Station size, faucet configuration, temperature options and purification capacity can be selected according to the environment and expected number of users.",
 
-    items: [
-      {
-        key: "education",
+  items: [
+    {
+      key: "education",
 
-        title: "Education",
+      title: "Education",
 
-        description:
-          "Supporting basic, secondary and tertiary institutions with dependable access to safe drinking water.",
-      },
+      description:
+        "Supporting basic, secondary and tertiary institutions with dependable access to safe drinking water.",
 
-      {
-        key: "business",
+      image: null,
+    },
 
-        title: "Business and Industry",
+    {
+      key: "business",
 
-        description:
-          "Providing scalable systems for offices, corporate institutions, factories and commercial facilities.",
-      },
+      title: "Business and Industry",
 
-      {
-        key: "communities",
+      description:
+        "Providing scalable systems for offices, corporate institutions, factories and commercial facilities.",
 
-        title: "Communities and Public Spaces",
+      image: null,
+    },
 
-        description:
-          "Creating convenient refill access for communities, hospitals, hotels and public institutions.",
-      },
-    ],
-  },
+    {
+      key: "communities",
+
+      title: "Communities and Public Spaces",
+
+      description:
+        "Creating convenient refill access for communities, hospitals, hotels and public institutions.",
+
+      image: null,
+    },
+  ],
+},
 
   sustainability: {
     eyebrow: "Sustainability",
@@ -233,6 +244,8 @@ export const defaultAboutContent: AboutPageContent = {
 
     description:
       "Our refill model encourages customers to carry reusable bottles instead of depending exclusively on disposable bottled and sachet water. It connects access to safe water with practical action against plastic pollution.",
+
+    image: null,
 
     imageEyebrow:
       "Environmental Responsibility",
@@ -257,6 +270,8 @@ export const defaultAboutContent: AboutPageContent = {
 
     description:
       "We work with each client to understand their environment, expected number of users, water requirements and preferred station configuration.",
+
+    image: null,
 
     items: [
       {

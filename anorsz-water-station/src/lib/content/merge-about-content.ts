@@ -29,9 +29,12 @@ export function mergeAboutContent(
       ...(content?.values ?? {}),
 
       items:
-        content?.values?.items?.length
-          ? content.values.items
-          : defaultAboutContent.values.items,
+        defaultAboutContent.values.items.map(
+          (defaultItem, index) => ({
+            ...defaultItem,
+            ...(content?.values?.items?.[index] ?? {}),
+          }),
+        ),
     },
 
     technology: {
@@ -39,9 +42,13 @@ export function mergeAboutContent(
       ...(content?.technology ?? {}),
 
       items:
-        content?.technology?.items?.length
-          ? content.technology.items
-          : defaultAboutContent.technology.items,
+        defaultAboutContent.technology.items.map(
+          (defaultItem, index) => ({
+            ...defaultItem,
+            ...(content?.technology?.items?.[index] ??
+              {}),
+          }),
+        ),
     },
 
     impact: {
@@ -49,9 +56,12 @@ export function mergeAboutContent(
       ...(content?.impact ?? {}),
 
       items:
-        content?.impact?.items?.length
-          ? content.impact.items
-          : defaultAboutContent.impact.items,
+        defaultAboutContent.impact.items.map(
+          (defaultItem, index) => ({
+            ...defaultItem,
+            ...(content?.impact?.items?.[index] ?? {}),
+          }),
+        ),
     },
 
     sustainability: {
@@ -59,9 +69,11 @@ export function mergeAboutContent(
       ...(content?.sustainability ?? {}),
 
       points:
-        content?.sustainability?.points?.length
-          ? content.sustainability.points
-          : defaultAboutContent.sustainability.points,
+        defaultAboutContent.sustainability.points.map(
+          (defaultPoint, index) =>
+            content?.sustainability?.points?.[index] ??
+            defaultPoint,
+        ),
     },
 
     support: {
@@ -69,9 +81,12 @@ export function mergeAboutContent(
       ...(content?.support ?? {}),
 
       items:
-        content?.support?.items?.length
-          ? content.support.items
-          : defaultAboutContent.support.items,
+        defaultAboutContent.support.items.map(
+          (defaultItem, index) => ({
+            ...defaultItem,
+            ...(content?.support?.items?.[index] ?? {}),
+          }),
+        ),
     },
 
     cta: {
