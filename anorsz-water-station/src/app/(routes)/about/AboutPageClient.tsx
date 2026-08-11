@@ -29,6 +29,7 @@ import {
   Zap,
   type LucideIcon,
 } from "lucide-react";
+import CmsImage from "@/components/content/CmsImage";
 
 import type { AboutPageContent } from "@/types/website-content";
 import aboutCommunityOne from "@/assets/images/about-community-1.jpeg";
@@ -401,13 +402,13 @@ export default function AboutPageClient({
             className="relative"
           >
             <div className="relative aspect-[4/4.5] min-h-[500px] overflow-hidden bg-[#ddd6de]">
-              <Image
-                src={aboutStoryImage}
-                alt="Anors.Z water station and company operations"
-                fill
-                className="object-cover transition duration-700 hover:scale-[1.025]"
-                sizes="(max-width: 1024px) 100vw, 53vw"
-              />
+             <CmsImage
+  media={content.story.image}
+  fallback={aboutStoryImage}
+  fallbackAlt="Anors.Z water station"
+  className="object-cover transition duration-700 hover:scale-[1.03]"
+  sizes="(max-width: 1024px) 100vw, 50vw"
+/>
 
               <div className="absolute inset-0 bg-gradient-to-t from-[#160b19]/65 via-transparent to-transparent" />
 
@@ -471,13 +472,16 @@ export default function AboutPageClient({
               whileHover={{ y: -8 }}
               className="group relative min-h-[540px] overflow-hidden bg-[#241026] text-white"
             >
-              <Image
-                src={aboutMissionImage}
-                alt="People accessing safe drinking water"
-                fill
-                className="object-cover opacity-60 transition duration-700 group-hover:scale-[1.025]"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
+              <CmsImage
+  media={
+    content.purpose
+      .missionImage
+  }
+  fallback={aboutMissionImage}
+  fallbackAlt="Anors.Z mission"
+  className="object-cover transition duration-700 hover:scale-[1.03]"
+  sizes="(max-width: 1024px) 100vw, 50vw"
+/>
 
               <div className="absolute inset-0 bg-gradient-to-t from-[#180719] via-[#241026]/65 to-[#241026]/20" />
 
@@ -511,13 +515,16 @@ export default function AboutPageClient({
               whileHover={{ y: -8 }}
               className="group relative min-h-[540px] overflow-hidden bg-[#681761] text-white"
             >
-              <Image
-                src={aboutVisionImage}
-                alt="A healthier and more sustainable community"
-                fill
-                className="object-cover opacity-55 transition duration-700 group-hover:scale-[1.025]"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
+             <CmsImage
+  media={
+    content.purpose
+      .visionImage
+  }
+  fallback={aboutVisionImage}
+  fallbackAlt="Anors.Z vision"
+  className="object-cover transition duration-700 hover:scale-[1.03]"
+  sizes="(max-width: 1024px) 100vw, 50vw"
+/>
 
               <div className="absolute inset-0 bg-gradient-to-t from-[#4b1048] via-[#681761]/65 to-[#681761]/20" />
 
@@ -783,13 +790,13 @@ export default function AboutPageClient({
       }`}
     >
       <div className="relative aspect-[4/5] min-h-[440px] overflow-hidden bg-[#ded8df]">
-        <Image
-          src={image}
-          alt={item.title}
-          fill
-          className="object-cover transition duration-700 group-hover:scale-[1.06]"
-          sizes="(max-width: 1024px) 100vw, 34vw"
-        />
+        <CmsImage
+  media={item.image}
+  fallback={image}
+  fallbackAlt={item.title}
+  className="object-cover transition duration-700 group-hover:scale-[1.06]"
+  sizes="(max-width: 1024px) 100vw, 34vw"
+/>
 
         <div className="absolute inset-0 bg-gradient-to-t from-[#170719]/90 via-[#170719]/15 to-transparent" />
 
@@ -858,13 +865,17 @@ export default function AboutPageClient({
             viewport={viewport}
             className="relative aspect-[16/11] min-h-[440px] overflow-hidden bg-[#d9d2db]"
           >
-            <Image
-              src={aboutSustainabilityImage}
-              alt="Reusable bottles and sustainable drinking-water access"
-              fill
-              className="object-cover transition duration-700 hover:scale-[1.025]"
-              sizes="(max-width: 1024px) 100vw, 56vw"
-            />
+           <CmsImage
+  media={
+    content.sustainability.image
+  }
+  fallback={
+    aboutSustainabilityImage
+  }
+  fallbackAlt="Anors.Z environmental sustainability"
+  className="object-cover transition duration-700 hover:scale-[1.03]"
+  sizes="(max-width: 1024px) 100vw, 50vw"
+/>
 
             <div className="absolute inset-0 bg-gradient-to-t from-[#180719]/70 via-transparent to-transparent" />
 
@@ -1019,13 +1030,13 @@ export default function AboutPageClient({
                 viewport={viewport}
                 className="relative aspect-[16/7] min-h-[230px] overflow-hidden bg-[#ded7df]"
               >
-                <Image
-                  src={aboutSupportImage}
-                  alt="Anors.Z installation and technical support"
-                  fill
-                  className="object-cover transition duration-700 hover:scale-[1.025]"
-                  sizes="(max-width: 1024px) 100vw, 55vw"
-                />
+               <CmsImage
+  media={content.support.image}
+  fallback={aboutSupportImage}
+  fallbackAlt="Anors.Z installation and technical support"
+  className="object-cover transition duration-700 hover:scale-[1.03]"
+  sizes="(max-width: 1024px) 100vw, 50vw"
+/>
 
                 <div className="absolute inset-0 bg-gradient-to-r from-[#160b19]/65 to-transparent" />
 

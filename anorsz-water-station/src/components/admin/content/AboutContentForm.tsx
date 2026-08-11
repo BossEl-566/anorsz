@@ -18,10 +18,20 @@ import ContentSection from "@/components/admin/content/ContentSection";
 
 import { saveAboutContent } from "@/app/admin/content/about/actions";
 
-import type { AboutPageContent } from "@/types/website-content";
+
+import MediaPickerField from "@/components/admin/media/MediaPickerField";
+
+import type { MediaItem } from "@/types/media";
+
+import type {
+  AboutPageContent,
+  WebsiteMediaSelection,
+} from "@/types/website-content";
 
 type Props = {
   initialContent: AboutPageContent;
+
+  mediaLibrary: MediaItem[];
 };
 
 type Message =
@@ -33,6 +43,7 @@ type Message =
 
 export default function AboutContentForm({
   initialContent,
+  mediaLibrary,
 }: Props) {
   const [content, setContent] =
     useState(initialContent);
@@ -131,6 +142,98 @@ export default function AboutContentForm({
       });
     });
   }
+
+  function updateStoryImage(
+  image: WebsiteMediaSelection | null,
+) {
+  setContent((current) => ({
+    ...current,
+
+    story: {
+      ...current.story,
+      image,
+    },
+  }));
+}
+
+function updateMissionImage(
+  missionImage: WebsiteMediaSelection | null,
+) {
+  setContent((current) => ({
+    ...current,
+
+    purpose: {
+      ...current.purpose,
+      missionImage,
+    },
+  }));
+}
+
+function updateVisionImage(
+  visionImage: WebsiteMediaSelection | null,
+) {
+  setContent((current) => ({
+    ...current,
+
+    purpose: {
+      ...current.purpose,
+      visionImage,
+    },
+  }));
+}
+
+function updateImpactImage(
+  index: number,
+  image: WebsiteMediaSelection | null,
+) {
+  setContent((current) => {
+    const items =
+      current.impact.items.map(
+        (item, itemIndex) =>
+          itemIndex === index
+            ? {
+                ...item,
+                image,
+              }
+            : item,
+      );
+
+    return {
+      ...current,
+
+      impact: {
+        ...current.impact,
+        items,
+      },
+    };
+  });
+}
+
+function updateSustainabilityImage(
+  image: WebsiteMediaSelection | null,
+) {
+  setContent((current) => ({
+    ...current,
+
+    sustainability: {
+      ...current.sustainability,
+      image,
+    },
+  }));
+}
+
+function updateSupportImage(
+  image: WebsiteMediaSelection | null,
+) {
+  setContent((current) => ({
+    ...current,
+
+    support: {
+      ...current.support,
+      image,
+    },
+  }));
+}
 
   return (
     <div className="space-y-6">
@@ -241,6 +344,13 @@ export default function AboutContentForm({
         title="Company Story"
         description="Manage the company introduction and belief statement."
       >
+        <MediaPickerField
+  label="Company Story Image"
+  description="Large image used in the company story section."
+  value={content.story.image}
+  media={mediaLibrary}
+  onChange={updateStoryImage}
+/>
         <ContentField
           label="Eyebrow"
           value={content.story.eyebrow}
@@ -366,6 +476,13 @@ export default function AboutContentForm({
         title="Mission & Vision"
         description="Manage Anors.Z's purpose, mission and vision statements."
       >
+        <MediaPickerField
+  label="Mission Image"
+  description="Image displayed with the Mission content."
+  value={content.purpose.missionImage}
+  media={mediaLibrary}
+  onChange={updateMissionImage}
+/>
         <ContentField
           label="Eyebrow"
           value={content.purpose.eyebrow}
@@ -452,6 +569,13 @@ export default function AboutContentForm({
           </div>
 
           <div className="space-y-4 rounded-xl bg-[#faf9f8] p-5">
+            <MediaPickerField
+  label="Vision Image"
+  description="Image displayed with the Vision content."
+  value={content.purpose.visionImage}
+  media={mediaLibrary}
+  onChange={updateVisionImage}
+/>
             <ContentField
               label="Vision Label"
               value={
@@ -735,6 +859,18 @@ export default function AboutContentForm({
                 key={item.key}
                 className="space-y-4 rounded-xl border border-black/10 bg-[#faf9f8] p-5"
               >
+                <MediaPickerField
+  label={`Image ${index + 1}`}
+  description={`Image for ${item.title}.`}
+  value={item.image}
+  media={mediaLibrary}
+  onChange={(image) =>
+    updateImpactImage(
+      index,
+      image,
+    )
+  }
+/>
                 <ContentField
                   label="Title"
                   value={item.title}
@@ -774,6 +910,13 @@ export default function AboutContentForm({
         title="Sustainability"
         description="Manage environmental responsibility messaging."
       >
+        <MediaPickerField
+  label="Sustainability Image"
+  description="Main image displayed in the sustainability section."
+  value={content.sustainability.image}
+  media={mediaLibrary}
+  onChange={updateSustainabilityImage}
+/>
         <ContentField
           label="Eyebrow"
           value={
@@ -874,6 +1017,13 @@ export default function AboutContentForm({
         title="Installation & Support"
         description="Manage installation, training and technical-support content."
       >
+        <MediaPickerField
+  label="Installation & Support Image"
+  description="Image displayed alongside installation and support information."
+  value={content.support.image}
+  media={mediaLibrary}
+  onChange={updateSupportImage}
+/>
         <ContentField
           label="Eyebrow"
           value={content.support.eyebrow}

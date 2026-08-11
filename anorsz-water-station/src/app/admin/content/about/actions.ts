@@ -5,7 +5,10 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { defaultAboutContent } from "@/lib/content/default-about-content";
 
-import type { AboutPageContent } from "@/types/website-content";
+import type {
+  AboutPageContent,
+  WebsiteMediaSelection,
+} from "@/types/website-content";
 
 type SaveResult = {
   success: boolean;
@@ -47,6 +50,51 @@ function cleanHref(
   }
 
   return fallback;
+}
+
+function cleanMediaSelection(
+  value:
+    | WebsiteMediaSelection
+    | null
+    | undefined,
+): WebsiteMediaSelection | null {
+  if (!value) {
+    return null;
+  }
+
+  if (
+    typeof value.id !== "string" ||
+    typeof value.name !== "string" ||
+    typeof value.url !== "string" ||
+    typeof value.alt !== "string"
+  ) {
+    return null;
+  }
+
+  const supabaseUrl =
+    process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+  if (!supabaseUrl) {
+    return null;
+  }
+
+  const expectedPrefix =
+    `${supabaseUrl}/storage/v1/object/public/site-media/`;
+
+  if (
+    !value.url.startsWith(
+      expectedPrefix,
+    )
+  ) {
+    return null;
+  }
+
+  return {
+    id: value.id.trim(),
+    name: value.name.trim(),
+    url: value.url.trim(),
+    alt: value.alt.trim(),
+  };
 }
 
 export async function saveAboutContent(
@@ -161,6 +209,9 @@ export async function saveAboutContent(
         content.story.title,
         defaultAboutContent.story.title,
       ),
+      image: cleanMediaSelection(
+  content.story.image,
+),
 
       paragraphOne: cleanText(
         content.story.paragraphOne,
@@ -208,6 +259,7 @@ export async function saveAboutContent(
         content.purpose.title,
         defaultAboutContent.purpose.title,
       ),
+      
 
       description: cleanText(
         content.purpose.description,
@@ -229,6 +281,11 @@ export async function saveAboutContent(
         defaultAboutContent.purpose.missionDescription,
       ),
 
+      missionImage:
+  cleanMediaSelection(
+    content.purpose.missionImage,
+  ),
+
       visionEyebrow: cleanText(
         content.purpose.visionEyebrow,
         defaultAboutContent.purpose.visionEyebrow,
@@ -239,11 +296,18 @@ export async function saveAboutContent(
         defaultAboutContent.purpose.visionTitle,
       ),
 
+      visionImage:
+  cleanMediaSelection(
+    content.purpose.visionImage,
+  ),
+
       visionDescription: cleanText(
         content.purpose.visionDescription,
         defaultAboutContent.purpose.visionDescription,
       ),
     },
+
+    
 
     values: {
       eyebrow: cleanText(
@@ -340,23 +404,29 @@ export async function saveAboutContent(
       ),
 
       items:
-        defaultAboutContent.impact.items.map(
-          (fallback, index) => ({
-            key: fallback.key,
+  defaultAboutContent.impact.items.map(
+    (fallback, index) => ({
+      key: fallback.key,
 
-            title: cleanText(
-              content.impact.items?.[index]
-                ?.title,
-              fallback.title,
-            ),
+      title: cleanText(
+        content.impact.items?.[index]
+          ?.title,
+        fallback.title,
+      ),
 
-            description: cleanText(
-              content.impact.items?.[index]
-                ?.description,
-              fallback.description,
-            ),
-          }),
+      description: cleanText(
+        content.impact.items?.[index]
+          ?.description,
+        fallback.description,
+      ),
+
+      image:
+        cleanMediaSelection(
+          content.impact.items?.[index]
+            ?.image,
         ),
+    }),
+  ),
     },
 
     sustainability: {
@@ -377,6 +447,11 @@ export async function saveAboutContent(
         defaultAboutContent.sustainability
           .description,
       ),
+
+      image:
+  cleanMediaSelection(
+    content.sustainability.image,
+  ),
 
       imageEyebrow: cleanText(
         content.sustainability.imageEyebrow,
@@ -416,6 +491,10 @@ export async function saveAboutContent(
         content.support.description,
         defaultAboutContent.support.description,
       ),
+      image:
+  cleanMediaSelection(
+    content.support.image,
+  ),
 
       items:
         defaultAboutContent.support.items.map(
