@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
+
 import {
   ChangeEvent,
   FormEvent,
@@ -9,12 +11,16 @@ import {
 
 import { useRouter } from "next/navigation";
 
+import * as tus from "tus-js-client";
+
 import {
   CheckCircle2,
   FileImage,
+  FileVideo,
   ImagePlus,
   Loader2,
   Upload,
+  Video,
   X,
   XCircle,
 } from "lucide-react";
@@ -26,14 +32,26 @@ type MediaUploadModalProps = {
   onClose: () => void;
 };
 
-const MAX_FILE_SIZE =
+type SelectedMediaType =
+  | "image"
+  | "video";
+
+const MAX_IMAGE_SIZE =
   10 * 1024 * 1024;
 
-const ALLOWED_TYPES = [
+const MAX_VIDEO_SIZE =
+  50 * 1024 * 1024;
+
+const IMAGE_TYPES = [
   "image/jpeg",
   "image/png",
   "image/webp",
   "image/avif",
+];
+
+const VIDEO_TYPES = [
+  "video/mp4",
+  "video/webm",
 ];
 
 const PAGE_OPTIONS = [
@@ -73,7 +91,10 @@ function sanitizeFileName(
   return filename
     .toLowerCase()
     .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9.\-_]/g, "");
+    .replace(
+      /[^a-z0-9.\-_]/g,
+      "",
+    );
 }
 
 function removeExtension(
@@ -85,39 +106,119 @@ function removeExtension(
   );
 }
 
+function formatBytes(
+  bytes: number,
+) {
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  }
+
+  if (
+    bytes <
+    1024 * 1024
+  ) {
+    return `${(
+      bytes / 1024
+    ).toFixed(1)} KB`;
+  }
+
+  return `${(
+    bytes /
+    1024 /
+    1024
+  ).toFixed(2)} MB`;
+}
+
+function getMediaType(
+  file: File,
+): SelectedMediaType | null {
+  if (
+    IMAGE_TYPES.includes(
+      file.type,
+    )
+  ) {
+    return "image";
+  }
+
+  if (
+    VIDEO_TYPES.includes(
+      file.type,
+    )
+  ) {
+    return "video";
+  }
+
+  return null;
+}
+
 export default function MediaUploadModal({
   isOpen,
   onClose,
 }: MediaUploadModalProps) {
-  const router = useRouter();
+  const router =
+    useRouter();
 
   const [file, setFile] =
-    useState<File | null>(null);
+    useState<File | null>(
+      null,
+    );
 
-  const [previewUrl, setPreviewUrl] =
-    useState<string | null>(null);
+  const [
+    previewUrl,
+    setPreviewUrl,
+  ] =
+    useState<string | null>(
+      null,
+    );
+
+  const [
+    mediaType,
+    setMediaType,
+  ] =
+    useState<SelectedMediaType | null>(
+      null,
+    );
 
   const [name, setName] =
     useState("");
 
-  const [altText, setAltText] =
-    useState("");
+  const [
+    altText,
+    setAltText,
+  ] = useState("");
 
-  const [pageUsage, setPageUsage] =
+  const [
+    pageUsage,
+    setPageUsage,
+  ] =
     useState("global");
 
-  const [isUploading, setIsUploading] =
+  const [
+    isUploading,
+    setIsUploading,
+  ] =
     useState(false);
 
-  const [message, setMessage] =
+  const [
+    uploadProgress,
+    setUploadProgress,
+  ] =
+    useState(0);
+
+  const [
+    message,
+    setMessage,
+  ] =
     useState<{
-      type: "success" | "error";
+      type:
+        | "success"
+        | "error";
       text: string;
     } | null>(null);
 
   /*
    * =========================================================
-   * IMAGE PREVIEW
+   * PREVIEW
    * =========================================================
    */
 
@@ -128,9 +229,13 @@ export default function MediaUploadModal({
     }
 
     const objectUrl =
-      URL.createObjectURL(file);
+      URL.createObjectURL(
+        file,
+      );
 
-    setPreviewUrl(objectUrl);
+    setPreviewUrl(
+      objectUrl,
+    );
 
     return () => {
       URL.revokeObjectURL(
@@ -148,9 +253,17 @@ export default function MediaUploadModal({
   function resetForm() {
     setFile(null);
     setPreviewUrl(null);
+    setMediaType(null);
+
     setName("");
     setAltText("");
-    setPageUsage("global");
+
+    setPageUsage(
+      "global",
+    );
+
+    setUploadProgress(0);
+
     setMessage(null);
     setIsUploading(false);
   }
@@ -166,7 +279,7 @@ export default function MediaUploadModal({
 
   /*
    * =========================================================
-   * SELECT FILE
+   * FILE SELECTION
    * =========================================================
    */
 
@@ -174,54 +287,90 @@ export default function MediaUploadModal({
     event: ChangeEvent<HTMLInputElement>,
   ) {
     const selected =
-      event.target.files?.[0];
+      event.target
+        .files?.[0];
 
     setMessage(null);
+    setUploadProgress(0);
 
     if (!selected) {
       setFile(null);
+      setMediaType(null);
       return;
     }
 
-    if (
-      !ALLOWED_TYPES.includes(
-        selected.type,
-      )
-    ) {
+    const detectedType =
+      getMediaType(
+        selected,
+      );
+
+    if (!detectedType) {
       setMessage({
         type: "error",
+
         text:
-          "Only JPG, PNG, WebP and AVIF images are allowed.",
+          "Only JPG, PNG, WebP, AVIF, MP4 and WebM files are allowed.",
       });
 
-      event.target.value = "";
+      event.target.value =
+        "";
 
       return;
     }
 
     if (
+      detectedType ===
+        "image" &&
       selected.size >
-      MAX_FILE_SIZE
+        MAX_IMAGE_SIZE
     ) {
       setMessage({
         type: "error",
+
         text:
-          "The selected image is larger than 10 MB.",
+          "Images must be 10 MB or smaller.",
       });
 
-      event.target.value = "";
+      event.target.value =
+        "";
+
+      return;
+    }
+
+    if (
+      detectedType ===
+        "video" &&
+      selected.size >
+        MAX_VIDEO_SIZE
+    ) {
+      setMessage({
+        type: "error",
+
+        text:
+          "Videos must be 50 MB or smaller.",
+      });
+
+      event.target.value =
+        "";
 
       return;
     }
 
     setFile(selected);
 
+    setMediaType(
+      detectedType,
+    );
+
     if (!name) {
       setName(
         removeExtension(
           selected.name,
         )
-          .replace(/[-_]+/g, " ")
+          .replace(
+            /[-_]+/g,
+            " ",
+          )
           .trim(),
       );
     }
@@ -229,101 +378,29 @@ export default function MediaUploadModal({
 
   /*
    * =========================================================
-   * UPLOAD
+   * STANDARD IMAGE UPLOAD
    * =========================================================
    */
 
-  async function handleSubmit(
-    event: FormEvent<HTMLFormElement>,
+  async function uploadImage(
+    storagePath: string,
   ) {
-    event.preventDefault();
-
-    setMessage(null);
-
     if (!file) {
-      setMessage({
-        type: "error",
-        text:
-          "Please select an image before uploading.",
-      });
-
-      return;
+      throw new Error(
+        "No image selected.",
+      );
     }
 
-    if (!name.trim()) {
-      setMessage({
-        type: "error",
-        text:
-          "Please enter a name for this image.",
-      });
+    const supabase =
+      createClient();
 
-      return;
-    }
-
-    setIsUploading(true);
-
-    try {
-      const supabase =
-        createClient();
-
-      /*
-       * ---------------------------------------
-       * Confirm current user
-       * ---------------------------------------
-       */
-
-      const {
-        data: claimsData,
-        error: claimsError,
-      } =
-        await supabase.auth.getClaims();
-
-      const userId =
-        typeof claimsData?.claims?.sub ===
-        "string"
-          ? claimsData.claims.sub
-          : null;
-
-      if (
-        claimsError ||
-        !userId
-      ) {
-        setMessage({
-          type: "error",
-          text:
-            "Your session has expired. Please sign in again.",
-        });
-
-        return;
-      }
-
-      /*
-       * ---------------------------------------
-       * Generate safe unique path
-       * ---------------------------------------
-       */
-
-      const safeFileName =
-        sanitizeFileName(
-          file.name,
-        );
-
-      const uniqueId =
-        crypto.randomUUID();
-
-      const storagePath =
-        `${pageUsage}/${uniqueId}-${safeFileName}`;
-
-      /*
-       * ---------------------------------------
-       * Upload directly to Supabase
-       * ---------------------------------------
-       */
-
-      const {
-        error: uploadError,
-      } = await supabase.storage
-        .from("site-media")
+    const {
+      error,
+    } =
+      await supabase.storage
+        .from(
+          "site-media",
+        )
         .upload(
           storagePath,
           file,
@@ -338,35 +415,359 @@ export default function MediaUploadModal({
           },
         );
 
-      if (uploadError) {
-        console.error(
-          "Upload error:",
-          uploadError,
-        );
+    if (error) {
+      throw error;
+    }
 
-        setMessage({
-          type: "error",
-          text:
-            uploadError.message ||
-            "The image could not be uploaded.",
-        });
+    setUploadProgress(
+      100,
+    );
+  }
 
-        return;
-      }
+  /*
+   * =========================================================
+   * RESUMABLE VIDEO UPLOAD
+   * =========================================================
+   */
+
+  async function uploadVideo(
+    storagePath: string,
+  ) {
+    if (!file) {
+      throw new Error(
+        "No video selected.",
+      );
+    }
+
+    const supabase =
+      createClient();
+
+    /*
+     * We only use getSession here
+     * to obtain the raw access token
+     * for the Supabase Storage
+     * resumable upload endpoint.
+     */
+    const {
+      data: {
+        session,
+      },
+      error:
+        sessionError,
+    } =
+      await supabase.auth.getSession();
+
+    if (
+      sessionError ||
+      !session
+    ) {
+      throw new Error(
+        "Your session has expired.",
+      );
+    }
+
+    const supabaseUrl =
+      process.env
+        .NEXT_PUBLIC_SUPABASE_URL;
+
+    if (!supabaseUrl) {
+      throw new Error(
+        "Supabase URL is not configured.",
+      );
+    }
+
+    const hostname =
+      new URL(
+        supabaseUrl,
+      ).hostname;
+
+    /*
+     * Example:
+     *
+     * abc123.supabase.co
+     * becomes:
+     * abc123
+     */
+    const projectId =
+      hostname.split(
+        ".",
+      )[0];
+
+    if (!projectId) {
+      throw new Error(
+        "Unable to determine Supabase project ID.",
+      );
+    }
+
+    const endpoint =
+      `https://${projectId}.storage.supabase.co/storage/v1/upload/resumable`;
+
+    await new Promise<void>(
+      (
+        resolve,
+        reject,
+      ) => {
+        const upload =
+          new tus.Upload(
+            file,
+            {
+              endpoint,
+
+              retryDelays: [
+                0,
+                3000,
+                5000,
+                10000,
+                20000,
+              ],
+
+              headers: {
+                authorization:
+                  `Bearer ${session.access_token}`,
+              },
+
+              uploadDataDuringCreation:
+                true,
+
+              removeFingerprintOnSuccess:
+                true,
+
+              metadata: {
+                bucketName:
+                  "site-media",
+
+                objectName:
+                  storagePath,
+
+                contentType:
+                  file.type,
+
+                cacheControl:
+                  "3600",
+              },
+
+              /*
+               * Supabase currently
+               * requires a 6 MB chunk
+               * size for TUS uploads.
+               */
+              chunkSize:
+                6 *
+                1024 *
+                1024,
+
+              onError(
+                error,
+              ) {
+                console.error(
+                  "TUS upload error:",
+                  error,
+                );
+
+                reject(
+                  error,
+                );
+              },
+
+              onProgress(
+                bytesUploaded,
+                bytesTotal,
+              ) {
+                const percentage =
+                  Math.round(
+                    (
+                      bytesUploaded /
+                      bytesTotal
+                    ) *
+                      100,
+                  );
+
+                setUploadProgress(
+                  percentage,
+                );
+              },
+
+              onSuccess() {
+                setUploadProgress(
+                  100,
+                );
+
+                resolve();
+              },
+            },
+          );
+
+        /*
+         * Resume an interrupted
+         * upload when possible.
+         */
+        upload
+          .findPreviousUploads()
+          .then(
+            (
+              previousUploads,
+            ) => {
+              if (
+                previousUploads.length >
+                0
+              ) {
+                upload.resumeFromPreviousUpload(
+                  previousUploads[
+                    0
+                  ],
+                );
+              }
+
+              upload.start();
+            },
+          )
+          .catch(
+            reject,
+          );
+      },
+    );
+  }
+
+  /*
+   * =========================================================
+   * SUBMIT
+   * =========================================================
+   */
+
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>,
+  ) {
+    event.preventDefault();
+
+    setMessage(null);
+
+    if (
+      !file ||
+      !mediaType
+    ) {
+      setMessage({
+        type: "error",
+
+        text:
+          "Please select an image or video.",
+      });
+
+      return;
+    }
+
+    if (!name.trim()) {
+      setMessage({
+        type: "error",
+
+        text:
+          "Please enter a name for this media item.",
+      });
+
+      return;
+    }
+
+    setIsUploading(
+      true,
+    );
+
+    setUploadProgress(
+      0,
+    );
+
+    let storagePath:
+      | string
+      | null = null;
+
+    try {
+      const supabase =
+        createClient();
 
       /*
        * ---------------------------------------
-       * Public URL
+       * Confirm current user
        * ---------------------------------------
        */
 
       const {
-        data: publicUrlData,
-      } = supabase.storage
-        .from("site-media")
-        .getPublicUrl(
+        data:
+          claimsData,
+        error:
+          claimsError,
+      } =
+        await supabase.auth.getClaims();
+
+      const userId =
+        typeof claimsData
+          ?.claims
+          ?.sub ===
+        "string"
+          ? claimsData
+              .claims.sub
+          : null;
+
+      if (
+        claimsError ||
+        !userId
+      ) {
+        throw new Error(
+          "Your session has expired. Please sign in again.",
+        );
+      }
+
+      /*
+       * ---------------------------------------
+       * Unique storage path
+       * ---------------------------------------
+       */
+
+      const safeFileName =
+        sanitizeFileName(
+          file.name,
+        );
+
+      const uniqueId =
+        crypto.randomUUID();
+
+      storagePath =
+        `${pageUsage}/${mediaType}s/${uniqueId}-${safeFileName}`;
+
+      /*
+       * Examples:
+       *
+       * home/images/uuid-water.webp
+       * about/videos/uuid-hero.mp4
+       */
+
+      if (
+        mediaType ===
+        "image"
+      ) {
+        await uploadImage(
           storagePath,
         );
+      } else {
+        await uploadVideo(
+          storagePath,
+        );
+      }
+
+      /*
+       * ---------------------------------------
+       * Obtain public URL
+       * ---------------------------------------
+       */
+
+      const {
+        data:
+          publicUrlData,
+      } =
+        supabase.storage
+          .from(
+            "site-media",
+          )
+          .getPublicUrl(
+            storagePath,
+          );
 
       const publicUrl =
         publicUrlData.publicUrl;
@@ -378,94 +779,124 @@ export default function MediaUploadModal({
        */
 
       const {
-        error: databaseError,
-      } = await supabase
-        .from("media_library")
-        .insert({
-          name:
-            name.trim(),
+        error:
+          databaseError,
+      } =
+        await supabase
+          .from(
+            "media_library",
+          )
+          .insert({
+            name:
+              name.trim(),
 
-          alt_text:
-            altText.trim() ||
-            null,
+            alt_text:
+              altText.trim() ||
+              null,
 
-          media_type:
-            "image",
+            media_type:
+              mediaType,
 
-          bucket_name:
-            "site-media",
+            bucket_name:
+              "site-media",
 
-          storage_path:
-            storagePath,
+            storage_path:
+              storagePath,
 
-          public_url:
-            publicUrl,
+            public_url:
+              publicUrl,
 
-          mime_type:
-            file.type,
+            mime_type:
+              file.type,
 
-          file_size:
-            file.size,
+            file_size:
+              file.size,
 
-          page_usage:
-            pageUsage,
+            page_usage:
+              pageUsage,
 
-          uploaded_by:
-            userId,
-        });
+            uploaded_by:
+              userId,
+          });
 
       /*
        * ---------------------------------------
-       * Rollback storage if DB fails
+       * Remove orphaned Storage object if
+       * database insert fails.
        * ---------------------------------------
        */
 
-      if (databaseError) {
+      if (
+        databaseError
+      ) {
         await supabase.storage
-          .from("site-media")
+          .from(
+            "site-media",
+          )
           .remove([
             storagePath,
           ]);
 
-        console.error(
-          "Media DB error:",
-          databaseError,
-        );
-
-        setMessage({
-          type: "error",
-          text:
-            "The image uploaded, but its media record could not be created.",
-        });
-
-        return;
+        throw databaseError;
       }
 
       setMessage({
         type: "success",
+
         text:
-          "Image uploaded successfully.",
+          mediaType ===
+          "video"
+            ? "Video uploaded successfully."
+            : "Image uploaded successfully.",
       });
 
       router.refresh();
 
-      window.setTimeout(() => {
-        resetForm();
-        onClose();
-      }, 900);
+      window.setTimeout(
+        () => {
+          resetForm();
+          onClose();
+        },
+        900,
+      );
     } catch (error) {
       console.error(
-        "Unexpected media upload error:",
+        "Media upload failed:",
         error,
       );
 
+      /*
+       * If something failed AFTER
+       * the actual upload, attempt
+       * cleanup.
+       */
+      if (
+        storagePath
+      ) {
+        /*
+         * Do not blindly remove here
+         * because uploadVideo may have
+         * failed mid-transfer.
+         *
+         * Successful-upload/database
+         * failure cleanup already
+         * happens above.
+         */
+      }
+
       setMessage({
         type: "error",
+
         text:
-          "Something went wrong while uploading the image.",
+          error instanceof
+          Error
+            ? error.message
+            : "The media file could not be uploaded.",
       });
     } finally {
-      setIsUploading(false);
+      setIsUploading(
+        false,
+      );
     }
   }
 
@@ -474,14 +905,16 @@ export default function MediaUploadModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-[160] flex items-center justify-center p-4 sm:p-6">
       {/* Overlay */}
 
       <button
         type="button"
         aria-label="Close upload dialog"
-        onClick={handleClose}
-        className="absolute inset-0 bg-[#160b19]/70 backdrop-blur-sm"
+        onClick={
+          handleClose
+        }
+        className="absolute inset-0 bg-[#160b19]/75 backdrop-blur-sm"
       />
 
       {/* Modal */}
@@ -492,78 +925,116 @@ export default function MediaUploadModal({
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-black/10 bg-white/95 px-5 py-5 backdrop-blur-xl sm:px-6">
           <div className="flex items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#681761]/10 text-[#681761]">
-              <ImagePlus className="h-5 w-5" />
+              {mediaType ===
+              "video" ? (
+                <Video className="h-5 w-5" />
+              ) : (
+                <ImagePlus className="h-5 w-5" />
+              )}
             </span>
 
             <div>
               <h2 className="font-semibold text-[#211024]">
-                Upload Image
+                Upload Media
               </h2>
 
               <p className="mt-1 text-xs text-black/40">
-                Add a new image to the Anors.Z media library.
+                Upload an image or
+                video to the Anors.Z
+                media library.
               </p>
             </div>
           </div>
 
           <button
             type="button"
-            onClick={handleClose}
-            disabled={isUploading}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-black/10 text-black/40 transition hover:bg-black/5 hover:text-black"
+            onClick={
+              handleClose
+            }
+            disabled={
+              isUploading
+            }
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-black/10 text-black/40 transition hover:bg-black/5"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         <form
-          onSubmit={handleSubmit}
+          onSubmit={
+            handleSubmit
+          }
           className="p-5 sm:p-6"
         >
-          {/* Upload area */}
+          {/* File picker */}
 
           <label className="group block cursor-pointer">
             <input
               type="file"
-              accept="image/jpeg,image/png,image/webp,image/avif"
+              accept="image/jpeg,image/png,image/webp,image/avif,video/mp4,video/webm"
+              disabled={
+                isUploading
+              }
               onChange={
                 handleFileChange
               }
-              disabled={isUploading}
               className="sr-only"
             />
 
             {previewUrl ? (
-              <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-[#f5f3f1]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={previewUrl}
-                  alt="Selected upload preview"
-                  className="max-h-[420px] w-full object-contain"
-                />
+              <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-[#171319]">
+                {mediaType ===
+                "video" ? (
+                  <video
+                    src={
+                      previewUrl
+                    }
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="max-h-[430px] w-full bg-black object-contain"
+                  />
+                ) : (
+                  <img
+                    src={
+                      previewUrl
+                    }
+                    alt="Selected upload preview"
+                    className="max-h-[430px] w-full object-contain"
+                  />
+                )}
 
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-5 pb-5 pt-16 text-white">
-                  <p className="text-sm font-semibold">
-                    {file?.name}
+                <div className="bg-[#171319] px-5 py-4 text-white">
+                  <p className="truncate text-sm font-semibold">
+                    {
+                      file?.name
+                    }
                   </p>
 
-                  <p className="mt-1 text-xs text-white/60">
-                    Click image to select a different file
+                  <p className="mt-1 text-xs text-white/50">
+                    Click to select
+                    another file
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="flex min-h-[280px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-black/10 bg-[#faf9f8] p-8 text-center transition group-hover:border-[#681761]/30 group-hover:bg-[#681761]/[0.03]">
+              <div className="flex min-h-[280px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-black/10 bg-[#faf9f8] p-8 text-center transition group-hover:border-[#681761]/30">
                 <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#681761]/10 text-[#681761]">
                   <Upload className="h-7 w-7" />
                 </span>
 
                 <h3 className="mt-5 text-sm font-semibold text-[#211024]">
-                  Select an image
+                  Select image or
+                  video
                 </h3>
 
                 <p className="mt-2 max-w-sm text-xs leading-5 text-black/40">
-                  JPG, PNG, WebP or AVIF. Maximum file size 10 MB.
+                  Images: JPG, PNG,
+                  WebP or AVIF up to
+                  10 MB.
+                  <br />
+                  Videos: MP4 or WebM
+                  up to 50 MB.
                 </p>
 
                 <span className="mt-5 rounded-xl bg-[#681761] px-5 py-2.5 text-xs font-semibold text-white">
@@ -573,25 +1044,71 @@ export default function MediaUploadModal({
             )}
           </label>
 
-          {/* File info */}
+          {/* File information */}
 
-          {file && (
-            <div className="mt-4 flex items-center gap-3 rounded-xl border border-black/10 bg-[#faf9f8] p-4">
-              <FileImage className="h-5 w-5 shrink-0 text-[#681761]" />
+          {file &&
+            mediaType && (
+              <div className="mt-4 flex items-center gap-3 rounded-xl border border-black/10 bg-[#faf9f8] p-4">
+                {mediaType ===
+                "video" ? (
+                  <FileVideo className="h-5 w-5 shrink-0 text-[#681761]" />
+                ) : (
+                  <FileImage className="h-5 w-5 shrink-0 text-[#681761]" />
+                )}
 
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-[#211024]">
-                  {file.name}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-[#211024]">
+                    {file.name}
+                  </p>
+
+                  <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-black/40">
+                    <span>
+                      {
+                        mediaType
+                      }
+                    </span>
+
+                    <span>
+                      {formatBytes(
+                        file.size,
+                      )}
+                    </span>
+
+                    <span>
+                      {
+                        file.type
+                      }
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+          {/* Upload progress */}
+
+          {isUploading && (
+            <div className="mt-5 rounded-xl border border-[#681761]/10 bg-[#681761]/5 p-4">
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-xs font-semibold text-[#211024]">
+                  Uploading
                 </p>
 
-                <p className="mt-1 text-xs text-black/40">
-                  {(
-                    file.size /
-                    1024 /
-                    1024
-                  ).toFixed(2)}{" "}
-                  MB
-                </p>
+                <span className="text-xs font-semibold text-[#681761]">
+                  {
+                    uploadProgress
+                  }
+                  %
+                </span>
+              </div>
+
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#681761]/10">
+                <div
+                  className="h-full rounded-full bg-[#681761] transition-[width] duration-200"
+                  style={{
+                    width:
+                      `${uploadProgress}%`,
+                  }}
+                />
               </div>
             </div>
           )}
@@ -600,83 +1117,91 @@ export default function MediaUploadModal({
 
           <div className="mt-6 grid gap-5">
             <div>
-              <label
-                htmlFor="media-name"
-                className="text-sm font-semibold text-[#211024]"
-              >
-                Image Name
+              <label className="text-sm font-semibold text-[#211024]">
+                Media Name
               </label>
 
-              <p className="mt-1 text-xs text-black/40">
-                A friendly name used inside the admin system.
-              </p>
-
               <input
-                id="media-name"
                 value={name}
-                onChange={(event) =>
+                onChange={(
+                  event,
+                ) =>
                   setName(
-                    event.target.value,
+                    event
+                      .target
+                      .value,
                   )
                 }
                 required
-                disabled={isUploading}
-                placeholder="Homepage water station"
-                className="mt-2 h-12 w-full rounded-xl border border-black/10 bg-[#f8f7f5] px-4 text-sm text-[#211024] outline-none transition focus:border-[#681761] focus:bg-white focus:ring-4 focus:ring-[#681761]/10"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="alt-text"
-                className="text-sm font-semibold text-[#211024]"
-              >
-                Alternative Text
-              </label>
-
-              <p className="mt-1 text-xs leading-5 text-black/40">
-                Describe the image for accessibility and search engines.
-              </p>
-
-              <input
-                id="alt-text"
-                value={altText}
-                onChange={(event) =>
-                  setAltText(
-                    event.target.value,
-                  )
+                disabled={
+                  isUploading
                 }
-                disabled={isUploading}
-                placeholder="Anors.Z intelligent water station"
-                className="mt-2 h-12 w-full rounded-xl border border-black/10 bg-[#f8f7f5] px-4 text-sm text-[#211024] outline-none transition focus:border-[#681761] focus:bg-white focus:ring-4 focus:ring-[#681761]/10"
+                placeholder="About hero video"
+                className="mt-2 h-12 w-full rounded-xl border border-black/10 bg-[#f8f7f5] px-4 text-sm outline-none transition focus:border-[#681761] focus:bg-white focus:ring-4 focus:ring-[#681761]/10"
               />
             </div>
 
             <div>
-              <label
-                htmlFor="page-usage"
-                className="text-sm font-semibold text-[#211024]"
-              >
-                Website Section
+              <label className="text-sm font-semibold text-[#211024]">
+                Alternative Text /
+                Description
               </label>
 
               <p className="mt-1 text-xs text-black/40">
-                Where is this image mainly intended to be used?
+                For images, describe
+                the image. For videos,
+                add a short description
+                of what the video shows.
               </p>
 
-              <select
-                id="page-usage"
-                value={pageUsage}
-                onChange={(event) =>
-                  setPageUsage(
-                    event.target.value,
+              <input
+                value={
+                  altText
+                }
+                onChange={(
+                  event,
+                ) =>
+                  setAltText(
+                    event
+                      .target
+                      .value,
                   )
                 }
-                disabled={isUploading}
-                className="mt-2 h-12 w-full rounded-xl border border-black/10 bg-[#f8f7f5] px-4 text-sm text-[#211024] outline-none focus:border-[#681761] focus:ring-4 focus:ring-[#681761]/10"
+                disabled={
+                  isUploading
+                }
+                placeholder="Anors.Z water station demonstration"
+                className="mt-2 h-12 w-full rounded-xl border border-black/10 bg-[#f8f7f5] px-4 text-sm outline-none transition focus:border-[#681761] focus:bg-white focus:ring-4 focus:ring-[#681761]/10"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-[#211024]">
+                Website Section
+              </label>
+
+              <select
+                value={
+                  pageUsage
+                }
+                onChange={(
+                  event,
+                ) =>
+                  setPageUsage(
+                    event
+                      .target
+                      .value,
+                  )
+                }
+                disabled={
+                  isUploading
+                }
+                className="mt-2 h-12 w-full rounded-xl border border-black/10 bg-[#f8f7f5] px-4 text-sm outline-none focus:border-[#681761] focus:ring-4 focus:ring-[#681761]/10"
               >
                 {PAGE_OPTIONS.map(
-                  (option) => (
+                  (
+                    option,
+                  ) => (
                     <option
                       key={
                         option.value
@@ -685,7 +1210,9 @@ export default function MediaUploadModal({
                         option.value
                       }
                     >
-                      {option.label}
+                      {
+                        option.label
+                      }
                     </option>
                   ),
                 )}
@@ -712,19 +1239,25 @@ export default function MediaUploadModal({
               )}
 
               <span>
-                {message.text}
+                {
+                  message.text
+                }
               </span>
             </div>
           )}
 
-          {/* Buttons */}
+          {/* Footer */}
 
           <div className="mt-7 flex flex-col-reverse gap-3 border-t border-black/10 pt-5 sm:flex-row sm:justify-end">
             <button
               type="button"
-              onClick={handleClose}
-              disabled={isUploading}
-              className="h-12 rounded-xl border border-black/10 px-5 text-sm font-medium text-black/55 transition hover:bg-black/5"
+              disabled={
+                isUploading
+              }
+              onClick={
+                handleClose
+              }
+              className="h-12 rounded-xl border border-black/10 px-5 text-sm font-medium text-black/55"
             >
               Cancel
             </button>
@@ -740,12 +1273,18 @@ export default function MediaUploadModal({
               {isUploading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Uploading...
+
+                  Uploading{" "}
+                  {
+                    uploadProgress
+                  }
+                  %
                 </>
               ) : (
                 <>
                   <Upload className="h-4 w-4" />
-                  Upload Image
+
+                  Upload Media
                 </>
               )}
             </button>

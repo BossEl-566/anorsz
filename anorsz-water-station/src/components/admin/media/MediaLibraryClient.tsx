@@ -14,12 +14,15 @@ import {
   AlertTriangle,
   Calendar,
   FileImage,
+  FileVideo,
   HardDrive,
-  ImagePlus,
   Images,
   Loader2,
+  Play,
   Search,
   Trash2,
+  Upload,
+  Video,
   X,
 } from "lucide-react";
 
@@ -33,7 +36,12 @@ type MediaLibraryClientProps = {
   initialMedia: MediaItem[];
 };
 
-const FILTERS = [
+type MediaTypeFilter =
+  | "all"
+  | "image"
+  | "video";
+
+const PAGE_FILTERS = [
   {
     value: "all",
     label: "All",
@@ -68,11 +76,42 @@ const FILTERS = [
   },
 ];
 
+const MEDIA_TYPE_FILTERS: {
+  value: MediaTypeFilter;
+  label: string;
+}[] = [
+  {
+    value: "all",
+    label: "All Media",
+  },
+  {
+    value: "image",
+    label: "Images",
+  },
+  {
+    value: "video",
+    label: "Videos",
+  },
+];
+
+/*
+ * =========================================================
+ * FILE SIZE
+ * =========================================================
+ */
+
 function formatFileSize(
   bytes: number | null,
 ) {
-  if (!bytes) {
+  if (
+    bytes === null ||
+    bytes === undefined
+  ) {
     return "Unknown";
+  }
+
+  if (bytes === 0) {
+    return "0 B";
   }
 
   if (bytes < 1024) {
@@ -95,6 +134,12 @@ function formatFileSize(
   ).toFixed(2)} MB`;
 }
 
+/*
+ * =========================================================
+ * DATE
+ * =========================================================
+ */
+
 function formatDate(
   value: string,
 ) {
@@ -110,10 +155,23 @@ function formatDate(
   );
 }
 
+/*
+ * =========================================================
+ * COMPONENT
+ * =========================================================
+ */
+
 export default function MediaLibraryClient({
   initialMedia,
 }: MediaLibraryClientProps) {
-  const router = useRouter();
+  const router =
+    useRouter();
+
+  /*
+   * =========================================================
+   * STATE
+   * =========================================================
+   */
 
   const [
     isUploadOpen,
@@ -142,9 +200,17 @@ export default function MediaLibraryClient({
   ] = useState("");
 
   const [
-    filter,
-    setFilter,
+    pageFilter,
+    setPageFilter,
   ] = useState("all");
+
+  const [
+    mediaTypeFilter,
+    setMediaTypeFilter,
+  ] =
+    useState<MediaTypeFilter>(
+      "all",
+    );
 
   const [
     deleteError,
@@ -171,38 +237,65 @@ export default function MediaLibraryClient({
 
       return initialMedia.filter(
         (media) => {
-          const matchesFilter =
-            filter === "all" ||
+          /*
+           * Media type
+           */
+
+          const matchesMediaType =
+            mediaTypeFilter ===
+              "all" ||
+            media.media_type ===
+              mediaTypeFilter;
+
+          /*
+           * Website page
+           */
+
+          const matchesPage =
+            pageFilter ===
+              "all" ||
             media.page_usage ===
-              filter;
+              pageFilter;
+
+          /*
+           * Search
+           */
 
           const matchesSearch =
             !query ||
             media.name
               .toLowerCase()
-              .includes(query) ||
+              .includes(
+                query,
+              ) ||
             media.alt_text
               ?.toLowerCase()
-              .includes(query) ||
+              .includes(
+                query,
+              ) ||
             media.storage_path
               .toLowerCase()
-              .includes(query);
+              .includes(
+                query,
+              );
 
           return (
-            matchesFilter &&
+            matchesMediaType &&
+            matchesPage &&
             matchesSearch
           );
         },
       );
     }, [
       initialMedia,
-      filter,
+      mediaTypeFilter,
+      pageFilter,
       searchTerm,
     ]);
 
   /*
    * =========================================================
-   * DELETE
+   * DELETE MEDIA
    * =========================================================
    */
 
@@ -222,7 +315,9 @@ export default function MediaLibraryClient({
             deleteConfirmation.id,
           );
 
-        if (!result.success) {
+        if (
+          !result.success
+        ) {
           setDeleteError(
             result.message,
           );
@@ -243,6 +338,26 @@ export default function MediaLibraryClient({
     );
   }
 
+  /*
+   * =========================================================
+   * COUNTS
+   * =========================================================
+   */
+
+  const visibleImageCount =
+    filteredMedia.filter(
+      (item) =>
+        item.media_type ===
+        "image",
+    ).length;
+
+  const visibleVideoCount =
+    filteredMedia.filter(
+      (item) =>
+        item.media_type ===
+        "video",
+    ).length;
+
   return (
     <>
       {/* =====================================================
@@ -251,21 +366,30 @@ export default function MediaLibraryClient({
 
       <section className="mt-8 rounded-2xl border border-black/10 bg-white p-4 sm:p-5">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+          {/* Search */}
+
           <div className="relative w-full xl:max-w-md">
             <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-black/30" />
 
             <input
               type="search"
-              value={searchTerm}
-              onChange={(event) =>
+              value={
+                searchTerm
+              }
+              onChange={(
+                event,
+              ) =>
                 setSearchTerm(
-                  event.target.value,
+                  event.target
+                    .value,
                 )
               }
-              placeholder="Search media..."
-              className="h-12 w-full rounded-xl border border-black/10 bg-[#f8f7f5] pl-11 pr-4 text-sm outline-none transition focus:border-[#681761] focus:bg-white focus:ring-4 focus:ring-[#681761]/10"
+              placeholder="Search images and videos..."
+              className="h-12 w-full rounded-xl border border-black/10 bg-[#f8f7f5] pl-11 pr-4 text-sm text-[#211024] outline-none transition placeholder:text-black/25 focus:border-[#681761] focus:bg-white focus:ring-4 focus:ring-[#681761]/10"
             />
           </div>
+
+          {/* Upload */}
 
           <button
             type="button"
@@ -276,45 +400,92 @@ export default function MediaLibraryClient({
             }
             className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#681761] px-5 text-sm font-semibold text-white transition hover:bg-[#52114d]"
           >
-            <ImagePlus className="h-4 w-4" />
+            <Upload className="h-4 w-4" />
 
-            Upload Image
+            Upload Media
           </button>
         </div>
 
-        {/* Filters */}
+        {/* =================================================
+            MEDIA TYPE FILTER
+        ================================================== */}
 
-        <div className="mt-5 flex gap-2 overflow-x-auto border-t border-black/10 pt-4">
-          {FILTERS.map(
-            (item) => {
-              const active =
-                filter ===
-                item.value;
+        <div className="mt-5 border-t border-black/10 pt-4">
+          <div className="flex flex-wrap items-center gap-2">
+            {MEDIA_TYPE_FILTERS.map(
+              (item) => {
+                const active =
+                  mediaTypeFilter ===
+                  item.value;
 
-              return (
-                <button
-                  key={
-                    item.value
-                  }
-                  type="button"
-                  onClick={() =>
-                    setFilter(
-                      item.value,
-                    )
-                  }
-                  className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition ${
-                    active
-                      ? "bg-[#681761] text-white"
-                      : "bg-[#f5f3f1] text-black/45 hover:text-[#681761]"
-                  }`}
-                >
-                  {
-                    item.label
-                  }
-                </button>
-              );
-            },
-          )}
+                return (
+                  <button
+                    key={
+                      item.value
+                    }
+                    type="button"
+                    onClick={() =>
+                      setMediaTypeFilter(
+                        item.value,
+                      )
+                    }
+                    className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
+                      active
+                        ? "bg-[#211024] text-white shadow-sm"
+                        : "bg-[#f5f3f1] text-black/45 hover:bg-[#681761]/10 hover:text-[#681761]"
+                    }`}
+                  >
+                    {
+                      item.label
+                    }
+                  </button>
+                );
+              },
+            )}
+          </div>
+        </div>
+
+        {/* =================================================
+            PAGE FILTER
+        ================================================== */}
+
+        <div className="mt-4 border-t border-black/10 pt-4">
+          <p className="mb-3 text-[9px] font-semibold uppercase tracking-[0.16em] text-black/30">
+            Website Section
+          </p>
+
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {PAGE_FILTERS.map(
+              (item) => {
+                const active =
+                  pageFilter ===
+                  item.value;
+
+                return (
+                  <button
+                    key={
+                      item.value
+                    }
+                    type="button"
+                    onClick={() =>
+                      setPageFilter(
+                        item.value,
+                      )
+                    }
+                    className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold transition ${
+                      active
+                        ? "bg-[#681761] text-white"
+                        : "bg-[#f5f3f1] text-black/45 hover:bg-[#681761]/10 hover:text-[#681761]"
+                    }`}
+                  >
+                    {
+                      item.label
+                    }
+                  </button>
+                );
+              },
+            )}
+          </div>
         </div>
       </section>
 
@@ -322,7 +493,7 @@ export default function MediaLibraryClient({
           RESULT SUMMARY
       ====================================================== */}
 
-      <div className="mt-6 flex items-center justify-between gap-4">
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-sm font-semibold text-[#211024]">
             Media Files
@@ -335,13 +506,39 @@ export default function MediaLibraryClient({
             {filteredMedia.length ===
             1
               ? "item"
-              : "items"}
+              : "items"}{" "}
+            found
           </p>
         </div>
+
+        {filteredMedia.length >
+          0 && (
+          <div className="flex items-center gap-2 text-[10px]">
+            <span className="rounded-full bg-[#f5f3f1] px-3 py-1.5 text-black/45">
+              {
+                visibleImageCount
+              }{" "}
+              {visibleImageCount ===
+              1
+                ? "image"
+                : "images"}
+            </span>
+
+            <span className="rounded-full bg-[#f5f3f1] px-3 py-1.5 text-black/45">
+              {
+                visibleVideoCount
+              }{" "}
+              {visibleVideoCount ===
+              1
+                ? "video"
+                : "videos"}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* =====================================================
-          EMPTY
+          EMPTY STATE
       ====================================================== */}
 
       {filteredMedia.length ===
@@ -357,7 +554,11 @@ export default function MediaLibraryClient({
             </h3>
 
             <p className="mt-2 text-sm leading-6 text-black/45">
-              Upload the first image to start building the Anors.Z media library.
+              No images or videos
+              match the current
+              filters. Upload a new
+              file or change your
+              search and filters.
             </p>
 
             <button
@@ -367,18 +568,18 @@ export default function MediaLibraryClient({
                   true,
                 )
               }
-              className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#681761] px-5 text-sm font-semibold text-white"
+              className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#681761] px-5 text-sm font-semibold text-white transition hover:bg-[#52114d]"
             >
-              <ImagePlus className="h-4 w-4" />
+              <Upload className="h-4 w-4" />
 
-              Upload Image
+              Upload Media
             </button>
           </div>
         </section>
       )}
 
       {/* =====================================================
-          GRID
+          MEDIA GRID
       ====================================================== */}
 
       {filteredMedia.length >
@@ -396,9 +597,11 @@ export default function MediaLibraryClient({
                 }
                 className="group overflow-hidden rounded-2xl border border-black/10 bg-white text-left transition duration-300 hover:-translate-y-1 hover:border-[#681761]/20 hover:shadow-xl hover:shadow-black/5"
               >
-                {/* Image */}
+                {/* =================================================
+                    MEDIA PREVIEW
+                ================================================== */}
 
-                <div className="relative aspect-[4/3] overflow-hidden bg-[#eee9ee]">
+                <div className="relative aspect-[4/3] overflow-hidden bg-[#211024]">
                   {media.media_type ===
                   "image" ? (
                     <img
@@ -413,18 +616,55 @@ export default function MediaLibraryClient({
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center">
-                      <FileImage className="h-10 w-10 text-black/20" />
-                    </div>
+                    <>
+                      <video
+                        src={
+                          media.public_url
+                        }
+                        muted
+                        playsInline
+                        preload="metadata"
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                      />
+
+                      {/* Video overlay */}
+
+                      <div className="pointer-events-none absolute inset-0 bg-black/20 transition group-hover:bg-black/10" />
+
+                      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                        <span className="flex h-14 w-14 items-center justify-center rounded-full border border-white/20 bg-black/55 text-white shadow-xl backdrop-blur-md transition duration-300 group-hover:scale-110">
+                          <Play className="ml-0.5 h-5 w-5 fill-current" />
+                        </span>
+                      </div>
+                    </>
                   )}
 
-                  <span className="absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur">
+                  {/* Page badge */}
+
+                  <span className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-md">
                     {media.page_usage ||
                       "global"}
                   </span>
+
+                  {/* Type badge */}
+
+                  <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[#211024] shadow-sm backdrop-blur-md">
+                    {media.media_type ===
+                    "video" ? (
+                      <Video className="h-3 w-3" />
+                    ) : (
+                      <FileImage className="h-3 w-3" />
+                    )}
+
+                    {
+                      media.media_type
+                    }
+                  </span>
                 </div>
 
-                {/* Information */}
+                {/* =================================================
+                    MEDIA INFORMATION
+                ================================================== */}
 
                 <div className="p-4">
                   <h3 className="truncate text-sm font-semibold text-[#211024]">
@@ -433,7 +673,10 @@ export default function MediaLibraryClient({
 
                   <p className="mt-2 line-clamp-2 min-h-10 text-xs leading-5 text-black/40">
                     {media.alt_text ||
-                      "No alternative text provided."}
+                      (media.media_type ===
+                      "video"
+                        ? "No video description provided."
+                        : "No alternative text provided.")}
                   </p>
 
                   <div className="mt-4 flex items-center justify-between border-t border-black/10 pt-3 text-[10px] text-black/35">
@@ -457,7 +700,7 @@ export default function MediaLibraryClient({
       )}
 
       {/* =====================================================
-          UPLOAD
+          UPLOAD MODAL
       ====================================================== */}
 
       <MediaUploadModal
@@ -470,83 +713,157 @@ export default function MediaLibraryClient({
       />
 
       {/* =====================================================
-          PREVIEW MODAL
+          MEDIA PREVIEW MODAL
       ====================================================== */}
 
       {selectedMedia && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+          {/* Overlay */}
+
           <button
             type="button"
-            aria-label="Close preview"
+            aria-label="Close media preview"
             onClick={() =>
               setSelectedMedia(
                 null,
               )
             }
-            className="absolute inset-0 bg-[#160b19]/75 backdrop-blur-sm"
+            className="absolute inset-0 bg-[#160b19]/80 backdrop-blur-sm"
           />
 
-          <div className="relative z-10 max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
-            <div className="flex items-center justify-between border-b border-black/10 px-5 py-4 sm:px-6">
-              <div>
-                <h2 className="font-semibold text-[#211024]">
-                  {
-                    selectedMedia.name
-                  }
-                </h2>
+          {/* Modal */}
 
-                <p className="mt-1 text-xs text-black/40">
-                  Media details
+          <div className="relative z-10 max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
+            {/* Header */}
+
+            <div className="sticky top-0 z-20 flex items-center justify-between border-b border-black/10 bg-white/95 px-5 py-4 backdrop-blur-xl sm:px-6">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  {selectedMedia.media_type ===
+                  "video" ? (
+                    <Video className="h-4 w-4 shrink-0 text-[#681761]" />
+                  ) : (
+                    <FileImage className="h-4 w-4 shrink-0 text-[#681761]" />
+                  )}
+
+                  <h2 className="truncate font-semibold text-[#211024]">
+                    {
+                      selectedMedia.name
+                    }
+                  </h2>
+                </div>
+
+                <p className="mt-1 text-xs capitalize text-black/40">
+                  {
+                    selectedMedia.media_type
+                  }{" "}
+                  details
                 </p>
               </div>
 
               <button
                 type="button"
+                aria-label="Close preview"
                 onClick={() =>
                   setSelectedMedia(
                     null,
                   )
                 }
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-black/10 text-black/40"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-black/10 text-black/40 transition hover:bg-black/5 hover:text-black"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="grid lg:grid-cols-[1.35fr_0.65fr]">
-              {/* Preview */}
+            <div className="grid lg:grid-cols-[1.4fr_0.6fr]">
+              {/* =================================================
+                  LARGE PREVIEW
+              ================================================== */}
 
-              <div className="flex min-h-[400px] items-center justify-center bg-[#eee9ee] p-4">
-                <img
-                  src={
-                    selectedMedia.public_url
-                  }
-                  alt={
-                    selectedMedia.alt_text ||
-                    selectedMedia.name
-                  }
-                  className="max-h-[650px] max-w-full object-contain"
-                />
+              <div className="flex min-h-[420px] items-center justify-center bg-[#171319] p-4 sm:p-6">
+                {selectedMedia.media_type ===
+                "video" ? (
+                  <video
+                    key={
+                      selectedMedia.id
+                    }
+                    src={
+                      selectedMedia.public_url
+                    }
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="max-h-[680px] w-full max-w-full bg-black object-contain"
+                  >
+                    Your browser does
+                    not support video
+                    playback.
+                  </video>
+                ) : (
+                  <img
+                    src={
+                      selectedMedia.public_url
+                    }
+                    alt={
+                      selectedMedia.alt_text ||
+                      selectedMedia.name
+                    }
+                    className="max-h-[680px] max-w-full object-contain"
+                  />
+                )}
               </div>
 
-              {/* Details */}
+              {/* =================================================
+                  DETAILS
+              ================================================== */}
 
               <div className="border-t border-black/10 p-5 lg:border-l lg:border-t-0 lg:p-6">
-                <div className="space-y-5">
+                <div className="space-y-6">
+                  {/* Media type */}
+
                   <div>
                     <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-black/30">
-                      Alternative Text
+                      Media Type
+                    </p>
+
+                    <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-[#681761]/10 px-3 py-2 text-xs font-semibold capitalize text-[#681761]">
+                      {selectedMedia.media_type ===
+                      "video" ? (
+                        <Video className="h-3.5 w-3.5" />
+                      ) : (
+                        <FileImage className="h-3.5 w-3.5" />
+                      )}
+
+                      {
+                        selectedMedia.media_type
+                      }
+                    </div>
+                  </div>
+
+                  {/* Description */}
+
+                  <div>
+                    <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-black/30">
+                      {selectedMedia.media_type ===
+                      "video"
+                        ? "Description"
+                        : "Alternative Text"}
                     </p>
 
                     <p className="mt-2 text-sm leading-6 text-[#211024]">
                       {selectedMedia.alt_text ||
-                        "No alternative text"}
+                        (selectedMedia.media_type ===
+                        "video"
+                          ? "No video description provided."
+                          : "No alternative text provided.")}
                     </p>
                   </div>
 
+                  {/* Page */}
+
                   <div>
                     <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-black/30">
-                      Used For
+                      Website Section
                     </p>
 
                     <p className="mt-2 text-sm capitalize text-[#211024]">
@@ -555,8 +872,23 @@ export default function MediaLibraryClient({
                     </p>
                   </div>
 
+                  {/* MIME type */}
+
+                  <div>
+                    <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-black/30">
+                      File Type
+                    </p>
+
+                    <p className="mt-2 text-sm text-[#211024]">
+                      {selectedMedia.mime_type ||
+                        "Unknown"}
+                    </p>
+                  </div>
+
+                  {/* File size */}
+
                   <div className="flex items-start gap-3">
-                    <HardDrive className="mt-0.5 h-4 w-4 text-[#681761]" />
+                    <HardDrive className="mt-0.5 h-4 w-4 shrink-0 text-[#681761]" />
 
                     <div>
                       <p className="text-xs font-medium text-[#211024]">
@@ -571,8 +903,10 @@ export default function MediaLibraryClient({
                     </div>
                   </div>
 
+                  {/* Upload date */}
+
                   <div className="flex items-start gap-3">
-                    <Calendar className="mt-0.5 h-4 w-4 text-[#681761]" />
+                    <Calendar className="mt-0.5 h-4 w-4 shrink-0 text-[#681761]" />
 
                     <div>
                       <p className="text-xs font-medium text-[#211024]">
@@ -587,6 +921,8 @@ export default function MediaLibraryClient({
                     </div>
                   </div>
 
+                  {/* Storage path */}
+
                   <div>
                     <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-black/30">
                       Storage Path
@@ -598,7 +934,23 @@ export default function MediaLibraryClient({
                       }
                     </p>
                   </div>
+
+                  {/* Public URL */}
+
+                  <div>
+                    <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-black/30">
+                      Public URL
+                    </p>
+
+                    <p className="mt-2 max-h-24 overflow-y-auto break-all rounded-lg bg-[#f8f7f5] p-3 font-mono text-[10px] leading-5 text-black/45">
+                      {
+                        selectedMedia.public_url
+                      }
+                    </p>
+                  </div>
                 </div>
+
+                {/* Delete */}
 
                 <div className="mt-8 border-t border-black/10 pt-5">
                   <button
@@ -616,7 +968,7 @@ export default function MediaLibraryClient({
                   >
                     <Trash2 className="h-4 w-4" />
 
-                    Delete Image
+                    Delete Media
                   </button>
                 </div>
               </div>
@@ -631,7 +983,11 @@ export default function MediaLibraryClient({
 
       {deleteConfirmation && (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-5">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          {/* Overlay */}
+
+          <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" />
+
+          {/* Dialog */}
 
           <div className="relative z-10 w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
             <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-red-600">
@@ -639,46 +995,78 @@ export default function MediaLibraryClient({
             </span>
 
             <h2 className="mt-5 text-xl font-semibold text-[#211024]">
-              Delete this image?
+              Delete this media
+              file?
             </h2>
 
             <p className="mt-3 text-sm leading-6 text-black/50">
-              This permanently removes{" "}
-              <strong>
+              This will permanently
+              remove{" "}
+              <strong className="font-semibold text-[#211024]">
                 {
                   deleteConfirmation.name
                 }
               </strong>{" "}
-              from Supabase Storage and the media library.
+              from Supabase Storage
+              and the media library.
             </p>
 
+            <div className="mt-4 flex items-center gap-2 rounded-xl bg-[#f8f7f5] p-3">
+              {deleteConfirmation.media_type ===
+              "video" ? (
+                <FileVideo className="h-4 w-4 shrink-0 text-[#681761]" />
+              ) : (
+                <FileImage className="h-4 w-4 shrink-0 text-[#681761]" />
+              )}
+
+              <span className="text-xs capitalize text-black/50">
+                {
+                  deleteConfirmation.media_type
+                }{" "}
+                •{" "}
+                {formatFileSize(
+                  deleteConfirmation.file_size,
+                )}
+              </span>
+            </div>
+
             {deleteError && (
-              <p className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-600">
-                {deleteError}
-              </p>
+              <div className="mt-4 rounded-xl border border-red-100 bg-red-50 p-4">
+                <p className="text-sm leading-6 text-red-600">
+                  {deleteError}
+                </p>
+              </div>
             )}
 
             <div className="mt-6 flex gap-3">
               <button
                 type="button"
-                disabled={isDeleting}
-                onClick={() =>
+                disabled={
+                  isDeleting
+                }
+                onClick={() => {
+                  setDeleteError(
+                    "",
+                  );
+
                   setDeleteConfirmation(
                     null,
-                  )
-                }
-                className="h-11 flex-1 rounded-xl border border-black/10 text-sm font-medium text-black/55"
+                  );
+                }}
+                className="h-11 flex-1 rounded-xl border border-black/10 text-sm font-medium text-black/55 transition hover:bg-black/5 disabled:opacity-50"
               >
                 Cancel
               </button>
 
               <button
                 type="button"
-                disabled={isDeleting}
+                disabled={
+                  isDeleting
+                }
                 onClick={
                   handleDelete
                 }
-                className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-red-600 text-sm font-semibold text-white disabled:opacity-60"
+                className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-red-600 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isDeleting ? (
                   <>
