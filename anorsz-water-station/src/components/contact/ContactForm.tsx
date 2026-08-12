@@ -51,7 +51,7 @@ export default function ContactForm() {
       ].join("\n"),
     );
 
-    window.location.href = `mailto:gigamonjosephp@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:info@anorsz.com?subject=${subject}&body=${body}`;
 
     setIsPreparing(false);
     setEmailOpened(true);
