@@ -307,3 +307,348 @@ export type AboutPageContent = {
     secondaryButtonHref: string;
   };
 };
+
+/*
+ * =========================================================
+ * SOLUTIONS PAGE
+ * =========================================================
+ */
+
+export type SolutionsOverviewKey =
+  | "smartWater"
+  | "campus"
+  | "community"
+  | "commercial"
+  | "groundwater"
+  | "support";
+
+export type SolutionsTechnologyKey =
+  | "smartCard"
+  | "display"
+  | "ultrafiltration"
+  | "uv"
+  | "reverseOsmosis"
+  | "temperature";
+
+export type SolutionsApplicationKey =
+  | "schools"
+  | "companies"
+  | "factories"
+  | "healthcare"
+  | "hotels"
+  | "restaurants"
+  | "communities"
+  | "publicInstitutions";
+
+export type SolutionsCommercialKey =
+  | "corporate"
+  | "industry"
+  | "hospitality";
+
+export type SolutionsSupportKey =
+  | "assessment"
+  | "design"
+  | "installation"
+  | "training";
+
+export type SolutionsOverviewItem = {
+  key: SolutionsOverviewKey;
+
+  number: string;
+
+  title: string;
+
+  description: string;
+
+  href: string;
+
+  image:
+    | WebsiteMediaSelection
+    | null;
+};
+
+export type SolutionsTechnologyItem = {
+  key: SolutionsTechnologyKey;
+
+  title: string;
+
+  description: string;
+};
+
+export type SolutionsCapacityItem = {
+  faucets: string;
+
+  users: string;
+
+  description: string;
+
+  suitableFor: string;
+};
+
+export type SolutionsApplicationItem = {
+  key: SolutionsApplicationKey;
+
+  title: string;
+
+  description: string;
+};
+
+export type SolutionsCommercialItem = {
+  key: SolutionsCommercialKey;
+
+  title: string;
+
+  description: string;
+
+  image:
+    | WebsiteMediaSelection
+    | null;
+
+  linkLabel: string;
+
+  linkHref: string;
+};
+
+export type SolutionsSupportItem = {
+  key: SolutionsSupportKey;
+
+  number: string;
+
+  title: string;
+
+  description: string;
+};
+
+export type SolutionsPageContent = {
+  /*
+   * =======================================================
+   * HERO
+   * =======================================================
+   */
+
+  hero: {
+    breadcrumbLabel: string;
+
+    titleLineOne: string;
+
+    titleLineTwo: string;
+
+    description: string;
+
+    lowerDescription: string;
+
+    linkLabel: string;
+
+    linkHref: string;
+
+    image:
+      | WebsiteMediaSelection
+      | null;
+  };
+
+  /*
+   * =======================================================
+   * SOLUTION OVERVIEW
+   * =======================================================
+   */
+
+  overview: {
+    eyebrow: string;
+
+    title: string;
+
+    description: string;
+
+    items: SolutionsOverviewItem[];
+  };
+
+  /*
+   * =======================================================
+   * SMART WATER STATIONS
+   * =======================================================
+   */
+
+  smartWater: {
+    eyebrow: string;
+
+    title: string;
+
+    description: string;
+
+    features: string[];
+
+    buttonLabel: string;
+
+    buttonHref: string;
+
+    image:
+      | WebsiteMediaSelection
+      | null;
+
+    imageEyebrow: string;
+
+    imageText: string;
+  };
+
+  /*
+   * =======================================================
+   * TECHNOLOGY
+   * =======================================================
+   */
+
+  technology: {
+    eyebrow: string;
+
+    title: string;
+
+    description: string;
+
+    items: SolutionsTechnologyItem[];
+  };
+
+  /*
+   * =======================================================
+   * CAMPUS CAPACITY
+   * =======================================================
+   */
+
+  campus: {
+    eyebrow: string;
+
+    title: string;
+
+    description: string;
+
+    capacities: SolutionsCapacityItem[];
+
+    disclaimer: string;
+  };
+
+  /*
+   * =======================================================
+   * COMMUNITY
+   * =======================================================
+   */
+
+  community: {
+    eyebrow: string;
+
+    title: string;
+
+    description: string;
+
+    features: string[];
+
+    image:
+      | WebsiteMediaSelection
+      | null;
+
+    imageEyebrow: string;
+
+    imageText: string;
+  };
+
+  /*
+   * =======================================================
+   * COMMERCIAL PURIFICATION
+   * =======================================================
+   */
+
+  commercial: {
+    eyebrow: string;
+
+    title: string;
+
+    description: string;
+
+    items: SolutionsCommercialItem[];
+  };
+
+  /*
+   * =======================================================
+   * GROUNDWATER
+   * =======================================================
+   */
+
+  groundwater: {
+    eyebrow: string;
+
+    title: string;
+
+    description: string;
+
+    features: string[];
+
+    disclaimer: string;
+
+    image:
+      | WebsiteMediaSelection
+      | null;
+
+    imageEyebrow: string;
+
+    imageText: string;
+  };
+
+  /*
+   * =======================================================
+   * WHO WE SERVE
+   * =======================================================
+   */
+
+  applications: {
+    eyebrow: string;
+
+    title: string;
+
+    description: string;
+
+    items: SolutionsApplicationItem[];
+  };
+
+  /*
+   * =======================================================
+   * INSTALLATION AND SUPPORT
+   * =======================================================
+   */
+
+  support: {
+    eyebrow: string;
+
+    title: string;
+
+    description: string;
+
+    backgroundImage:
+      | WebsiteMediaSelection
+      | null;
+
+    items: SolutionsSupportItem[];
+  };
+
+  /*
+   * =======================================================
+   * CTA
+   * =======================================================
+   */
+
+  cta: {
+    eyebrow: string;
+
+    title: string;
+
+    description: string;
+
+    primaryButtonLabel: string;
+
+    primaryButtonHref: string;
+
+    secondaryButtonLabel: string;
+
+    secondaryButtonHref: string;
+
+    backgroundImage:
+      | WebsiteMediaSelection
+      | null;
+  };
+};

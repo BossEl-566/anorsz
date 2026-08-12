@@ -34,7 +34,7 @@ const pages = [
       "Water station solutions, industries and service information.",
     href: "/admin/content/solutions",
     icon: Lightbulb,
-    status: "Pending",
+    status: "Available",
   },
 
   {
