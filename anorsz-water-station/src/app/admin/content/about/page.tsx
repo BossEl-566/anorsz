@@ -46,7 +46,6 @@ export default async function AdminAboutContentPage() {
       updated_at
     `,
   )
-  .eq("media_type", "image")
   .in(
     "page_usage",
     [

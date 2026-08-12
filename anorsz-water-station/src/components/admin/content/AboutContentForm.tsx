@@ -26,7 +26,10 @@ import type { MediaItem } from "@/types/media";
 import type {
   AboutPageContent,
   WebsiteMediaSelection,
+  WebsiteVideoSelection,
 } from "@/types/website-content";
+
+import VideoPickerField from "@/components/admin/media/VideoPickerField";
 
 type Props = {
   initialContent: AboutPageContent;
@@ -235,6 +238,51 @@ function updateSupportImage(
   }));
 }
 
+function updateHeroVideo(
+  video:
+    | WebsiteVideoSelection
+    | null,
+) {
+  setContent((current) => ({
+    ...current,
+
+    hero: {
+      ...current.hero,
+      video,
+    },
+  }));
+}
+
+function updateTechnologyVideo(
+  video:
+    | WebsiteVideoSelection
+    | null,
+) {
+  setContent((current) => ({
+    ...current,
+
+    technology: {
+      ...current.technology,
+      video,
+    },
+  }));
+}
+
+function updateSupportVideo(
+  video:
+    | WebsiteVideoSelection
+    | null,
+) {
+  setContent((current) => ({
+    ...current,
+
+    support: {
+      ...current.support,
+      video,
+    },
+  }));
+}
+
   return (
     <div className="space-y-6">
       {/* HERO */}
@@ -244,6 +292,19 @@ function updateSupportImage(
         title="About Hero"
         description="Manage the text displayed over the About page video."
       >
+        <VideoPickerField
+  label="Hero Background Video"
+  description="Background video displayed at the top of the About page."
+  value={
+    content.hero.video
+  }
+  media={
+    mediaLibrary
+  }
+  onChange={
+    updateHeroVideo
+  }
+/>
         <ContentField
           label="Breadcrumb Label"
           value={content.hero.breadcrumbLabel}
@@ -705,6 +766,19 @@ function updateSupportImage(
         title="Technology"
         description="Manage the technology introduction and six technology cards."
       >
+        <VideoPickerField
+  label="Technology Demonstration Video"
+  description="Main demonstration video displayed above the technology cards."
+  value={
+    content.technology.video
+  }
+  media={
+    mediaLibrary
+  }
+  onChange={
+    updateTechnologyVideo
+  }
+/>
         <ContentField
           label="Eyebrow"
           value={content.technology.eyebrow}
@@ -1017,6 +1091,19 @@ function updateSupportImage(
         title="Installation & Support"
         description="Manage installation, training and technical-support content."
       >
+        <VideoPickerField
+  label="Installation & Support Video"
+  description="Video demonstrating installation, setup or technical support."
+  value={
+    content.support.video
+  }
+  media={
+    mediaLibrary
+  }
+  onChange={
+    updateSupportVideo
+  }
+/>
         <MediaPickerField
   label="Installation & Support Image"
   description="Image displayed alongside installation and support information."

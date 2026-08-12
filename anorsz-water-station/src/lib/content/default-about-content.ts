@@ -7,6 +7,8 @@ export const defaultAboutContent: AboutPageContent = {
     titleLineOne: "Pure Water.",
     titleLineTwo: "Positive Impact.",
 
+    video: null,
+
     description:
       "We combine modern purification technology, intelligent dispensing and environmental responsibility to help people access cleaner and safer drinking water.",
 
@@ -125,6 +127,8 @@ export const defaultAboutContent: AboutPageContent = {
 
     description:
       "Our water stations combine filtration, sterilisation, smart-card access, real-time information and modern dispensing technology in one integrated solution.",
+
+    video: null,
 
     videoLabel: "Technology demonstration",
 
@@ -270,6 +274,8 @@ export const defaultAboutContent: AboutPageContent = {
 
     description:
       "We work with each client to understand their environment, expected number of users, water requirements and preferred station configuration.",
+
+    video: null,
 
     image: null,
 

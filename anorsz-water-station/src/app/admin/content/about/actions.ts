@@ -8,12 +8,85 @@ import { defaultAboutContent } from "@/lib/content/default-about-content";
 import type {
   AboutPageContent,
   WebsiteMediaSelection,
+  WebsiteVideoSelection,
 } from "@/types/website-content";
 
 type SaveResult = {
   success: boolean;
   message: string;
 };
+
+function cleanVideoSelection(
+  value:
+    | WebsiteVideoSelection
+    | null
+    | undefined,
+): WebsiteVideoSelection | null {
+  if (!value) {
+    return null;
+  }
+
+  if (
+    typeof value.id !== "string" ||
+    typeof value.name !== "string" ||
+    typeof value.url !== "string" ||
+    typeof value.description !==
+      "string" ||
+    typeof value.mimeType !==
+      "string"
+  ) {
+    return null;
+  }
+
+  const supabaseUrl =
+    process.env
+      .NEXT_PUBLIC_SUPABASE_URL;
+
+  if (!supabaseUrl) {
+    return null;
+  }
+
+  const expectedPrefix =
+    `${supabaseUrl}/storage/v1/object/public/site-media/`;
+
+  if (
+    !value.url.startsWith(
+      expectedPrefix,
+    )
+  ) {
+    return null;
+  }
+
+  const allowedTypes = [
+    "video/mp4",
+    "video/webm",
+  ];
+
+  if (
+    !allowedTypes.includes(
+      value.mimeType,
+    )
+  ) {
+    return null;
+  }
+
+  return {
+    id:
+      value.id.trim(),
+
+    name:
+      value.name.trim(),
+
+    url:
+      value.url.trim(),
+
+    description:
+      value.description.trim(),
+
+    mimeType:
+      value.mimeType.trim(),
+  };
+}
 
 function cleanText(
   value: unknown,
@@ -177,6 +250,11 @@ export async function saveAboutContent(
         content.hero.titleLineTwo,
         defaultAboutContent.hero.titleLineTwo,
       ),
+
+      video:
+  cleanVideoSelection(
+    content.hero.video,
+  ),
 
       description: cleanText(
         content.hero.description,
@@ -361,6 +439,11 @@ export async function saveAboutContent(
         defaultAboutContent.technology.videoLabel,
       ),
 
+      video:
+  cleanVideoSelection(
+    content.technology.video,
+  ),
+
       items:
         defaultAboutContent.technology.items.map(
           (fallback, index) => ({
@@ -491,6 +574,10 @@ export async function saveAboutContent(
         content.support.description,
         defaultAboutContent.support.description,
       ),
+      video:
+  cleanVideoSelection(
+    content.support.video,
+  ),
       image:
   cleanMediaSelection(
     content.support.image,

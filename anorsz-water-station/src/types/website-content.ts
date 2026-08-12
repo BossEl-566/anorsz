@@ -17,6 +17,14 @@ export type WebsiteMediaSelection = {
   alt: string;
 };
 
+export type WebsiteVideoSelection = {
+  id: string;
+  name: string;
+  url: string;
+  description: string;
+  mimeType: string;
+};
+
 export type HomeInstitution = {
   key:
     | "schools"
@@ -195,6 +203,8 @@ export type AboutPageContent = {
 
     linkLabel: string;
     linkHref: string;
+
+    video: WebsiteVideoSelection | null;
   };
 
   story: {
@@ -244,6 +254,8 @@ export type AboutPageContent = {
 
     videoLabel: string;
 
+    video: WebsiteVideoSelection | null;
+
     items: AboutTechnologyItem[];
   };
 
@@ -276,6 +288,8 @@ export type AboutPageContent = {
     image: WebsiteMediaSelection | null;
 
     items: AboutSupportItem[];
+
+    video: WebsiteVideoSelection | null;
 
     imageEyebrow: string;
     imageText: string;
