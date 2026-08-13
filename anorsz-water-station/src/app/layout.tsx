@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+  "https://anorsz.com",
+),
   title: {
     default: "Anors.Z Global Water Station",
     template: "%s | Anors.Z Global Water Station",

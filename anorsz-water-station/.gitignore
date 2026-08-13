@@ -49,3 +49,13 @@ public/_next-video
 
 # Environment variables
 .env.local
+
+# OpenNext
+.open-next
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+
+!.env.example

@@ -6,3 +6,4 @@ const nextConfig: NextConfig = {
 };
 
 export default withNextVideo(nextConfig);
+import('@opennextjs/cloudflare').then(m => m.initOpenNextCloudflareForDev());
