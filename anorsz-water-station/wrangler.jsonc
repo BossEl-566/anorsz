@@ -3,6 +3,7 @@
   "main": ".open-next/worker.js",
   "name": "anorsz-water-station",
   "compatibility_date": "2026-08-13",
+  "keep_vars": true,
   "compatibility_flags": [
     "global_fetch_strictly_public"
   ],
