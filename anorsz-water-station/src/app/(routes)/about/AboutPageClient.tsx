@@ -704,7 +704,7 @@ export default function AboutPageClient({
             viewport={viewport}
             className="relative"
           >
-            <div className="relative aspect-[4/4.5] min-h-[500px] overflow-hidden bg-[#ddd6de]">
+            <div className="relative aspect-4/4.5 min-h-125 overflow-hidden bg-[#ddd6de]">
               <CmsImage
                 media={
                   content.story
