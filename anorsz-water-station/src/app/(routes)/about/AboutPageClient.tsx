@@ -718,7 +718,7 @@ export default function AboutPageClient({
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-[#160b19]/65 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-[#160b19]/65 via-transparent to-transparent" />
 
               <div className="absolute bottom-6 left-6 right-6 border-t border-white/35 pt-5 text-white sm:bottom-8 sm:left-8 sm:right-8">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-white/65">
@@ -747,7 +747,7 @@ export default function AboutPageClient({
       ====================================================== */}
 
       <section className="bg-white">
-        <div className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+        <div className="mx-auto max-w-360 px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
           <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <motion.div
               variants={
