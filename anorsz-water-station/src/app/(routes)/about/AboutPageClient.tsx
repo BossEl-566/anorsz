@@ -827,7 +827,7 @@ export default function AboutPageClient({
 
               <div className="absolute inset-0 bg-linear-to-t from-[#180719] via-[#241026]/65 to-[#241026]/20" />
 
-              <div className="relative flex min-h-[540px] flex-col p-7 sm:p-10 lg:p-12">
+              <div className="relative flex min-h-135 flex-col p-7 sm:p-10 lg:p-12">
                 <div className="flex items-start justify-between">
                   <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/15 backdrop-blur-md">
                     <Target className="h-5 w-5" />
@@ -875,7 +875,7 @@ export default function AboutPageClient({
               whileHover={{
                 y: -8,
               }}
-              className="group relative min-h-[540px] overflow-hidden bg-[#681761] text-white"
+              className="group relative min-h-135 overflow-hidden bg-[#681761] text-white"
             >
               <CmsImage
                 media={
@@ -890,9 +890,9 @@ export default function AboutPageClient({
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-[#4b1048] via-[#681761]/65 to-[#681761]/20" />
+              <div className="absolute inset-0 bg-linear-to-t from-[#4b1048] via-[#681761]/65 to-[#681761]/20" />
 
-              <div className="relative flex min-h-[540px] flex-col p-7 sm:p-10 lg:p-12">
+              <div className="relative flex min-h-135 flex-col p-7 sm:p-10 lg:p-12">
                 <div className="flex items-start justify-between">
                   <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/15 backdrop-blur-md">
                     <Eye className="h-5 w-5" />
