@@ -349,7 +349,7 @@ export default function ContactPageClient() {
           }}
         />
 
-        <div className="relative mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
+        <div className="relative mx-auto max-w-360 px-5 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28 xl:px-16">
           <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <motion.div
               variants={slideFromLeft}
@@ -388,6 +388,7 @@ export default function ContactPageClient() {
           >
             {contactCards.map((card) => {
               const Icon = card.icon;
+
 
               return (
                 <motion.article
