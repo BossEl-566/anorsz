@@ -240,11 +240,11 @@ export default function ContactPageClient() {
 
         <div className="absolute inset-0 bg-[#681761]/30" />
 
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/80 via-black/10 to-transparent" />
 
-        <div className="absolute inset-0 bg-gradient-to-r from-[#110513]/95 via-[#2e1030]/60 to-black/15" />
+        <div className="absolute inset-0 bg-linear-to-r from-[#110513]/95 via-[#2e1030]/60 to-black/15" />
 
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#160b19]/95" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-[#160b19]/95" />
 
         <div
           aria-hidden="true"
