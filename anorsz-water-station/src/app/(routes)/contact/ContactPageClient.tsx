@@ -260,7 +260,7 @@ export default function ContactPageClient() {
           }}
         />
 
-        <div className="relative z-10 mx-auto flex min-h-[72svh] max-w-[1440px] items-end px-5 pb-12 pt-32 sm:px-8 sm:pb-16 lg:px-12 lg:pb-20 xl:px-16">
+        <div className="relative z-10 mx-auto flex min-h-[72svh] max-w-360 items-end px-5 pb-12 pt-32 sm:px-8 sm:pb-16 lg:px-12 lg:pb-20 xl:px-16">
           <div className="w-full">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -282,7 +282,7 @@ export default function ContactPageClient() {
                 initial={{ opacity: 0, y: 35 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.7 }}
-                className="max-w-4xl text-[clamp(2.5rem,5.7vw,5.5rem)] font-normal leading-[0.99] tracking-[-0.05em]"
+                className="max-w-4xl text-[clamp(2.5rem,5.7vw,5.5rem)] font-normal leading-[0.99] tracking-tighter"
               >
                 Let&apos;s Talk About
                 <span className="block">Your Water Needs.</span>
@@ -395,7 +395,7 @@ export default function ContactPageClient() {
                   key={card.title}
                   variants={staggerItem}
                   whileHover={{ y: -7 }}
-                  className="group min-h-[310px] border-b border-r border-black/10 bg-white p-7 transition duration-300 hover:z-10 hover:border-[#681761]/30 hover:shadow-[0_24px_60px_rgba(50,14,49,0.1)]"
+                  className="group min-h-77.5 border-b border-r border-black/10 bg-white p-7 transition duration-300 hover:z-10 hover:border-[#681761]/30 hover:shadow-[0_24px_60px_rgba(50,14,49,0.1)]"
                 >
                   <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#681761]/10 text-[#681761] transition duration-300 group-hover:bg-[#681761] group-hover:text-white">
                     <Icon className="h-5 w-5" />
@@ -419,13 +419,13 @@ export default function ContactPageClient() {
           ENQUIRY FORM
       ========================================================== */}
       <section id="enquiry-form" className="scroll-mt-24 bg-white">
-        <div className="mx-auto grid max-w-[1440px] gap-0 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[0.82fr_1.18fr] lg:px-12 lg:py-28 xl:px-16">
+        <div className="mx-auto grid max-w-360 gap-0 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[0.82fr_1.18fr] lg:px-12 lg:py-28 xl:px-16">
           <motion.div
             variants={slideFromLeft}
             initial="hidden"
             whileInView="visible"
             viewport={viewport}
-            className="relative min-h-[500px] overflow-hidden bg-[#221025] text-white lg:min-h-full"
+            className="relative min-h-125 overflow-hidden bg-[#221025] text-white lg:min-h-full"
           >
             <Image
               src={aboutStoryImage}
@@ -437,7 +437,7 @@ export default function ContactPageClient() {
 
             <div className="absolute inset-0 bg-[#351139]/35" />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-[#160719]/98 via-[#1f0a23]/55 to-black/25" />
+            <div className="absolute inset-0 bg-linear-to-t from-[#160719]/98 via-[#1f0a23]/55 to-black/25" />
 
             <div
               aria-hidden="true"
