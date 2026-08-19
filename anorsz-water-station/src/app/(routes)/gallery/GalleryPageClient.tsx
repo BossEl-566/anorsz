@@ -178,7 +178,7 @@ export default function GalleryPageClient() {
           }}
         />
 
-        <div className="relative z-10 mx-auto flex min-h-[76svh] max-w-[1440px] items-end px-5 pb-12 pt-32 sm:px-8 sm:pb-16 lg:px-12 lg:pb-20 xl:px-16">
+        <div className="relative z-10 mx-auto flex min-h-[76svh] max-w-350 items-end px-5 pb-12 pt-32 sm:px-8 sm:pb-16 lg:px-12 lg:pb-20 xl:px-16">
           <div className="w-full">
             <motion.div
               initial={{
@@ -374,7 +374,7 @@ export default function GalleryPageClient() {
                   sizes="(max-width: 1024px) 50vw, 28vw"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-[#160719]/55 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-[#160719]/55 via-transparent to-transparent" />
               </motion.div>
 
               <motion.div
