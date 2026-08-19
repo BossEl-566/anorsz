@@ -119,6 +119,7 @@ const galleryHighlights = [
   },
 ];
 
+
 export default function GalleryPageClient() {
   return (
     <main className="overflow-hidden bg-[#f7f6f4] text-[#171319]">
