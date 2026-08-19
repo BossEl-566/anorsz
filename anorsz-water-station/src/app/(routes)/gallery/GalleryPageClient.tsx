@@ -155,13 +155,13 @@ export default function GalleryPageClient() {
         <div className="absolute inset-0 bg-[#681761]/30" />
 
         {/* Header readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/10 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/80 via-black/10 to-transparent" />
 
         {/* Side contrast */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#100412]/95 via-[#2b102f]/65 to-black/15" />
+        <div className="absolute inset-0 bg-linear-to-r from-[#100412]/95 via-[#2b102f]/65 to-black/15" />
 
         {/* Bottom contrast */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#160b19]/95" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-[#160b19]/95" />
 
         {/* Decorative pattern */}
         <div
